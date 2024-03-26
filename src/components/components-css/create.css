@@ -1,0 +1,24 @@
+.browse {
+  padding-bottom: 19px;
+  padding-left: 10px;
+}
+
+.de_tab.tab_methods .de_nav li {
+    /* padding-bottom: 10px; */
+    /* float: left;
+    display: flex; */
+}
+.de_tab.tab_methods .de_nav li span {
+    /* min-width: 150px;
+    min-height: 150px !important; */
+}
+
+
+.hideCollaborator{
+  display: none;
+}
+
+.showCollaborator{
+  display: block;
+}
+

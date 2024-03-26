@@ -1,0 +1,21 @@
+.follow {
+  box-sizing: border-box;
+  width: 78px;
+  height: 33px;
+  border-radius: 10px;
+}
+
+.follow:hover {
+  background: #879590;
+  box-shadow: 1px 1px 1px #7268e9;
+  color: #ffffff;
+}
+
+ol li {
+  list-style-type: none;
+}
+
+.viewAllAuthor {
+  color: #8364e2;
+  font-weight: bold;
+}

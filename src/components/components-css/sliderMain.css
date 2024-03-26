@@ -1,0 +1,58 @@
+.decrypt-market{
+    font-style: normal;
+    font-weight: 800;
+    font-size: 25px;
+    line-height: 34px;
+    color: #838383;
+    }
+
+.Create-sell-h1{
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05)),
+linear-gradient(268.44deg, #FE9A5E -6.07%, #FF3392 28.72%, #8155E5 64.62%, #4AC4F0 101.65%);
+    -webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+
+    }
+
+
+    .arrow{
+        position: absolute;
+        bottom: 15%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .arrow span{
+        display: block;
+        width: 30px;
+        height: 30px;
+        border-bottom: 5px solid #8155E5;
+        border-right:  5px solid #8155E5;
+        transform: rotate(45deg);
+        margin: -10px;
+        animation: scroll 2s infinite;
+    }
+
+    .arrow span:nth-child(2){
+        animation-delay: -.2s;
+    }
+
+    .arrow span:nth-child(3){
+        animation-delay: -.4s;
+    }
+
+
+    @keyframes scroll {
+        0% {
+            opacity: 0;
+            transform: rotate(45deg) translate(-20px, -20px);
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform: rotate(45deg) translate(20px, 20px);
+        }
+    }
+
