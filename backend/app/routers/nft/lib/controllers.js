@@ -760,7 +760,7 @@ controllers.getHotCollections = async (req, res) => {
     if (sTextsearch !== "") {
       CollectionSearchArray["sName"] = {
         $regex: new RegExp(sTextsearch),
-        $options: "<options>",
+        // $options: "<options>",
       };
     }
 
