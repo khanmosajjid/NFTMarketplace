@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 
 const fs = require("fs");
+const os = require("os");
 const http = require("https");
 const {
   NFT,
@@ -195,9 +196,11 @@ controllers.create = async (req, res) => {
         // let testBuffer = Buffer.from(testFile);
 
         try {
-          const pathString = "/tmp/";
+          // const pathString = "/tmp/";
+          const tempDir = os.tmpdir();
+          const filePath = path.join(tempDir, req.file.originalname);
           //console.log("Files Data", req.file)
-          const file = fs.createWriteStream(pathString + req.file.originalname);
+          const file = fs.createWriteStream(filePath);
           //console.log("file in create is-------->",file)
 
           let fileUrl = req.file.location;
@@ -211,7 +214,7 @@ controllers.create = async (req, res) => {
             var stream = response.pipe(file);
             //console.log("strema is------>",stream)
             const readableStreamForFile = fs.createReadStream(
-              pathString + req.file.originalname
+             filePath
             );
 
             stream.on("finish", async function () {
@@ -644,8 +647,11 @@ controllers.createCollection = async (req, res) => {
         };
 
         try {
-          const pathString = "/tmp/";
-          const file = fs.createWriteStream(pathString + req.file.originalname);
+          // const pathString = "/tmp/";
+          const tempDir = os.tmpdir();
+          const filePath = path.join(tempDir, req.file.originalname);
+          const file = fs.createWriteStream(filePath);
+          // console.log("fileeee",file)
           let fileLocation = req.file.location;
           fileLocation = fileLocation.replace("http://", "https://");
           var prefix = "https://";
@@ -657,8 +663,9 @@ controllers.createCollection = async (req, res) => {
             const request = http.get(`${fileLocation}`, function (response) {
               console.log("here");
               var stream = response.pipe(file);
+              const filePath = path.join(tempDir, req.file.originalname);
               const readableStreamForFile = fs.createReadStream(
-                pathString + req.file.originalname
+               filePath
               );
               console.log("herer for testing");
 
@@ -3372,6 +3379,7 @@ controllers.getSearchedNft = async (req, res) => {
 controllers.updateCollectionToken = async (req, res) => {
   try {
     console.log("update collection token is called", req.body);
+    console.log('reqdddd',req.params.collectionAddress);
     if (!req.params.collectionAddress)
       return res.reply(messages.not_found("Contract Address Not Found"));
     const contractAddress = req.params.collectionAddress;
@@ -3379,10 +3387,12 @@ controllers.updateCollectionToken = async (req, res) => {
     const collection = await Collection.findOne({
       sContractAddress: contractAddress,
     });
+    console.log("colelellel",collection)
     let nextId = collection.getNextId();
-
+    console.log(nextId)
     collection.nextId = nextId + 1;
     collection.save();
+    console.log("Work donee")
     return res.reply(messages.success("Token Updated", nextId + 1));
   } catch (error) {
     return res.reply(messages.server_error());

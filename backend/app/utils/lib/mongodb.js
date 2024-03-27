@@ -10,6 +10,7 @@ function MongoClient() {
     };
 }
 
+console.log(process.env.DB_URL)
 MongoClient.prototype.initialize = function () {
     mongoose
         .connect(process.env.DB_URL, this.options)
