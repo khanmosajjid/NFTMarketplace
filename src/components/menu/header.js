@@ -8,16 +8,23 @@ import Group from "./../../assets/images/Group.png";
 import logo2 from "./../../assets/images/logo-2.png";
 import DecryptNFTLogo2 from "./../../assets/images/DecryptNFT-Logo2.png";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const Header = function () {
   const [showmenu, btn_icon] = useState(false);
   const [cookies] = useCookies(["selected_account"]);
   const [currentAccount, setCurrentAccount] = useState("");
+  let navigate =useNavigate()
 
   useEffect(() => {
+    console.log(cookies.selected_account)
     if (cookies.selected_account) {
       setCurrentAccount(cookies.selected_account);
+    }
+    else{
+      setCurrentAccount('');
+      navigate('/')
     }
   }, [cookies.selected_account]);
 
@@ -136,7 +143,7 @@ const Header = function () {
           </BreakpointProvider>
 
           <div className="mainside">
-            <AccountModal />
+            <AccountModal  navigate={navigate}/>
           </div>
         </div>
 

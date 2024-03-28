@@ -221,6 +221,24 @@ const Collection = function (props) {
           </div>
         </div>
       </section>
+      <section className="collection-detail-card">
+        <div className="collection-card">
+          <h1>flat price</h1>
+          <p>3000</p>
+        </div>
+        <div className="collection-card">
+          <h1>Volume</h1>
+          <p>3000</p>
+        </div>
+        <div className="collection-card">
+          <h1>Latest Price</h1>
+          <p>3000</p>
+        </div>
+        <div className="collection-card">
+          <h1>fItems</h1>
+          <p>3000</p>
+        </div>
+      </section>
 
       <section className="container no-top">
         <div className="row mt-4 mb-5">

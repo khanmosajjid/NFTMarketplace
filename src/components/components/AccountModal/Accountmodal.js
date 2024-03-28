@@ -16,6 +16,7 @@ import "../../../App.css";
 import { useCookies } from "react-cookie";
 import evt from "../../../events/events"
 import { getCurrentProvider } from "../../../helpers/getterFunctions";
+import { useNavigate } from "@reach/router";
 var CryptoJS = require("crypto-js");
 
 async function initWeb3(provider) {
@@ -40,7 +41,7 @@ const AccountModal = (props) => {
   const [isPopup, setIsPopup] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [userDetails, setUserDetails] = useState()
-
+ 
   let web3Modal = null;
   let web3 = null;
   let provider = null;
@@ -88,6 +89,12 @@ const AccountModal = (props) => {
         });
 
         provider.on("chainChanged", async (_chainId) => {
+          if(parseInt(_chainId, 16).toString() !== process.env.REACT_APP_CHAIN_ID){
+            setWrongNetwork(true)
+            setIsPopup(true)
+            
+            return;
+          }
           console.log(
             "333",
             parseInt(_chainId, 16).toString() !==
@@ -170,6 +177,14 @@ const AccountModal = (props) => {
     }
     try {
       const chainId = await web3.eth.getChainId();
+      const networkId = await web3.eth.net.getId();
+      console.log(networkId)
+      if(networkId!=80001){
+       setWrongNetwork(true)
+       setIsPopup(true)
+       return;
+      }
+        
       console.log("chain id", chainId);
       console.log("222", chainId.toString() !== process.env.REACT_APP_CHAIN_ID);
       window.sessionStorage.setItem("chain_id", chainId.toString());
@@ -281,6 +296,7 @@ const AccountModal = (props) => {
   useEffect(() => {
     if (provider) {
       provider.on("chainChanged", async (_chainId) => {
+       
         console.log(
           "444",
           parseInt(_chainId, 16).toString() !== process.env.REACT_APP_CHAIN_ID,
@@ -324,38 +340,74 @@ const AccountModal = (props) => {
 
 
   const handleNetworkSwitch = async (networkName) => {
+    console.log(networkName);
+    // try {
+    //   try {
+    //     await window.ethereum.request({
+    //       method: "wallet_switchEthereumChain",
+    //       params: [{ chainId: Networks[networkName].chainId }],
+    //     });
+    //     NotificationManager.success("Chain switched successfully");
+    //   } catch (e) {
+    //     if (e.code === 4902) {
+    //       try {
+    //         await window.ethereum.request({
+    //           method: "wallet_addEthereumChain",
+    //           params: [{ ...Networks[networkName] }],
+    //         });
+    //       } catch (addError) {
+    //         console.error(addError);
+    //         NotificationManager.success("Something went wrong");
+    //       }
+    //     } else {
+    //       console.log(e)
+    //       NotificationManager.success("Something went wrong");
+    //     }
+    //   }
 
-    try {
-      try {
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: Networks[networkName].chainId }],
-        });
-        NotificationManager.success("Chain switched successfully");
-      } catch (e) {
-        if (e.code === 4902) {
-          try {
-            await window.ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [{ ...Networks[networkName] }],
-            });
-          } catch (addError) {
-            console.error(addError);
-            NotificationManager.success("Something went wrong");
-          }
-        } else {
-          NotificationManager.success("Something went wrong");
-        }
-      }
-
-    } catch (e) {
-      console.log("error in switch", e);
-    }
+    // } catch (e) {
+    //   console.log("error in switch", e);
+    // }
     // onConnect();
+   
+   try{ 
+    // console.log(Networks[networkName]);
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: Networks[networkName].chainId }],
+      });
+      NotificationManager.success("Chain switched successfully");
+      setWrongNetwork(false)
+      setIsPopup(false)
+    } 
+    catch (switchError) {
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{ ...Networks[networkName] }],
+          });
+          NotificationManager.success("Chain added successfully");
+        } catch (addError) {
+          console.error("Error adding chain:", addError);
+          NotificationManager.error("Failed to add chain");
+        }
+      } else {
+        console.error("Error switching chain:", switchError);
+        NotificationManager.error("Failed to switch chain");
+      }
+    } }
+    catch (outerError) {
+      console.error("Error in switch:", outerError);
+      NotificationManager.error("Failed to switch chain");
+    }
+  
   };
 
   const togglePopup = () => {
     setIsPopup(!isPopup);
+    props.navigate('/')
   };
 
   useEffect(() => {
