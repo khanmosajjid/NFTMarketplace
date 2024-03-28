@@ -680,6 +680,31 @@ export const GetCollectionsByAddress = async (data) => {
   }
 };
 
+export const GetMetaOfCollection = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL +
+      "/nft/getMetaDataOfCollection/",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
 export const GetCollectionsById = async (data) => {
   const requestOptions = {
     method: "POST",

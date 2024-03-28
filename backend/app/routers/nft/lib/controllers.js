@@ -214,7 +214,7 @@ controllers.create = async (req, res) => {
             var stream = response.pipe(file);
             //console.log("strema is------>",stream)
             const readableStreamForFile = fs.createReadStream(
-             filePath
+              filePath
             );
 
             stream.on("finish", async function () {
@@ -665,7 +665,7 @@ controllers.createCollection = async (req, res) => {
               var stream = response.pipe(file);
               const filePath = path.join(tempDir, req.file.originalname);
               const readableStreamForFile = fs.createReadStream(
-               filePath
+                filePath
               );
               console.log("herer for testing");
 
@@ -1435,6 +1435,48 @@ controllers.getCollectionDetailsByAddress = (req, res) => {
   }
 };
 
+controllers.getMetaDataOfCollection = async (req, res) => {
+  try {
+    console.log(req.body.collectionId)
+    const nfts = await NFT.find({nCollection:req.body.collectionId}).populate('nOrders')
+    nfts.sort((a,b)=>a.nOrders[0].oPrice-b.nOrders[0].oPrice)
+    // const nfts = await NFT.aggregate([
+    //   // Match NFTs belonging to the specified collection
+    //   { $match: { nCollection: req.body.collectionId } },
+
+    //   {
+    //     $lookup: {
+    //       from: "orders", // Assuming orders are stored in a separate collection named ordersCollection
+    //       localField: "nOrders",   // Field in nftCollection
+    //       foreignField: "_id",      // Field in ordersCollection
+    //       as: "orders"
+    //     }
+    //   },
+    //   {
+    //     $addFields: {
+    //       price: { $toDouble: "$orders.oPrice" } // Add a field to store the maximum oPrice within nOrders array
+    //     }
+    //   },
+    //   {
+    //     $sort: { "minPriceOrder": 1 } // Sort documents based on the maxPriceOrder field
+    //   }
+
+    //   // Limit to 1 document to get the minimum price
+    //   // { $limit: 1 }
+    // ]);
+    console.log('nfts',nfts[0]);
+    const floorPrice = nfts.length > 0 ? nfts[0].nOrders[0].oPrice.toString() : 0;
+    console.log(floorPrice);
+    let metaData = {
+      "floorPrice": floorPrice
+    }
+    return res.reply(messages.no_prefix("MetaData Details"), metaData);
+  } catch (error) {
+    console.log('Error getting metadata for collection', error);
+    return res.reply(messages.server_error());
+  }
+}
+
 controllers.setTransactionHash = async (req, res) => {
   try {
     if (!req.body.nNFTId) return res.reply(messages.not_found("NFT ID"));
@@ -1540,8 +1582,8 @@ controllers.landing = async (req, res) => {
                         $eq: [
                           "$$user_likes",
                           req.userId &&
-                          req.userId != undefined &&
-                          req.userId != null
+                            req.userId != undefined &&
+                            req.userId != null
                             ? mongoose.Types.ObjectId(req.userId)
                             : "",
                         ],
@@ -1664,8 +1706,8 @@ controllers.landing = async (req, res) => {
                         $eq: [
                           "$$user_likes",
                           req.userId &&
-                          req.userId != undefined &&
-                          req.userId != null
+                            req.userId != undefined &&
+                            req.userId != null
                             ? mongoose.Types.ObjectId(req.userId)
                             : "",
                         ],
@@ -1788,8 +1830,8 @@ controllers.landing = async (req, res) => {
                         $eq: [
                           "$$user_likes",
                           req.userId &&
-                          req.userId != undefined &&
-                          req.userId != null
+                            req.userId != undefined &&
+                            req.userId != null
                             ? mongoose.Types.ObjectId(req.userId)
                             : "",
                         ],
@@ -2203,7 +2245,7 @@ controllers.updateNftOrder = async (req, res) => {
       nftownerID,
       { $inc: { nQuantityLeft: -req.body.putOnSaleQty } },
       { new: true },
-      function (err, response) {}
+      function (err, response) { }
     );
     if (req.body.erc721) {
       await NFT.findByIdAndUpdate(sId, {
@@ -2241,8 +2283,8 @@ controllers.likeNFT = async (req, res) => {
           let likeARY =
             NFTData.nUser_likes && NFTData.nUser_likes.length
               ? NFTData.nUser_likes.filter(
-                  (v) => v.toString() == req.userId.toString()
-                )
+                (v) => v.toString() == req.userId.toString()
+              )
               : [];
 
           //console.log("like Array",likeARY);
@@ -3018,10 +3060,10 @@ controllers.transferNfts = async (req, res) => {
         (o) => o.address === req.body.receiver.toLowerCase()
       ).quantity
         ? parseInt(
-            _NFTB.nOwnedBy.find(
-              (o) => o.address === req.body.receiver.toLowerCase()
-            ).quantity
-          )
+          _NFTB.nOwnedBy.find(
+            (o) => o.address === req.body.receiver.toLowerCase()
+          ).quantity
+        )
         : 0;
       boughtQty = req.body.qty;
       let ownedQty = parseInt(currentQty) + parseInt(boughtQty);
@@ -3379,7 +3421,7 @@ controllers.getSearchedNft = async (req, res) => {
 controllers.updateCollectionToken = async (req, res) => {
   try {
     console.log("update collection token is called", req.body);
-    console.log('reqdddd',req.params.collectionAddress);
+    console.log('reqdddd', req.params.collectionAddress);
     if (!req.params.collectionAddress)
       return res.reply(messages.not_found("Contract Address Not Found"));
     const contractAddress = req.params.collectionAddress;
@@ -3387,7 +3429,7 @@ controllers.updateCollectionToken = async (req, res) => {
     const collection = await Collection.findOne({
       sContractAddress: contractAddress,
     });
-    console.log("colelellel",collection)
+    console.log("colelellel", collection)
     let nextId = collection.getNextId();
     console.log(nextId)
     collection.nextId = nextId + 1;

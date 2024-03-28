@@ -6,6 +6,7 @@ import { createGlobalStyle } from "styled-components";
 import {
   GetCollectionsByAddress,
   GetIndividualAuthorDetail,
+  GetMetaOfCollection,
   getProfile
 } from "../../apiServices";
 import Loader from "../components/loader";
@@ -14,6 +15,7 @@ import { useParams } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
 import Avatar from "./../../assets/images/avatar5.jpg";
 import { useCookies } from "react-cookie";
+import { convertToEth } from "../../helpers/numberFormatter";
 
 const GlobalStyles = createGlobalStyle`
 header#myHeader.navbar.white a {
@@ -84,7 +86,7 @@ const Collection = function (props) {
   const [profile, setProfile] = useState();
   const [currentUser, setCurrentUser] = useState();
   const [cookies] = useCookies(["selected_account", "Authorization"]);
-
+  const [metaData, setMetaData]=useState({})
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,6 +127,10 @@ const Collection = function (props) {
           userId: collectionDetails.oCreatedBy,
           currUserId: profile ? profile._id : "",
         });
+        
+        let metadata = await GetMetaOfCollection({ collectionId: collectionDetails.sContractAddress });
+      //  metaData['floorPrice']=convertToEth(metadata.floorPrice)
+        setMetaData(metadata)
         setAuthorDetails(data);
 
         setLoading(false);
@@ -221,10 +227,13 @@ const Collection = function (props) {
           </div>
         </div>
       </section>
+      <div className="collection-desc">
+        <h3>{collectionDetails.sDescription}</h3>
+      </div>
       <section className="collection-detail-card">
         <div className="collection-card">
           <h1>flat price</h1>
-          <p>3000</p>
+          <p>${convertToEth(metaData.floorPrice)}</p>
         </div>
         <div className="collection-card">
           <h1>Volume</h1>
@@ -235,7 +244,7 @@ const Collection = function (props) {
           <p>3000</p>
         </div>
         <div className="collection-card">
-          <h1>fItems</h1>
+          <h1>Items</h1>
           <p>3000</p>
         </div>
       </section>

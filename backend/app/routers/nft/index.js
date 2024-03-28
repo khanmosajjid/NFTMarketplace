@@ -21,6 +21,12 @@ router.post(
 );
 
 router.post(
+  '/getMetaDataOfCollection',
+  nftMiddleware.verifyWithoutToken,
+  nftController.getMetaDataOfCollection
+)
+
+router.post(
   "/createCollection",
   nftMiddleware.verifyToken,
   nftController.createCollection
