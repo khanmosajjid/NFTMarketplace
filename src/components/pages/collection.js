@@ -232,11 +232,11 @@ const Collection = function (props) {
       </div>
       <section className="collection-detail-card">
         <div className="collection-card">
-          <h1>flat price</h1>
+          <h1>Floor Price</h1>
           <p>${convertToEth(metaData.floorPrice)}</p>
         </div>
         <div className="collection-card">
-          <h1>Volume</h1>
+          <h1>Trade Volume</h1>
           <p>3000</p>
         </div>
         <div className="collection-card">
@@ -244,8 +244,8 @@ const Collection = function (props) {
           <p>3000</p>
         </div>
         <div className="collection-card">
-          <h1>Items</h1>
-          <p>3000</p>
+          <h1>Total Items</h1>
+          <p>{metaData.items}</p>
         </div>
       </section>
 
