@@ -2,7 +2,7 @@
   "name": "decryptmarketplace",
   "version": "0.1.1",
   "private": true,
-  "homepage": "/",
+  "homepage": ".",
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^6.0.0",
     "@fortawesome/free-solid-svg-icons": "^6.0.0",
@@ -72,12 +72,13 @@
   },
   "scripts": {
     "start":  "react-scripts --openssl-legacy-provider start",
-    "build": "react-scripts build",
+    "build": "react-scripts --openssl-legacy-provider build",
     "build:testing": "env-cmd -f .env.testing react-scripts build",
     "build:staging": "env-cmd -f .env-staging react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start:development": "env-cmd -f .env react-scripts start"
+    "start:development": "env-cmd -f .env react-scripts start",
+    "serve": "serve -s build -l 5000"
   },
   "eslintConfig": {
     "extends": [

@@ -6,6 +6,7 @@ import Breakpoint, {
 import AccountModal from "./../components/AccountModal/Accountmodal";
 import Group from "./../../assets/images/Group.png";
 import logo2 from "./../../assets/images/logo-2.png";
+import logo1 from "./../../assets/images/logo1.png";
 import DecryptNFTLogo2 from "./../../assets/images/DecryptNFT-Logo2.png";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
@@ -55,13 +56,13 @@ const Header = function () {
           <div className="logo px-0">
             <div className="navbar-title navbar-item">
               <a href="/">
-                <img src={Group} className="img-fluid d-block" alt="#" />
+                <img src={logo1} style={{width:"80px",height:"60px"}} className="img-fluid d-block" alt="#" />
                 <img src={logo2} className="img-fluid d-3" alt="#" />
-                <img
-                  src={DecryptNFTLogo2}
+                {/* <img
+                  src={logo1}
                   className="img-fluid d-none"
                   alt="#"
-                />
+                /> */}
               </a>
             </div>
           </div>

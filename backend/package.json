@@ -7,6 +7,9 @@
     "test": "mocha **/*.test.js",
     "start": "npx nodemon index.js",
     "debug": "nodemon --inspect index.js",
+    "startpm2": "pm2 start index.js ",
+    "stoppm2": "pm2 stop index.js",
+    "statuspm2": "pm2 status",
     "dev": "nodemon index.js"
   },
   "nodemonConfig": {
@@ -48,6 +51,7 @@
     "nodemailer": "^6.5.0",
     "nodemon": "^2.0.19",
     "path": "^0.12.7",
+    "pm2": "^5.3.1",
     "randomstring": "^1.2.3",
     "request": "^2.88.2",
     "shortid": "^2.2.15",
