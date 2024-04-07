@@ -25,7 +25,7 @@ const Header = function () {
     }
     else{
       setCurrentAccount('');
-      navigate('/')
+      // navigate('/')
     }
   }, [cookies.selected_account]);
 

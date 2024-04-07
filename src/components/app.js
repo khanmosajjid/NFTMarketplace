@@ -22,6 +22,11 @@ import ExploreCollections from "./pages/exploreCollections";
 import ExploreAuthors from "./pages/exploreAuthors";
 import { checkAuthorization } from "../apiServices";
 import eventEmitter from "../events/events";
+import AboutUs from "./pages/aboutus";
+import Fee from "./pages/fee";
+import Terms from "./pages/terms";
+import Privacy from "./pages/privacy";
+import Risk from "./pages/risk";
 
 const GlobalStyles = createGlobalStyle`
   :root {
@@ -92,6 +97,11 @@ const App = (props) => {
         <Route exact path="/itemDetail" element={<ItemDetail />}>
           <Route path="/itemDetail/:id" element={<ItemDetail />} />
         </Route>
+        <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/fee" element={<Fee />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/risk" element={<Risk />} />
         <Route path="*" component={ItemNotFound} />
       </Routes>
       <ScrollToTopBtn />

@@ -12,7 +12,7 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import { KeyboardArrowRight } from "@material-ui/icons";
 import { getBanner } from "../../apiServices";
 import { useNavigate } from "react-router-dom";
-
+import banne1 from '../../assets/images/4591.png'
 var bgImgStyle = {
   backgroundImage: "url(./img/bg-shape-decrypt.png)",
   backgroundRepeat: "no-repeat",
@@ -80,7 +80,9 @@ const Home = () => {
       if(banres[i].order===1){
         //console.log("main banner",banres[i].bDesktopFileHash)
         setMainBanner({fileHash : banres[i].bDesktopFileHash, 
-          url: banres[i].bannerURL,collectionName:banres[i].collection_Name,nftName:banres[i].nft_Name})
+          // url: banres[i].bannerURL,
+          url:banne1,
+          collectionName:banres[i].collection_Name,nftName:banres[i].nft_Name})
       }
       if(banres[i].order===2){
         console.log("in banner 2")

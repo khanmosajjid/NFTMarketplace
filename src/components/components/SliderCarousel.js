@@ -109,7 +109,7 @@ export default class Responsive extends Component {
                 }}
                 
               />: <img
-                src="./img/carousel/crs-1.jpg"
+                src={require('../../assets/images/4591.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -139,7 +139,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4592.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -159,7 +159,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4593.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -179,7 +179,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4594.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -199,7 +199,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4595.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -225,7 +225,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4596.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -245,7 +245,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4597.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -265,7 +265,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4598.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -285,7 +285,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4599.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -311,7 +311,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4600.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -331,7 +331,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4601.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -351,7 +351,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/4602.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -371,7 +371,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src="./img/carousel/crs-2.jpg"
+                src={require('../../assets/images/lmslogo.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}

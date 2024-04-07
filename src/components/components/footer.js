@@ -24,28 +24,28 @@ const footer= () => (
                                 <div className="widget">
                                     <h5 className='font_24 text-dark NunitoBold'>Resources</h5>
                                     <ul>
-                                        <li><Link to="">About Us</Link></li>
-                                        <li><Link to="">Privacy Policy</Link></li>
-                                        {/* <li><Link to="">Suggestions</Link></li> */}
-                                        <li><Link to="">Terms & Conditions</Link></li>
-                                        {/* <li><Link to="">Docs</Link></li> */}
-                                        {/* <li><Link to="">Newsletter</Link></li> */}
+                                        {/* <li><Link to="">About Us</Link></li> */}
+                                        {/* <li><Link to="">Privacy Policy</Link></li> */}
+                                        <li><Link to="">Suggestions</Link></li>
+                                        {/* <li><Link to="">Terms & Conditions</Link></li> */}
+                                        <li><Link to="">Docs</Link></li>
+                                        <li><Link to="">Newsletter</Link></li>
                                     </ul>
                                 </div>
                             </div>
-                            {/* <div className="col-md-4 col-sm-6 col-xs-1">
+                            <div className="col-md-4 col-sm-6 col-xs-1">
                                 <div className="widget">
-                                    <h5 className='font_24 text-dark NunitoBold'>Community</h5>
+                                    <h5 className='font_24 text-dark NunitoBold'>Kunstify</h5>
                                     <ul>
-                                        <li><Link to="">Community</Link></li>
-                                        <li><Link to="">Documentation</Link></li>
-                                        <li><Link to="">Brand Assets</Link></li>
-                                        <li><Link to="">Blog</Link></li>
-                                        <li><Link to="">Forum</Link></li>
-                                        <li><Link to="">Mailing List</Link></li>
+                                        <li><a href="/about-us">About us</a></li>
+                                        <li><a href="/fee">Fees</a></li>
+                                        <li><a href="/terms">Terms</a></li>
+                                        <li><a href="/privacy">Privacy Policy</a></li>
+                                        <li><a href="/risk">Risk Notification</a></li>
+                                        {/* <li><Link to="">Mailing List</Link></li> */}
                                     </ul>
                                 </div>
-                            </div> */}
+                            </div>
                         </div>
                     </div>
                     <div className="col-md-4 col-sm-6 col-xs-1">
@@ -82,10 +82,10 @@ const footer= () => (
                                 <div className="de-flex-col">
                                     <div className="social-icons">
                                         <span onClick={()=> window.open("https://www.facebook.com/paiblock/", "_self")}><i className="fa fa-facebook fa-lg"></i></span>
-                                        <span onClick={()=> window.open("", "_self")}><i className="fa fa-twitter fa-lg"></i></span>
-                                        <span onClick={()=> window.open("", "_self")}><i className="fa fa-linkedin fa-lg"></i></span>
-                                        <span onClick={()=> window.open("", "_self")}><i className="fa fa-pinterest fa-lg"></i></span>
-                                        <span onClick={()=> window.open("", "_self")}><i className="fa fa-rss fa-lg"></i></span>
+                                        <span onClick={()=> window.open("https://www.instagram.com/paiblockapp/", "_self")}><i className="fa fa-instagram fa-lg"></i></span>
+                                        <span onClick={()=> window.open("https://www.linkedin.com/company/paiblock", "_self")}><i className="fa fa-linkedin fa-lg"></i></span>
+                                        <span onClick={()=> window.open("https://www.pinterest.com/paiblock/", "_self")}><i className="fa fa-pinterest fa-lg"></i></span>
+                                        <span onClick={()=> window.open("https://www.youtube.com/channel/UCEd4VIc8MOL4VdZy8U70hFQ", "_self")}><i className="fa fa-youtube fa-lg"></i></span>
                                     </div>
                                 </div>
                             </div>
