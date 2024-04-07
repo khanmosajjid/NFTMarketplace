@@ -81,9 +81,9 @@ const App = (props) => {
         <Route path="/explore" element={<Explore />} />
         <Route path="/updateProfile" element={<UpdateProfile />} />
         <Route path="/profile" element={<PersonalProfile />} />
-        <Route exact path="/collection" element={<Collection />}>
-          <Route path="/collection/:address" element={<Collection />} />
-        </Route>
+        <Route exact path="/collection" element={<Collection />}/>
+          {/* <Route path="/collection/:address" element={<Collection />} /> */}
+        {/* </Route> */}
         <Route path="/createOption" element={<CreateOption />} />
         <Route path="/createSingle" element={<Create2 />} />
         <Route path="/createMultiple" element={<Create3 />} />

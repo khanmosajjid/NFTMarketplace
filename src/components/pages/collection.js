@@ -16,6 +16,8 @@ import { NotificationManager } from "react-notifications";
 import Avatar from "./../../assets/images/avatar5.jpg";
 import { useCookies } from "react-cookie";
 import { convertToEth } from "../../helpers/numberFormatter";
+import { useSearchParams } from "react-router-dom/dist";
+import { useNavigate } from "react-router-dom";
 
 const GlobalStyles = createGlobalStyle`
 header#myHeader.navbar.white a {
@@ -87,6 +89,7 @@ const Collection = function (props) {
   const [currentUser, setCurrentUser] = useState();
   const [cookies] = useCookies(["selected_account", "Authorization"]);
   const [metaData, setMetaData]=useState({})
+  let navigate = useNavigate()
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,15 +98,17 @@ const Collection = function (props) {
   useEffect(() => {
     const fetch = async () => {
       if (currentUser) {
-        let _profile = await getProfile();
-        setProfile(_profile);
+        console.log('hhh',localStorage.getItem("decrypt_authorization"));
+        // let _profile = await getProfile();
+        // setProfile(_profile);
       }
     };
     fetch();
   }, [currentUser]);
 
-  let { address } = useParams();
-  let addr = address;
+  let [param] = useSearchParams();
+  console.log(param.get('addr'));
+  let addr = param.get('addr')
 
   useEffect(() => {
     async function fetch() {
@@ -125,7 +130,7 @@ const Collection = function (props) {
         setLoading(true);
         let data = await GetIndividualAuthorDetail({
           userId: collectionDetails.oCreatedBy,
-          currUserId: profile ? profile._id : "",
+          currUserId: profile ? profile._id : localStorage.getItem('decrypt_userId'),
         });
         
         let metadata = await GetMetaOfCollection({ collectionId: collectionDetails.sContractAddress });

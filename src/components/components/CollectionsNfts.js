@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { Pagination } from "@material-ui/lab";
 import Placeholder from "./placeholder";
 import { perPageCount } from "./../../helpers/constants";
+import { useNavigate } from "react-router-dom";
 
 const Outer = styled.div`
   display: flex;
@@ -23,7 +24,7 @@ const CollectionsNfts = (props) => {
   const [currPage, setCurrPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
-
+  let navigate = useNavigate()
   const handleChange = (e, p) => {
     setCurrPage(p);
   };
@@ -47,11 +48,13 @@ const CollectionsNfts = (props) => {
           props.owned,
           props.collection
         );
-        console.log("details are  ghfgh--------->50",details);
-        if (details.length > 0)
+        console.log("details are  ghfgh--------->50", details);
+        if (details.length > 0) {
           setTotalPages(Math.ceil(details[0]?.count / perPageCount));
-        setNfts(details);
-        setLoading(false);
+          setNfts(details);
+          setLoading(false);
+        }
+
       } catch (e) {
         console.log("error in collections nft api", e);
         setLoading(false);
@@ -67,15 +70,15 @@ const CollectionsNfts = (props) => {
       setHeight(img.offsetHeight);
     }
   };
-  
+
   return (
     <div className="row">
       {loading ? returnPlaceHolder() : ""}
-      {console.log("nfts are------------------>...>>>",nfts,nfts.length)}
-      {nfts && nfts.length>=1
+      {console.log("nfts are------------------>...>>>", nfts, nfts.length)}
+      {nfts && nfts.length >= 1
         ? nfts.map((nft, index) => (
           <>
-          {nft.isBlocked===true?"": <div
+            {nft.isBlocked === true ? "" : <div
               key={index}
               className="d-item col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-4"
             >
@@ -107,25 +110,25 @@ const CollectionsNfts = (props) => {
                   <Outer>
                     <span
                       onClick={() =>
-                        (window.location.href = "/itemDetail/" + nft.id)
+                        navigate(`/itemDetail/${nft.id}`)
                       }
                     >
-                      {nft.imageType==="mp4"?<video  className="lazy nft__item_preview  slider-img-preview " controls>
-                 <source  src={nft.previewImg} type="video/mp4" />
-                 </video>:<img
+                      {nft.imageType === "mp4" ? <video className="lazy nft__item_preview  slider-img-preview " controls>
+                        <source src={nft.previewImg} type="video/mp4" />
+                      </video> : <img
                         onLoad={onImgLoad}
                         src={nft.previewImg}
                         className="lazy nft__item_preview  slider-img-preview"
                         alt=""
                       />}
-                      
+
                     </span>
                   </Outer>
                 </div>
                 <div className="nft__item_info">
                   <span
                     onClick={() =>
-                      (window.location.href = "/itemDetail/" + nft.id)
+                      navigate(`/itemDetail/${nft.id}`)
                     }
                   >
                     <h4 className="nft_title_class">{nft.title}</h4>
@@ -155,15 +158,15 @@ const CollectionsNfts = (props) => {
                 </div>
               </div>
             </div>}
-            
+
           </>
-          
-          ))
-        :<div className='col-md-12'>
-        <h4 className='no_data_text text-muted'>
-          No NFTs Available
-        </h4>
-      </div>}
+
+        ))
+        : <div className='col-md-12'>
+          <h4 className='no_data_text text-muted'>
+            No NFTs Available
+          </h4>
+        </div>}
       {totalPages > 1 ? (
         <Pagination
           count={totalPages}

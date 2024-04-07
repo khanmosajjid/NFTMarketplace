@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { GetAllUserDetails } from "../../apiServices";
 import Avatar from "./../../assets/images/avatar5.jpg";
 
-const AuthorList = () => {
+const AuthorList = (props) => {
   const [authors, setAuthors] = useState([]);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const AuthorList = () => {
                 <div key={key} className="author_box_home col-md-4 col-sm-6 mb-4">
                   <div
                     onClick={() =>
-                      (window.location.href = `/author/${author._id}`)
+                      props.navigate(`/author/${author._id}`)
                     }
                     className="author_list_box d-flex align-items-center flex-wrap"
                   >

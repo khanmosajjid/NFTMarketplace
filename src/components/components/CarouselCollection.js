@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import Loader from "./loader";
 import Avatar from "./../../assets/images/avatar5.jpg";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 class CustomSlide extends Component {
   render() {
@@ -93,6 +94,7 @@ const CollectionList = (props) => {
 
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(false);
+  // let navigate = useNavigate()
 
   useEffect(() => {
     async function fetchData() {
@@ -131,7 +133,9 @@ const CollectionList = (props) => {
                     <div
                       className="nft_wrap"
                       onClick={() =>
-                        (window.location.href = `/collection/${collection.sContractAddress}`)
+                        // alert('hi')
+                        props.navigate(`/collection/?addr=${collection?.sContractAddress}`)
+                        // (window.location.href = `/collection/?addr=${collection?.sContractAddress}`)
                       }
                     >
                       <span>
@@ -147,7 +151,7 @@ const CollectionList = (props) => {
                     <div className="nft_coll_pp">
                       <span
                         onClick={() =>
-                          (window.location.href = `/author/${collection.oCreatedBy}`)
+                         props.navigate( `/author/${collection.oCreatedBy}`)
                         }
                       >
                         <img
@@ -174,7 +178,7 @@ const CollectionList = (props) => {
                     </div>
                       <span
                         onClick={() =>
-                          (window.location.href = `/collection/${collection.sContractAddress}`)
+                          props.navigate(`/collection/?addr=${collection.sContractAddress}`)
                         }
                       >
                         <h4 className="nft_title_class font_14 NunitoExtraBold text-dark">

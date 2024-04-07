@@ -1271,7 +1271,7 @@ const ItemDetails = function (props) {
       }
     };
 
-    fetchMeta();
+    // fetchMeta();
   }, [nftDetails, reloadContent]);
 
 

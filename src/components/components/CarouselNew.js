@@ -208,8 +208,8 @@ const ItemsList = (props) => {
                       <div className="author_list_pp">
                         <span
                           onClick={() =>
-                          (window.location.href =
-                            "/author/" + item.nCreater._id)
+                          props.navigate(`/author/${item.nCreater._id}`)
+                            
                           }
                         >
                           <img
@@ -238,7 +238,7 @@ const ItemsList = (props) => {
                         style={{ height: `${height}px` }}
                       >
                         <Outer onClick={() =>
-                          (window.location.href = `/itemDetail/` + item._id)}>
+                          props.navigate(`/itemDetail/${item._id}`)}>
                           {item && item.nNftImageType === "mp4" ? <video className="lazy nft__item_preview slider-img-preview w-100" onLoad={onImgLoad} controls>
                             <source src={item.nNftImage} type="video/mp4" />
 
@@ -259,7 +259,7 @@ const ItemsList = (props) => {
                       <div className="nft__item_info">
                         <span
                           onClick={() =>
-                            (window.location.href = `/itemDetail/${item._id}`)
+                            props.navigate(`/itemDetail/${item._id}`)
                           }
                         >
                           <h4 className="nft_title_class font_14 NunitoExtraBold text-dark">
@@ -274,7 +274,7 @@ const ItemsList = (props) => {
                         <div className="nft__item_action">
                           <span
                             onClick={() =>
-                              (window.location.href = `/itemDetail/` + item._id)
+                              props.navigate(`/itemDetail/${item._id}`)
                             }
                           >
                             {props.newItemFilter === "On Auction"

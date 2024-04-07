@@ -11,6 +11,7 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import { KeyboardArrowRight } from "@material-ui/icons";
 import { getBanner } from "../../apiServices";
+import { useNavigate } from "react-router-dom";
 
 var bgImgStyle = {
   backgroundImage: "url(./img/bg-shape-decrypt.png)",
@@ -31,7 +32,7 @@ var bgImgStyle2 = {
 const Home = () => {
   const [newItemFilter, setNewItemFilter] = useState("Buy Now");
   const [isDropDown, setIsDropDown] = useState(false);
-  
+  let navigate = useNavigate()
   const [banner1, setbanner1] = useState();
   const [banner2, setbanner2] = useState();
   const [banner3, setbanner3] = useState();
@@ -53,11 +54,19 @@ const Home = () => {
   
   const [mainBanner, setMainBanner] = useState({});
 
+
   useEffect(() => {
-    window.addEventListener("scroll", () => {
+    const handleScroll = () => {
       setIsDropDown(false);
-    });
-  });
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup function to remove the event listener when component is unmounted
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  },[]);
   useEffect(async () => {
     async function allBanner() {
       let banner = await getBanner();
@@ -165,7 +174,7 @@ const Home = () => {
               <div className="small-border"></div>
             </div>
             <div className="col-lg-12">
-              <CarouselCollection />
+              <CarouselCollection navigate={navigate} />
             </div>
           </div>
         </section>
@@ -215,7 +224,7 @@ const Home = () => {
             </div>
             <div className="col-lg-12">
 
-              <CarouselNew newItemFilter={newItemFilter} />
+              <CarouselNew newItemFilter={newItemFilter} navigate={navigate} />
             </div>
           </div>
         </section>
@@ -227,10 +236,10 @@ const Home = () => {
               <div className="small-border"></div>
             </div>
           </div>
-          <AuthorList />
+          <AuthorList navigate={navigate} />
           <div className="row mt-4">
             <div className="col-lg-12 text-center">
-              <span className="view-all font_18 NunitoBold" onClick={() => (window.location.href = "/exploreAuthors")}>
+              <span className="view-all font_18 NunitoBold" onClick={() => navigate("/exploreAuthors")}>
                 View All <KeyboardArrowRight />
               </span>
             </div>

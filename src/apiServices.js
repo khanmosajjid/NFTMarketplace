@@ -132,9 +132,11 @@ export function setCookie(cname, cvalue, exdays) {
 
 export const getProfile = async () => {
   try {
+    console.log("proffffff",localStorage.getItem("decrypt_authorization"));
     const response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/user/Profile",
       {
+        method: "GET",
         headers: {
           Authorization: localStorage.getItem("decrypt_authorization"),
           credentials: true,
@@ -274,7 +276,7 @@ export const GetIndividualAuthorDetail = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // Authorization:localStorage.getItem("Authorization"),
+      Authorization:localStorage.getItem("decrypt_authorization"),
     },
     body: JSON.stringify(data),
   };

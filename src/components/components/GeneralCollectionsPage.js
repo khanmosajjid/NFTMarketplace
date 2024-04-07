@@ -6,6 +6,7 @@ import { getCollections, isEmpty,getAllCollectionsList} from "../../helpers/gett
 import { Pagination } from "@material-ui/lab";
 import Placeholder from "./placeholder";
 import { perPageCount } from "../../helpers/constants";
+import { useNavigate } from "react-router-dom";
 
 const Outer = styled.div`
   display: flex;
@@ -23,6 +24,7 @@ const CollectionsList = (props) => {
   const [currPage, setCurrPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isAllCollections, setIsAllCollections] = useState("");
+  let navigate = useNavigate()
   const onImgLoad = ({ target: img }) => {
     let currentHeight = height;
     if (currentHeight < img.offsetHeight) {
@@ -32,6 +34,7 @@ const CollectionsList = (props) => {
 
   useEffect(() => {
     setIsAllCollections(props.isAllCollections);
+    console.log('hiii')
   }, []);
 
   useEffect(() => {
@@ -101,7 +104,7 @@ const CollectionsList = (props) => {
                 <div className="author_list_pp">
                   <span className="cursor-pointer"
                     onClick={() =>
-                      (window.location.href = "/author/" + collection.authorId)
+                      navigate(`/author/${collection.authorId}`)
                     }
                   >
                     <img
@@ -126,8 +129,7 @@ const CollectionsList = (props) => {
                   <Outer className="w-100">
                     <div
                       onClick={() =>
-                        (window.location.href =
-                          "/collection/" + collection.collectionAddress)
+                        navigate(`/collection/?addr=${collection.sContractAddress}`)
                       }
                       className="w-100 h-100"
                     >
@@ -143,8 +145,7 @@ const CollectionsList = (props) => {
                 <div className="nft__item_info col_info">
                   <span
                     onClick={() =>
-                      (window.location.href =
-                        "/collection/" + collection.collectionAddress)
+                      navigate(`/collection/?addr=${collection.sContractAddress}`)
                     }
                   >
                     <h4 className="nft_title_class">

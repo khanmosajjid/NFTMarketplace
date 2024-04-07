@@ -9,8 +9,8 @@ export default class Placeholder extends Component {
           height={160}
           width={317}
           speed={2}
-          primaryColor="#f3f3f3"
-          secondaryColor="#ecebeb"
+          primarycolor="#f3f3f3"
+          secondarycolor="#ecebeb"
           style={{ marginBottom: "4px" }}
         >
           <rect x="160" y="-1" rx="10" ry="10" width="160" height="160" />
