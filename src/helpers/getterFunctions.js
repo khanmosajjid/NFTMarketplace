@@ -669,21 +669,25 @@ export const GetOwnerOfToken = async (
       isERC721 === 1 ? erc721Abi.abi : erc1155Abi.abi
     );
 
-
+    console.log('jjjjjjjjjjjjjjj',collectionInstance)
     let balance = 0;
     if (isERC721 === 1) {
-
-      let owner = await collectionInstance.ownerOf(tokenId);
+      console.log('blll-if',tokenId, collectionInstance.ownerOf(1))
+      let owner = await collectionInstance?.ownerOf(tokenId)
+      console.log('bll-if',owner)
       if (owner.toLowerCase() === account.toLowerCase()) {
         balance = "1";
       }
-    } else {
+    } 
+    else {
+      console.log('blll',"else")
       balance = await collectionInstance.balanceOf(account, tokenId);
     }
+    console.log("blllllll",balance);
     if (balance === 0) {
       return 0
     }
-
+    console.log("balance",balance);
     return balance.toString();
   }
   catch (err) {

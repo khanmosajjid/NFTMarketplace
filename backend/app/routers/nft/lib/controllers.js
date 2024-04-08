@@ -1331,7 +1331,7 @@ controllers.nftID = async (req, res) => {
 
     aNFT = aNFT.toObject();
     aNFT.sCollectionDetail = {};
-
+    console.log('nftttt',aNFT)
     aNFT.sCollectionDetail = await Collection.findOne({
       sName:
         aNFT.sCollection && aNFT.sCollection != undefined
@@ -1439,7 +1439,7 @@ controllers.getMetaDataOfCollection = async (req, res) => {
   try {
     console.log(req.body.collectionId)
     const nfts = await NFT.find({nCollection:req.body.collectionId}).populate('nOrders')
-    nfts.sort((a,b)=>a.nOrders[0].oPrice-b.nOrders[0].oPrice)
+    nfts.sort((a,b)=>a.nOrders[0]?.oPrice-b.nOrders[0]?.oPrice)
     // const nfts = await NFT.aggregate([
     //   // Match NFTs belonging to the specified collection
     //   { $match: { nCollection: req.body.collectionId } },

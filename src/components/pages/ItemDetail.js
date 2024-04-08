@@ -1054,6 +1054,7 @@ const ItemDetails = function (props) {
   );
 
   const fetchData = async (isWithoutLoader = false) => {
+    console.log("btnnnnnnnnnnnnnnnnnnnnn","Helloo");
     if (!isWithoutLoader) {
       setLoading(true)
     }
@@ -1068,9 +1069,10 @@ const ItemDetails = function (props) {
       setIsOwned(resp.isOwned)
       setOwners(resp.owners)
       setCurrUserLazyMinted(resp.currUserLazyMinted)
-
+      console.log('qnnnnnnnn',originalQty)
       if (originalQty !== "null") {
         let btns = getButtonsByOrderGroup(resp.currUserLazyMinted, resp.ownedQuantity, originalQty, currentUser, resp.orders)
+        console.log("btnnnnnnnnnnnnnnnnnnnnn",btns);
         setButtons(btns)
       }
       setLoading(false);
@@ -1130,10 +1132,13 @@ const ItemDetails = function (props) {
       }
       // let bal = await GetOwnerOfToken(data.nCollection, data.nTokenID, data.nType, currentUser, true);
       // console.log("ball", bal, _ownedQuantity, isLazyMint)
-
+      console.log('refreeeeeeeee',currentUser,data)
       if (currentUser && currentUser !== "null" && _ownedQuantity !== undefined && parseInt(window.sessionStorage.getItem("chain_id")) === parseInt(process.env.REACT_APP_CHAIN_ID)) {
-        if ((Number(data?.nLazyMintingStatus) === 2 || Number(data?.nLazyMintingStatus) === 0)) {
+        console.log('refreeeeeeeee-2',data?.nLazyMintingStatus,typeof(data?.nLazyMintingStatus))
+        if ((data?.nLazyMintingStatus) == 2 || (data?.nLazyMintingStatus) == 0) {
+          console.log('refreeeeeeeee',"now work")
           let bal = await GetOwnerOfToken(data.nCollection, data.nTokenID, data.nType, currentUser, true);
+          console.log('refreeeeeeeee',bal)
           setOriginalQty(bal)
 
           let res = await checkOwnerChangeAndUpdate(bal, _ownedQuantity, data.nTokenID, data.nCollection, currentUser)
@@ -1145,10 +1150,11 @@ const ItemDetails = function (props) {
           return;
         }
         else {
+          console.log('refreeeeeeeee','else')
           setOriginalQty(0)
           return
         }
-        setOriginalQty(0)
+       
       }
 
 
@@ -2681,8 +2687,13 @@ const ItemDetails = function (props) {
                 {selectedMenu === 0 &&
                   <div className="tab-2 onStep fadeIn historyTab scrollable">
                     {console.log("orrr", originalQty)}
-                    {orders === "null" || buttons === "null" || currentUser === "null"
-                      ? <Loader />
+                    {console.log("orders", orders)}
+                    {console.log("buttons", buttons)}
+                    {console.log("currentUser", currentUser)}
+                    {orders === "null" || buttons === "null" || currentUser === "null"?
+                      //  <Loader /> 
+                     <p> hhhhhhhhhhhhhhhhhhhhhhhhh</p>
+                    //  {console.log(orders,)}
                       : (orders !== "null" && isOwned !== "null" && originalQty !== "null" && currentUser !== "null" && buttons !== "null") ?
                         getButtonsGroup(isLazyMint, 0, haveOrder, false, false, ownedQuantity, originalQty, currentUser, orders).length > 0 ?
                           getButtonsGroup(isLazyMint, 0, haveOrder, false, false, ownedQuantity, originalQty, currentUser, orders).map((b, i) => {
