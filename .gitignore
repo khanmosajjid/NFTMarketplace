@@ -6,9 +6,10 @@
 .pnp.js
 
 package-lock.json
-.zip
+*.zip
 # testing
 /coverage
+build/
 
 /.env
 .env

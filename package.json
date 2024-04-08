@@ -2,7 +2,7 @@
   "name": "decryptmarketplace",
   "version": "0.1.1",
   "private": true,
-  "homepage": ".",
+  "homepage": "/",
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^6.0.0",
     "@fortawesome/free-solid-svg-icons": "^6.0.0",

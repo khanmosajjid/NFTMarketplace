@@ -210,7 +210,7 @@ const AccountModal = (props) => {
           // await provider.send("eth_requestAccounts", []);
           const signer = provider.getSigner();
 
-          originalMessage = `Welcome to Decrypt NFT Marketplace!\n\nClick to sign in and accept the Decrypt NFT Marketplace Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${accounts[0]}\n\nNonce:\n${nonce}`;
+          originalMessage = `Welcome to Kunstify NFT Marketplace!\n\nClick to sign in and accept the Kunstify NFT Marketplace Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${accounts[0]}\n\nNonce:\n${nonce}`;
 
           sig = await signer.signMessage(originalMessage);
 
