@@ -1323,21 +1323,25 @@ controllers.nftID = async (req, res) => {
         options: {
           limit: 1,
         },
-      });
+        
+      },
+      
+    );
       if (!aNFT) return res.reply(messages.not_found("NFT"));
     } catch (e) {
-      console.log("error in NFt find by ID");
+      console.log("error in NFt find by ID",e);
     }
 
     aNFT = aNFT.toObject();
     aNFT.sCollectionDetail = {};
     console.log('nftttt',aNFT)
-    aNFT.sCollectionDetail = await Collection.findOne({
-      sName:
-        aNFT.sCollection && aNFT.sCollection != undefined
-          ? aNFT.sCollection
-          : "-",
-    });
+    // aNFT.sCollectionDetail = await Collection.findOne({
+    //   sName:
+    //     aNFT.sCollection && aNFT.sCollection != undefined
+    //       ? aNFT.sCollection
+    //       : "-",
+    // });
+    aNFT.sCollectionDetail = await Collection.findOne({sContractAddress:aNFT.nCollection})
     console.log("aNFT.nCreater.sEmail", aNFT?.nCreater?.sEmail);
 
     var token = req.headers.authorization;
@@ -1465,7 +1469,7 @@ controllers.getMetaDataOfCollection = async (req, res) => {
     //   // { $limit: 1 }
     // ]);
     console.log('nfts',nfts[0]);
-    const floorPrice = nfts.length > 0 ? nfts[0].nOrders[0].oPrice.toString() : 0;
+    const floorPrice = nfts.length > 0 ? nfts[0].nOrders[0]?.oPrice.toString() : 0;
     console.log(floorPrice);
     let metaData = {
       "floorPrice": floorPrice,

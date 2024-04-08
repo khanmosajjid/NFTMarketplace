@@ -105,13 +105,13 @@ const ItemDetails = function (props) {
   const [putOnMarketplaceLoader, setPutOnMarketplaceLoader] = useState(false);
   const [orderState, setOrderState] = useState([]);
   const [nftDetails, setNftDetails] = useState({});
-  const [orders, setOrders] = useState("null");
+  const [orders, setOrders] = useState(null);
   const [isPopup, setIsPopup] = useState(false);
   const [buyQuantity, setBuyQuantity] = useState(1);
   const [isMarketplacePopup, setMarketplacePopup] = useState(false);
   const [marketplacePrice, setMarketplacePrice] = useState("");
   const [marketplaceSaleType, setMarketplaceSaleType] = useState(0);
-  const [isOwned, setIsOwned] = useState("null");
+  const [isOwned, setIsOwned] = useState(null);
   const [marketplaceQuantity, setMarketplaceQuantity] = useState(1);
   const [haveOrder, setHaveOrder] = useState("null");
   const [ownedQuantity, setOwnedQuantity] = useState();
@@ -132,7 +132,7 @@ const ItemDetails = function (props) {
   const [currentOrder, setCurrentOrder] = useState([])
   const [currentOrderSeller, setCurrentOrderSeller] = useState();
   const [bids, setBids] = useState([]);
-  const [currentUser, setCurrentUser] = useState("null");
+  const [currentUser, setCurrentUser] = useState(null);
   const [currentBuyPrice, setCurrentBuyPrice] = useState(0);
   const [currOrderLeftQty, setCurrOrderLeftQty] = useState(0);
   const [currentOrderMinBid, setCurrentOrderMinBid] = useState(0);
@@ -157,12 +157,12 @@ const ItemDetails = function (props) {
   const [isActiveBid, setIsActiveBid] = useState(false)
   const [isActiveOffer, setIsActiveOffer] = useState(false)
   const [bidsLength, setBidsLength] = useState(0)
-  const [originalQty, setOriginalQty] = useState("null")
+  const [originalQty, setOriginalQty] = useState(null)
   const [userId, setUserId] = useState("");
   const [currBid, setCurrBid] = useState({})
   const [currOffer, setCurrOffer] = useState({})
   const [isLazyMint, setIsLazyMint] = useState("")
-  const [buttons, setButtons] = useState("null");
+  const [buttons, setButtons] = useState(null);
   const [owners, setOwners] = useState([])
   const [ownerChange, setOwnerChange] = useState(false);
   const [currUserLazyMinted, setCurrUserLazyMinted] = useState(false)
@@ -1172,9 +1172,10 @@ const ItemDetails = function (props) {
       if (id && id !== undefined) {
         let data = await GetNftDetails(id);
 
-        if (isEmptyObject(data)) {
-          window.location.href = "/profile";
-        }
+        // if (isEmptyObject(data)) {
+        //   window.location.href = "/profile";
+        // }
+        console.log("datta",data);
         setNftDetails(data);
       }
       //setLoading(false);
@@ -2315,8 +2316,8 @@ const ItemDetails = function (props) {
                             <img
                               className="lazy"
                               src={
-                                nftDetails && nftDetails.nCollectionsProfile
-                                  ? nftDetails.nCollectionsProfile
+                                nftDetails && nftDetails.sCollectionDetail
+                                  ? nftDetails.sCollectionDetail?.collectionImage
                                   : Avatar
                               }
                               alt=""
@@ -2690,11 +2691,11 @@ const ItemDetails = function (props) {
                     {console.log("orders", orders)}
                     {console.log("buttons", buttons)}
                     {console.log("currentUser", currentUser)}
-                    {orders === "null" || buttons === "null" || currentUser === "null"?
-                      //  <Loader /> 
-                     <p> hhhhhhhhhhhhhhhhhhhhhhhhh</p>
+                    {orders === null || buttons === null || currentUser === null?
+                       <Loader /> 
+                    //  <p> hhhhhhhhhhhhhhhhhhhhhhhhh</p>
                     //  {console.log(orders,)}
-                      : (orders !== "null" && isOwned !== "null" && originalQty !== "null" && currentUser !== "null" && buttons !== "null") ?
+                      : (orders !== null && isOwned !== null && originalQty !== null && currentUser !== null && buttons !== null) ?
                         getButtonsGroup(isLazyMint, 0, haveOrder, false, false, ownedQuantity, originalQty, currentUser, orders).length > 0 ?
                           getButtonsGroup(isLazyMint, 0, haveOrder, false, false, ownedQuantity, originalQty, currentUser, orders).map((b, i) => {
                             // return <button>{b}</button>

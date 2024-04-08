@@ -673,7 +673,7 @@ export const GetOwnerOfToken = async (
     let balance = 0;
     if (isERC721 === 1) {
       console.log('blll-if',tokenId, collectionInstance.ownerOf(1))
-      let owner = await collectionInstance?.ownerOf(tokenId)
+      let owner = await collectionInstance?.ownerOf(tokenId).call()
       console.log('bll-if',owner)
       if (owner.toLowerCase() === account.toLowerCase()) {
         balance = "1";

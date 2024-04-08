@@ -129,7 +129,7 @@ const CollectionsList = (props) => {
                   <Outer className="w-100">
                     <div
                       onClick={() =>
-                        navigate(`/collection/?addr=${collection.sContractAddress}`)
+                        navigate(`/collection/?addr=${collection.collectionAddress}`)
                       }
                       className="w-100 h-100"
                     >
@@ -145,7 +145,7 @@ const CollectionsList = (props) => {
                 <div className="nft__item_info col_info">
                   <span
                     onClick={() =>
-                      navigate(`/collection/?addr=${collection.sContractAddress}`)
+                      navigate(`/collection/?addr=${collection.collectionAddress}`)
                     }
                   >
                     <h4 className="nft_title_class">
@@ -155,6 +155,7 @@ const CollectionsList = (props) => {
                           : collection.collectionName
                         : ""}
                     </h4>
+                    {/* <h4>{collection.sContractAddress}</h4> */}
                   </span>
 
                   {/* <p>{collection.collectionType}</p> */}
