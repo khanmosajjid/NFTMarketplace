@@ -2475,13 +2475,14 @@ controllers.getOnSaleItems = async (req, res) => {
     if (sTextsearch !== "") {
       NFTSearchArray["nTitle"] = {
         $regex: new RegExp(sTextsearch),
-        $options: "<options>",
+        // $options: "<options>",
       };
     }
     if (itemType !== "") {
       NFTSearchArray["nType"] = itemType;
     }
     let NFTSearchObj = Object.assign({}, NFTSearchArray);
+    console.info("nftt-searr",JSON.stringify(NFTSearchObj));
     const results = {};
     if (endIndex < (await NFT.countDocuments(NFTSearchObj).exec())) {
       results.next = {

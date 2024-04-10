@@ -18,6 +18,7 @@ import { useCookies } from "react-cookie";
 import { convertToEth } from "../../helpers/numberFormatter";
 import { useSearchParams } from "react-router-dom/dist";
 import { useNavigate } from "react-router-dom";
+import CollectionSection from "../components/collectionNew";
 
 const GlobalStyles = createGlobalStyle`
 header#myHeader.navbar.white a {
@@ -88,7 +89,7 @@ const Collection = function (props) {
   const [profile, setProfile] = useState();
   const [currentUser, setCurrentUser] = useState();
   const [cookies] = useCookies(["selected_account", "Authorization"]);
-  const [metaData, setMetaData]=useState({})
+  const [metaData, setMetaData] = useState({})
   let navigate = useNavigate()
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -98,7 +99,7 @@ const Collection = function (props) {
   useEffect(() => {
     const fetch = async () => {
       if (currentUser) {
-        console.log('hhh',localStorage.getItem("decrypt_authorization"));
+        console.log('hhh', localStorage.getItem("decrypt_authorization"));
         // let _profile = await getProfile();
         // setProfile(_profile);
       }
@@ -132,9 +133,9 @@ const Collection = function (props) {
           userId: collectionDetails.oCreatedBy,
           currUserId: profile ? profile._id : localStorage.getItem('decrypt_userId'),
         });
-        
+
         let metadata = await GetMetaOfCollection({ collectionId: collectionDetails.sContractAddress });
-      //  metaData['floorPrice']=convertToEth(metadata.floorPrice)
+        //  metaData['floorPrice']=convertToEth(metadata.floorPrice)
         setMetaData(metadata)
         setAuthorDetails(data);
 
@@ -182,19 +183,53 @@ const Collection = function (props) {
               <div className="coll_profile_avatar">
                 <div className="coll_profile_img">
                   <a href={"/author/" + authorDetails._id} >
-                    <img
+                    {/* <img
                       src={
                         authorDetails.sProfilePicUrl
                           ? authorDetails.sProfilePicUrl
                           : Avatar
                       }
                       alt=""
-                    />
+                    /> */}
+
+                    <div  style={styles.container}>
+                      <img className="col-4" src={collectionDetails.collectionImage} alt="NFT" style={styles.collImg} />
+
+                      <div className="col-8 container-items">
+                        
+                          <h2 className="title-h">{collectionDetails ? collectionDetails.sName : ""}</h2>
+                          <p style={{color:"white"}} className="title-p">
+                            {collectionDetails.sDescription}
+                          </p>
+                      
+                        <section className="collection-detail-card">
+                          <div className="collection-card">
+                            <h3 style={{ minHeight: "1rem", fontSize: "1.5rem" }}>Floor Price</h3>
+                            <p>${convertToEth(metaData.floorPrice)}</p>
+                          </div>
+                          <div className="collection-card">
+                            <h1 style={{ minHeight: "1rem", fontSize: "1.5rem" }}>Trade Volume</h1>
+                            <p>3000</p>
+                          </div>
+                          <div className="collection-card">
+                            <h1 style={{ minHeight: "1rem", fontSize: "1.5rem" }}>Latest Price</h1>
+                            <p>3000</p>
+                          </div>
+                          <div className="collection-card">
+                            <h1 style={{ minHeight: "1rem", fontSize: "1.5rem" }}>Total Items</h1>
+                            <p>{metaData.items}</p>
+                          </div>
+                        </section>
+                      </div>
+
+
+
+                    </div>
                   </a>
-                  <i className="fa fa-check"></i>
+                  {/* <i className="fa fa-check"></i> */}
                 </div>
 
-                <div className="profile_name">
+                {/* <div className="profile_name">
                   <h4 className="font_36 text-dark NunitoBold mb-0 mt-3">
                     {collectionDetails ? collectionDetails.sName : ""}
                   </h4>
@@ -216,43 +251,38 @@ const Collection = function (props) {
                         "......" +
                         collectionDetails.sContractAddress.slice(37, 42) : ""
                       }
-                      {/*                        
-                        {collectionDetails
-                          ? collectionDetails.sContractAddress
-                          : ""}*/}
+                    
                     </div>
-                    {/* <button id="btn_copy" title="Copy Text">
-                        Copy
-                      </button> */}
+                   
                   </CopyToClipboard>
 
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
         </div>
       </section>
-      <div className="collection-desc">
+      {/* <div className="collection-desc">
         <h3>{collectionDetails.sDescription}</h3>
       </div>
       <section className="collection-detail-card">
         <div className="collection-card">
-          <h1 style={{minHeight:"1rem",fontSize:"2rem"}}>Floor Price</h1>
+          <h1 style={{ minHeight: "1rem", fontSize: "2rem" }}>Floor Price</h1>
           <p>${convertToEth(metaData.floorPrice)}</p>
         </div>
         <div className="collection-card">
-          <h1 style={{minHeight:"1rem",fontSize:"2rem"}}>Trade Volume</h1>
+          <h1 style={{ minHeight: "1rem", fontSize: "2rem" }}>Trade Volume</h1>
           <p>3000</p>
         </div>
         <div className="collection-card">
-          <h1 style={{minHeight:"1rem",fontSize:"2rem"}}>Latest Price</h1>
+          <h1 style={{ minHeight: "1rem", fontSize: "2rem" }}>Latest Price</h1>
           <p>3000</p>
         </div>
         <div className="collection-card">
-          <h1 style={{minHeight:"1rem",fontSize:"2rem"}}>Total Items</h1>
+          <h1 style={{ minHeight: "1rem", fontSize: "2rem" }}>Total Items</h1>
           <p>{metaData.items}</p>
         </div>
-      </section>
+      </section> */}
 
       <section className="container no-top">
         <div className="row mt-4 mb-5">
@@ -302,6 +332,25 @@ const Collection = function (props) {
   );
 };
 
+const styles = {
+  container: {
+    display: "flex",
+    flexDirection: "row",
+    justifycontent: "justify",
+    alignItems: "center",
+    gap: "15px",
+    padding:"28px"
+  },
+  collImg: {
+  
+      width: "250px",
+      height: "250px",
+      marginLeft: "15px",
+      marginTop: "32px",
+      borderRadius: "12px"
+  
+  }
+}
 
 
 export default Collection;

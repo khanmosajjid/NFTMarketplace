@@ -330,7 +330,7 @@ controllers.updateOrder = async (req, res) => {
 
 
       await NFT.findOne({ _id: mongoose.Types.ObjectId(req.body.oNftId) }, async function (errNFT, nftDataFound) {
-          const web3 = new Web3(process.env.JSON_RPC_URL);
+        const web3 = new Web3(process.env.JSON_RPC_URL);
         if (errNFT) {
           console.log("Error in finding NFT", errNFT)
           throw errNFT;
@@ -343,7 +343,12 @@ controllers.updateOrder = async (req, res) => {
             let sellerAddress = req.body.oSeller.toLowerCase();
             let buyerAddress = req.body.oBuyer.toLowerCase();
             if (ERCType === 1) {
-              let con = new web3.eth.Contract(ERC721ABI.abi, ContractAddress)
+              console.log("abii",ERC721ABI);
+              // const contractJson = fs.readFileSync('./../../../../contract/ERC721ABI.json');
+
+              // // Parse the JSON interface file
+              // const abi = JSON.parse(contractJson);
+              let con = new web3.eth.Contract(ERC721ABI, ContractAddress)
               let currentOwnerAddress = await con.methods.ownerOf(tokenID).call();
               let OwnedBy = [];
               OwnedBy.push({
@@ -358,7 +363,7 @@ controllers.updateOrder = async (req, res) => {
                   }
                 });
             } else {
-              let con = new web3.eth.Contract(ERC1155ABI.abi, ContractAddress)
+              let con = new web3.eth.Contract(ERC1155ABI, ContractAddress)
               let sellerCurrentQty = await con.balanceOf(sellerAddress, tokenID).call();
               let buyerCurrentQty = await con.balanceOf(buyerAddress, tokenID).call();
               console.log("seller qty", sellerCurrentQty, buyerCurrentQty)
@@ -391,36 +396,36 @@ controllers.updateOrder = async (req, res) => {
                 });
               }
 
-    isExist = await NFT.exists(
-      {
-        _id: mongoose.Types.ObjectId(req.body.oNftId), "nOwnedBy.address": buyerAddress
-      })
+              isExist = await NFT.exists(
+                {
+                  _id: mongoose.Types.ObjectId(req.body.oNftId), "nOwnedBy.address": buyerAddress
+                })
 
 
-    if (parseInt(buyerCurrentQty) === 0 || buyerCurrentQty === undefined) {
-      await NFT.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(req.body.oNftId) },
-        { $pull: { nOwnedBy: { address: buyerAddress } } }
-      ).catch((e) => {
-        console.log("Error in Deleting Seller Qty ", e.message);
-      });
-    } else if (parseInt(buyerCurrentQty) > 0 && isExist) {
-      await NFT.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(req.body.oNftId), "nOwnedBy.address": buyerAddress },
-        { $set: { "nOwnedBy.$.quantity": parseInt(buyerCurrentQty) } }
-      ).catch((e) => {
-        console.log("Error2", e.message);
-      });
-    }
-    else if (parseInt(buyerCurrentQty) > 0) {
-      await NFT.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(req.body.oNftId) },
-        { $push: { nOwnedBy: { address: buyerAddress, quantity: parseInt(buyerCurrentQty) } } }
-      ).catch((e) => {
-        console.log("Error2", e.message);
-      });
-    }
-  }
+              if (parseInt(buyerCurrentQty) === 0 || buyerCurrentQty === undefined) {
+                await NFT.findOneAndUpdate(
+                  { _id: mongoose.Types.ObjectId(req.body.oNftId) },
+                  { $pull: { nOwnedBy: { address: buyerAddress } } }
+                ).catch((e) => {
+                  console.log("Error in Deleting Seller Qty ", e.message);
+                });
+              } else if (parseInt(buyerCurrentQty) > 0 && isExist) {
+                await NFT.findOneAndUpdate(
+                  { _id: mongoose.Types.ObjectId(req.body.oNftId), "nOwnedBy.address": buyerAddress },
+                  { $set: { "nOwnedBy.$.quantity": parseInt(buyerCurrentQty) } }
+                ).catch((e) => {
+                  console.log("Error2", e.message);
+                });
+              }
+              else if (parseInt(buyerCurrentQty) > 0) {
+                await NFT.findOneAndUpdate(
+                  { _id: mongoose.Types.ObjectId(req.body.oNftId) },
+                  { $push: { nOwnedBy: { address: buyerAddress, quantity: parseInt(buyerCurrentQty) } } }
+                ).catch((e) => {
+                  console.log("Error2", e.message);
+                });
+              }
+            }
 
           } else {
             console.log("Error in finding Collection", nftDataFound)
@@ -432,22 +437,22 @@ controllers.updateOrder = async (req, res) => {
         }
       });
 
-  }
-
-  await NFT.findOneAndUpdate(
-    { _id: mongoose.Types.ObjectId(req.body.oNftId) },
-    {
-      $set: {
-        nLazyMintingStatus: Number(lazyMintingStatus),
-      },
     }
-  ).catch((e) => {
-    console.log("Error1", e.message);
-  });
-  return res.reply(messages.updated("order"));
-} catch (error) {
-  return res.reply(messages.error(), error.message);
-}
+
+    await NFT.findOneAndUpdate(
+      { _id: mongoose.Types.ObjectId(req.body.oNftId) },
+      {
+        $set: {
+          nLazyMintingStatus: Number(lazyMintingStatus),
+        },
+      }
+    ).catch((e) => {
+      console.log("Error1", e.message);
+    });
+    return res.reply(messages.updated("order"));
+  } catch (error) {
+    return res.reply(messages.error(), error.message);
+  }
 };
 
 controllers.getOrder = (req, res) => {
