@@ -179,10 +179,10 @@ const AccountModal = (props) => {
       const chainId = await web3.eth.getChainId();
       const networkId = await web3.eth.net.getId();
       console.log(networkId)
-      if(networkId!=80001){
-       setWrongNetwork(true)
-       setIsPopup(true)
-       return;
+      if (networkId != process.env.REACT_APP_CHAIN_ID) {
+        setWrongNetwork(true);
+        setIsPopup(true);
+        return;
       }
         
       console.log("chain id", chainId);

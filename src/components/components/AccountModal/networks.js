@@ -53,7 +53,7 @@ export const Networks = {
       decimals: 18,
     },
 
-    rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+    rpcUrls: ["https://rpc-amoy.polygon.technology/"],
     blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
   },
 };
