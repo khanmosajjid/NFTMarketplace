@@ -74,6 +74,7 @@ controllers.createOrder = async (req, res) => {
                     const contractData = new web3.eth.Contract(ERC721ABI, contractAddress);
                     console.log("reading 721", nftData.nTokenID, contractAddress)
                     const nftOwner = await contractData.methods.ownerOf(nftData.nTokenID).call();
+                    console.log("nftOwner", nftOwner)
                     if (sellerAddress === nftOwner) {
                       order.save().then((result) => {
                         return res.reply(messages.created("Order"), result);
