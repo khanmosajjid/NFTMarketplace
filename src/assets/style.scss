@@ -5450,9 +5450,11 @@ button.btn-main.showHideBtn {
 .coll_profile_img {
   height: 375px;
   border-radius: 27px;
+  border-color: #000000!important;
   margin: auto;
-  background-color: #8155e5;
+  background-color: #fff;
   position: relative;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 h2.title-h {
   margin: 0px;
@@ -5852,7 +5854,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 .collection-card {
   width: 190px; /* Adjust as needed */
   height: 168px; /* Adjust as needed */
-  background-color: #ffba00; /* Adjust background color */
+  background-color: #fff; /* Adjust background color */
   border: 1px solid #eaeaea; /* Adjust border properties */
   border-radius: 8px; /* Adjust border radius to make it slightly rounded */
   // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adjust shadow */

@@ -1472,7 +1472,7 @@ controllers.getMetaDataOfCollection = async (req, res) => {
     const floorPrice = nfts.length > 0 ? nfts[0].nOrders[0]?.oPrice.toString() : 0;
     console.log(floorPrice);
     let metaData = {
-      "floorPrice": floorPrice,
+      "floorPrice": floorPrice || 0,
       "items":nfts.length
     }
     return res.reply(messages.no_prefix("MetaData Details"), metaData);

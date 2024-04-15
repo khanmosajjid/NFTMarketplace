@@ -109,7 +109,7 @@ export default class Responsive extends Component {
                 }}
                 
               />: <img
-                src={require('../../assets/images/4591.png').default}
+                src={require('../../assets/images/lmslogo.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}
@@ -371,7 +371,7 @@ export default class Responsive extends Component {
                     e.target.src = "./img/carousel/crs-4.jpg";
                   }}
                 />: <img
-                src={require('../../assets/images/lmslogo.png').default}
+                src={require('../../assets/images/4591.png').default}
                 className="lazy img-fluid"
                 alt=""
               />}

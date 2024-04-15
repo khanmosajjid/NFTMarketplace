@@ -204,20 +204,20 @@ const Collection = function (props) {
                       
                         <section className="collection-detail-card">
                           <div className="collection-card">
-                            <h3 style={{ minHeight: "1rem", fontSize: "1.5rem" }}>Floor Price</h3>
-                            <p>${convertToEth(metaData.floorPrice)}</p>
+                            <h4 style={{color:"black"}}>Floor Price</h4>
+                            <h3 style={{fontSize:"30px",color:"black"}}>${convertToEth(metaData?.floorPrice)}</h3>
                           </div>
                           <div className="collection-card">
-                            <h1 style={{ minHeight: "1rem", fontSize: "1.5rem" }}>Trade Volume</h1>
-                            <p>3000</p>
+                            <h4 style={{color:"black"}}>Trade Volume</h4>
+                            <h3 style={{fontSize:"30px",color:"black"}}>3000</h3>
                           </div>
                           <div className="collection-card">
-                            <h1 style={{ minHeight: "1rem", fontSize: "1.5rem" }}>Latest Price</h1>
-                            <p>3000</p>
+                            <h4 style={{color:"black"}}>Latest Price</h4>
+                            <h3 style={{fontSize:"30px",color:"black"}}>3000</h3>
                           </div>
                           <div className="collection-card">
-                            <h1 style={{ minHeight: "1rem", fontSize: "1.5rem" }}>Total Items</h1>
-                            <p>{metaData.items}</p>
+                            <h4 style={{color:"black"}}>Total Items</h4>
+                            <h3 style={{fontSize:"30px",color:"black"}}>{metaData.items}</h3>
                           </div>
                         </section>
                       </div>
