@@ -371,11 +371,11 @@ const AccountModal = (props) => {
     // onConnect();
    
    try{ 
-    // console.log(Networks[networkName]);
+    console.log("hghhhg",Networks[networkName]?.chainId );
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: Networks[networkName].chainId }],
+        params: [{ chainId: Networks[networkName]?.chainId }],
       });
       NotificationManager.success("Chain switched successfully");
       setWrongNetwork(false)

@@ -125,9 +125,9 @@ Router.prototype.setupMiddleware = function () {
 Router.prototype.setupServer = function () {
   this.httpServer = http.Server(this.app);
   this.httpServer.timeout = 300000;
-  console.log(process.env.SPORT);
-  this.httpServer.listen(process.env.PORT, "0.0.0.0", () =>
-    log.green(`Spinning on ${process.env.PORT}`)
+  console.log(process.env.SERVER_PORT);
+  this.httpServer.listen(process.env.SERVER_PORT, "0.0.0.0", () =>
+    log.green(`Spinning on ${process.env.SERVER_PORT}`)
   );
 };
 Router.prototype.routeConfig = function (req, res, next) {
