@@ -285,7 +285,7 @@ const Collection = function (props) {
       </section> */}
 
       <section className="container no-top">
-        <div className="row mt-4 mb-5">
+        {/* <div className="row mt-4 mb-5">
           <div className="col-lg-12">
             <div className="items_filter">
               <ul className="de_nav">
@@ -298,7 +298,7 @@ const Collection = function (props) {
               </ul>
             </div>
           </div>
-        </div>
+        </div> */}
         {openMenu && (
           <div id="zero1" className="onStep fadeIn" >
             <CollectionsNfts
