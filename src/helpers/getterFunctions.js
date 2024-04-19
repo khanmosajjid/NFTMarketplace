@@ -436,9 +436,9 @@ const toTypedOrder = (
 ) => {
   const domain = {
     chainId: process.env.REACT_APP_CHAIN_ID,
-    name: "Decrypt Marketplace",
+    name: "Digital Arms Marketplace",
     verifyingContract: contracts.MARKETPLACE,
-    version: "1",
+    version: "V1.3",
   };
 
   const types = {
