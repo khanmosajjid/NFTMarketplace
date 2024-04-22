@@ -34,6 +34,7 @@ const collectionSchema = mongoose.Schema({
   sRoyaltyPercentage: Number,
   sName: String,
   sDescription: String,
+  sFloorPrice: Number,
   hashStatus: {
     //0 - Inactive & 1 - Active & 2 - Failed/Cancel
     type: Number,

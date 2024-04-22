@@ -2311,7 +2311,7 @@ const ItemDetails = function (props) {
                   <div className="col-md-4">
                     <div className="item_author author_item_list">
                       <div className="author_list_pp">
-                        <a href={`/collection/${nftDetails.nCollection}`}>
+                        <a href={`/collection/?addr=${nftDetails.nCollection}`}>
                           <span>
                             <img
                               className="lazy"

@@ -676,6 +676,7 @@ console.log("in this d=multiple section")
     fd.append("erc721", isSingle ? JSON.stringify(true) : JSON.stringify(false));
     fd.append("sRoyaltyPercentage", collectionData.sRoyaltyPercentage);
     fd.append("quantity", collectionData.quantity);
+    fd.append('sFloorprice',collectionData.floorPrice)
 
     await createCollection(fd);
     NotificationManager.success("Collection Created Successfully");

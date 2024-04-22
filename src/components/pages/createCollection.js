@@ -51,6 +51,7 @@ const CreateCollection = (props) => {
   const [symbol, setSymbol] = useState();
   const [description, setDescription] = useState();
   const [royalty, setRoyalty] = useState();
+  const [floorPrice, setFloorPrice] = useState(0);
   const [loading, setLoading] = useState(false);
 
   //   useEffect(() => {
@@ -85,13 +86,13 @@ const CreateCollection = (props) => {
       setLoading(true);
       props.isSingle
         ? (res1 = await creator.deployExtendedERC721(
-            title,
-            symbol,
-            image,
-            royalty,
-            contracts.USDT
-          ))
-        : (res1 = await creator.deployExtendedERC115(image, royalty,contracts.USDT));
+          title,
+          symbol,
+          image,
+          royalty,
+          contracts.USDT
+        ))
+        : (res1 = await creator.deployExtendedERC115(image, royalty, contracts.USDT));
     } catch (e) {
       console.log(e);
     }
@@ -103,6 +104,7 @@ const CreateCollection = (props) => {
 
       fd.append("sName", title);
       fd.append("sDescription", description);
+      fd.append('sFloorprice',floorPrice)
       fd.append("nftFile", image);
       fd.append("sContractAddress", contractAddress);
       fd.append("erc721", JSON.stringify(true));
@@ -147,10 +149,10 @@ const CreateCollection = (props) => {
                   <p id="file_name">PNG, JPG, GIF, WEBP or MP4. Max {MAX_FILE_SIZE}mb.</p>
                   {files
                     ? files.map((x) => (
-                        <p key="{index}">
-                          PNG, JPG, GIF, WEBP or MP4. Max {MAX_FILE_SIZE}mb.{x.name}
-                        </p>
-                      ))
+                      <p key="{index}">
+                        PNG, JPG, GIF, WEBP or MP4. Max {MAX_FILE_SIZE}mb.{x.name}
+                      </p>
+                    ))
                     : ""}
                   <div className="browse">
                     <input
@@ -225,6 +227,19 @@ const CreateCollection = (props) => {
                   placeholder="suggested: 0, 10%, 20%, 30%. Maximum is 70%"
                   onChange={(e) => {
                     setRoyalty(e.target.value);
+                  }}
+                />
+
+                <h5>Floor Price</h5>
+                <input
+                  type="text"
+                  name="item_floorPrice"
+                  value={floorPrice}
+                  id="item_royalties"
+                  className="form-control"
+                  placeholder="suggested: 0, 10%, 20%, 30%. Maximum is 70%"
+                  onChange={(e) => {
+                    setFloorPrice(e.target.value);
                   }}
                 />
 

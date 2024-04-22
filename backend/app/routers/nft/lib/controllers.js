@@ -674,10 +674,12 @@ controllers.createCollection = async (req, res) => {
                   .pinFileToIPFS(readableStreamForFile, oOptions)
                   .then(async (file2) => {
                     console.log("here--->", file2.IpfsHash);
+                    console.log("here-price-->",req.body.sFloorprice );
                     const collection = new Collection({
                       sHash: file2.IpfsHash,
                       sName: req.body.sName,
                       sDescription: req.body.sDescription,
+                      sFloorPrice:Number(req.body.sFloorprice),
                       erc721: req.body.erc721,
                       sContractAddress: req.body.sContractAddress,
                       sRoyaltyPercentage: req.body.sRoyaltyPercentage,
@@ -1470,10 +1472,12 @@ controllers.getMetaDataOfCollection = async (req, res) => {
     // ]);
     console.log('nfts',nfts[0]);
     const floorPrice = nfts.length > 0 ? nfts[0].nOrders[0]?.oPrice.toString() : 0;
+    const latestPrice = nfts.length > 0 ? nfts[nfts.length-1].nOrders[0]?.oPrice.toString() : 0;
     console.log(floorPrice);
     let metaData = {
       "floorPrice": floorPrice || 0,
-      "items":nfts.length
+      "items":nfts.length,
+      "latestPrice":latestPrice
     }
     return res.reply(messages.no_prefix("MetaData Details"), metaData);
   } catch (error) {
@@ -2474,8 +2478,8 @@ controllers.getOnSaleItems = async (req, res) => {
     NFTSearchArray["isBlocked"] = 0;
     if (sTextsearch !== "") {
       NFTSearchArray["nTitle"] = {
-        $regex: new RegExp(sTextsearch),
-        // $options: "<options>",
+        $regex: new RegExp(sTextsearch,),
+        $options: "i",
       };
     }
     if (itemType !== "") {
@@ -2496,7 +2500,7 @@ controllers.getOnSaleItems = async (req, res) => {
         limit: limit,
       };
     }
-
+    // console.log('serach obj',NFTSearchObj)
     await NFT.find(NFTSearchObj)
       .sort({ nCreated: -1 })
       .select({

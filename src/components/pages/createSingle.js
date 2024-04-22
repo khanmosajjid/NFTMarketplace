@@ -95,6 +95,7 @@ const CreateSingle = (props) => {
   const [symbol, setSymbol] = useState("");
   const [description, setDescription] = useState("");
   const [royalty, setRoyalty] = useState("");
+  const [floorPrice, setFloorPrice] = useState(0);
   const [loading, setLoading] = useState(false);
   const [price, setPrice] = useState("");
   const [collections, setCollections] = useState([]);
@@ -246,6 +247,7 @@ const CreateSingle = (props) => {
     setTitle("")
     setDescription("")
     setRoyalty("")
+    setFloorPrice(0)
     setFiles("")
     setSymbol()
   }
@@ -485,6 +487,7 @@ const CreateSingle = (props) => {
         erc721: JSON.stringify(true),
         sRoyaltyPercentage: Number(royalty) * 100,
         quantity: 1,
+        floorPrice:floorPrice,
         symbol: symbol,
       };
       let collectionsList = "";
@@ -1584,6 +1587,22 @@ const CreateSingle = (props) => {
                                                 t.substr(t.indexOf("."), 3)
                                                 : t;
                                             setRoyalty(Number(e.target.value));
+                                          }}
+                                        />
+
+                                        <h5 className="createColTitle m-0 required">
+                                          Floor Price
+                                        </h5>
+
+                                        <input
+                                          type="text"
+                                          name="item_title"
+                                          value={floorPrice}
+                                          id="item_title"
+                                          className="form-control createColInput"
+                                          placeholder="e.g. 'CF"
+                                          onChange={(e) => {
+                                            setFloorPrice(e.target.value);
                                           }}
                                         />
 
