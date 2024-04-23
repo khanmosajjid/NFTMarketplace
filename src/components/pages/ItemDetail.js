@@ -1240,6 +1240,7 @@ const ItemDetails = function (props) {
 
       if (id) {
         let data = await getAllBidsByNftId(id);
+        console.log('oferrrs',data)
         let _highestBid = {};
         let bidLength, offerLength;
         _highestBid = data?.highestBid;
