@@ -22,7 +22,8 @@ import {
   UpdateStatus,
   checkBidOffer,
   deleteBids,
-  checkOwnerChange
+  checkOwnerChange,
+  updateVolume
 
 } from "../apiServices";
 import { createCollection } from "../apiServices";
@@ -50,6 +51,7 @@ import { convertToEth } from "./numberFormatter";
 import { slowRefresh } from "./NotifyStatus";
 import moment from "moment";
 import { isEmptyObject } from "jquery";
+
 
 
 export const handleBuyNft = async (
@@ -218,7 +220,9 @@ export const handleBuyNft = async (
         signature,
         options
       );
-
+     let volume=await updateVolume({id:sellerOrder[1],price:new BigNumber(order[6].toString())
+        .multipliedBy(new BigNumber(qty.toString()))
+        .toString()})
 
       let req = {
         "recordID": id,
@@ -1459,6 +1463,9 @@ export const handleAcceptBids = async (
 
 
         completeOrder = await completeOrder.wait();
+        let volume=await updateVolume({id:sellerOrder[1],price:new BigNumber(order[6].toString())
+          .multipliedBy(new BigNumber(bidData.bidQuantity.toString()))
+          .toString()})
         if (completeOrder.status === 0) {
           // NotificationManager.error("Transaction Failed");
           return false;
@@ -1989,6 +1996,9 @@ export const handleAcceptOffers = async (
         }
 
         completeOrder = await completeOrder.wait();
+        let volume=await updateVolume({id:sellerOrder[1],price:new BigNumber(buyerOrder[6].toString())
+          .multipliedBy(new BigNumber(bidData?.bidQuantity.toString()))
+          .toString()})
         if (completeOrder.status === 0) {
           return false;
         }

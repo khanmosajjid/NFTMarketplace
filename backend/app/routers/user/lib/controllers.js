@@ -590,9 +590,9 @@ controllers.getTermsData = async (req, res) => {
 controllers.getUserProfilewithNfts = async (req, res) => {
   console.log("req", req.body);
   try {
-    if (!req.body.currUserId) {
-      return res.reply(messages.unauthorized());
-    }
+    // if (!req.body.currUserId) {
+    //   return res.reply(messages.unauthorized());
+    // }
     User.findOne(
       {
         _id: req.body.userId,

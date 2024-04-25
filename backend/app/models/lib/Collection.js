@@ -35,6 +35,7 @@ const collectionSchema = mongoose.Schema({
   sName: String,
   sDescription: String,
   sFloorPrice: Number,
+  volume:Number,
   hashStatus: {
     //0 - Inactive & 1 - Active & 2 - Failed/Cancel
     type: Number,

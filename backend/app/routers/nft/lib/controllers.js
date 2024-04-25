@@ -674,12 +674,12 @@ controllers.createCollection = async (req, res) => {
                   .pinFileToIPFS(readableStreamForFile, oOptions)
                   .then(async (file2) => {
                     console.log("here--->", file2.IpfsHash);
-                    console.log("here-price-->",req.body.sFloorprice );
+                    console.log("here-price-->", req.body.sFloorprice);
                     const collection = new Collection({
                       sHash: file2.IpfsHash,
                       sName: req.body.sName,
                       sDescription: req.body.sDescription,
-                      sFloorPrice:Number(req.body.sFloorprice),
+                      sFloorPrice: Number(req.body.sFloorprice),
                       erc721: req.body.erc721,
                       sContractAddress: req.body.sContractAddress,
                       sRoyaltyPercentage: req.body.sRoyaltyPercentage,
@@ -1325,25 +1325,25 @@ controllers.nftID = async (req, res) => {
         options: {
           limit: 1,
         },
-        
+
       },
-      
-    );
+
+      );
       if (!aNFT) return res.reply(messages.not_found("NFT"));
     } catch (e) {
-      console.log("error in NFt find by ID",e);
+      console.log("error in NFt find by ID", e);
     }
 
     aNFT = aNFT.toObject();
     aNFT.sCollectionDetail = {};
-    console.log('nftttt',aNFT)
+    console.log('nftttt', aNFT)
     // aNFT.sCollectionDetail = await Collection.findOne({
     //   sName:
     //     aNFT.sCollection && aNFT.sCollection != undefined
     //       ? aNFT.sCollection
     //       : "-",
     // });
-    aNFT.sCollectionDetail = await Collection.findOne({sContractAddress:aNFT.nCollection})
+    aNFT.sCollectionDetail = await Collection.findOne({ sContractAddress: aNFT.nCollection })
     console.log("aNFT.nCreater.sEmail", aNFT?.nCreater?.sEmail);
 
     var token = req.headers.authorization;
@@ -1426,6 +1426,17 @@ controllers.getCollectionDetails = (req, res) => {
   }
 };
 
+controllers.updateCollectionVoulme=  async(req,res)=>{
+  const {id,price} = req.body
+  try {
+    let collection= await Collection.updateOne({sContractAddress:id},{$inc:{volume:price}})
+     return res.reply(messages.no_prefix("Volume updated."), collection);
+  } catch (error) {
+    console.log(error)
+    return res.reply(messages.server_error());
+  }
+}
+
 controllers.getCollectionDetailsByAddress = (req, res) => {
   try {
     Collection.findOne(
@@ -1444,8 +1455,8 @@ controllers.getCollectionDetailsByAddress = (req, res) => {
 controllers.getMetaDataOfCollection = async (req, res) => {
   try {
     console.log(req.body.collectionId)
-    const nfts = await NFT.find({nCollection:req.body.collectionId}).populate('nOrders')
-    nfts.sort((a,b)=>a.nOrders[0]?.oPrice-b.nOrders[0]?.oPrice)
+    const nfts = await NFT.find({ nCollection: req.body.collectionId }).populate('nOrders')
+    nfts.sort((a, b) => a.nOrders[0]?.oPrice - b.nOrders[0]?.oPrice)
     // const nfts = await NFT.aggregate([
     //   // Match NFTs belonging to the specified collection
     //   { $match: { nCollection: req.body.collectionId } },
@@ -1470,14 +1481,18 @@ controllers.getMetaDataOfCollection = async (req, res) => {
     //   // Limit to 1 document to get the minimum price
     //   // { $limit: 1 }
     // ]);
-    console.log('nfts',nfts[0]);
+    console.log('nfts', nfts[0]);
     const floorPrice = nfts.length > 0 ? nfts[0].nOrders[0]?.oPrice.toString() : 0;
-    const latestPrice = nfts.length > 0 ? nfts[nfts.length-1].nOrders[0]?.oPrice.toString() : 0;
+    const latestPrice = nfts.length > 0 ? nfts[nfts.length - 1].nOrders[0]?.oPrice.toString() : 0;
+    
+
+    const Price = await Collection.findOne({sContractAddress:req.body.collectionId})
     console.log(floorPrice);
     let metaData = {
       "floorPrice": floorPrice || 0,
-      "items":nfts.length,
-      "latestPrice":latestPrice
+      "items": nfts.length,
+      "latestPrice": latestPrice,
+      "volume":Price?.volume || 0,
     }
     return res.reply(messages.no_prefix("MetaData Details"), metaData);
   } catch (error) {
@@ -2486,7 +2501,7 @@ controllers.getOnSaleItems = async (req, res) => {
       NFTSearchArray["nType"] = itemType;
     }
     let NFTSearchObj = Object.assign({}, NFTSearchArray);
-    console.info("nftt-searr",JSON.stringify(NFTSearchObj));
+    console.info("nftt-searr", JSON.stringify(NFTSearchObj));
     const results = {};
     if (endIndex < (await NFT.countDocuments(NFTSearchObj).exec())) {
       results.next = {
