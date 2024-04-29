@@ -1391,7 +1391,13 @@ export const handleAcceptBids = async (
     NotificationManager.error("Buyer don't have enough Tokens");
     return false;
   }
-
+console.log(
+  "sellerOrder sellerSignature  buyerOrder buyerSignature",
+  sellerOrder,
+  sellerSignature,
+  buyerOrder,
+  buyerSignature
+);
   try {
     let marketplace = await exportInstance(
       contracts.MARKETPLACE,

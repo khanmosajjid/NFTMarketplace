@@ -34,6 +34,7 @@ mongoose
   .connect(process.env.DB_URL, options)
   .then(() => console.log("Database conncted"))
   .catch((error) => {
+    console.log("error is",error)
     throw error;
   });
 

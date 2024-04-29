@@ -16,7 +16,7 @@ export const MAX_FILE_SIZE = 50;
 export const perPageCount = 12;
 export const Network = {
   name: "Mumbai",
-  chainId: 80001,
+  chainId: process.env.REACT_APP_CHAIN_ID,
   _defaultProvider: (providers) =>
     new providers.JsonRpcProvider(process.env.REACT_APP_RPC_URL),
 };
