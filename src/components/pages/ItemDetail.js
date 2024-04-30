@@ -1403,16 +1403,18 @@ const ItemDetails = function (props) {
                           : "btn-main btn-removefromsale"
                       }
                       onClick={async () => {
-                        let res1 = await handleNetworkSwitch(currentUser);
-                        setCookie("balance", res1, { path: "/" });
-                        if (res1 === false) return;
+                        // let res1 = await handleNetworkSwitch(currentUser);
+                        // setCookie("balance", res1, { path: "/" });
+                        // if (res1 === false) return;
                         if (!currentUser) {
+                          console.log("herreee");
                           setNotConnectedModal(true);
 
                           setRemoveFromSaleLoader(false);
                           return;
                         }
                         setRemoveFromSaleLoader(true);
+                        console.log("herer again is");
                         let res = await handleRemoveFromSale(
                           orderId,
                           currentUser?.toLowerCase(),

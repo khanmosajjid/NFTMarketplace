@@ -22,8 +22,7 @@ import {
   UpdateStatus,
   checkBidOffer,
   deleteBids,
-  checkOwnerChange
-
+  checkOwnerChange,
 } from "../apiServices";
 import { createCollection } from "../apiServices";
 import {
@@ -51,7 +50,6 @@ import { slowRefresh } from "./NotifyStatus";
 import moment from "moment";
 import { isEmptyObject } from "jquery";
 
-
 export const handleBuyNft = async (
   id,
   isERC721,
@@ -65,17 +63,17 @@ export const handleBuyNft = async (
   let details;
   let marketplace;
   let usrHaveQuantity;
-  let completeOrder
-  let checkCallStatic
+  let completeOrder;
+  let checkCallStatic;
   let sellerOrder = [];
   let buyerOrder = [];
-  let amount
+  let amount;
   try {
     order = await buildSellOrder(id);
     if (order === false) {
-      NotificationManager.info("Something happened on this NFT", "", 3000)
-      slowRefresh(1000)
-      return false
+      NotificationManager.info("Something happened on this NFT", "", 3000);
+      slowRefresh(1000);
+      return false;
     }
     details = await getOrderDetails({ orderId: id });
   } catch (e) {
@@ -88,7 +86,7 @@ export const handleBuyNft = async (
       .multipliedBy(new BigNumber(qty.toString()))
       .toString();
   } catch (e) {
-    console.log("error while buying is", e)
+    console.log("error while buying is", e);
     NotificationManager.error("Error while buying NFT");
     return false;
   }
@@ -149,7 +147,10 @@ export const handleBuyNft = async (
         buyerOrder.push(parseInt(order[key]));
     }
   }
-  if ((LazyMintingStatus === 2 || LazyMintingStatus === 0) && !seller?.lazyMinted) {
+  if (
+    (LazyMintingStatus === 2 || LazyMintingStatus === 0) &&
+    !seller?.lazyMinted
+  ) {
     usrHaveQuantity = await GetOwnerOfToken(
       sellerOrder[1],
       sellerOrder[2],
@@ -157,23 +158,40 @@ export const handleBuyNft = async (
       sellerOrder[0]
     );
 
-    if (parseInt(usrHaveQuantity) === 0 || usrHaveQuantity === false || parseInt(usrHaveQuantity) < parseInt(buyerOrder[3])) {
-      NotificationManager.info("Something happened on this NFT", "", 3000)
-      let owners = []
+    if (
+      parseInt(usrHaveQuantity) === 0 ||
+      usrHaveQuantity === false ||
+      parseInt(usrHaveQuantity) < parseInt(buyerOrder[3])
+    ) {
+      NotificationManager.info("Something happened on this NFT", "", 3000);
+      let owners = [];
       if (isERC721 === 1) {
         let owner = await NFTcontract.ownerOf(sellerOrder[2]);
         owners.push({
-          "address": owner,
-          "quantity": 1
-        })
-        await updateOwner({ tokenID: sellerOrder[2], collection: sellerOrder[1], ownersData: owners })
+          address: owner,
+          quantity: 1,
+        });
+        await updateOwner({
+          tokenID: sellerOrder[2],
+          collection: sellerOrder[1],
+          ownersData: owners,
+        });
+      } else {
+        await checkOwnerChangeAndUpdate(
+          usrHaveQuantity,
+          buyerOrder[3],
+          sellerOrder[2],
+          sellerOrder[1],
+          sellerOrder[0]
+        );
       }
-      else {
-        await checkOwnerChangeAndUpdate(usrHaveQuantity, buyerOrder[3], sellerOrder[2], sellerOrder[1], sellerOrder[0])
-      }
-      await DeleteOrder({ orderId: id, isERC721: isERC721 === 1 ? true : false, ownedQty: !seller?.lazyMinted ? usrHaveQuantity : seller?.quantity })
+      await DeleteOrder({
+        orderId: id,
+        isERC721: isERC721 === 1 ? true : false,
+        ownedQty: !seller?.lazyMinted ? usrHaveQuantity : seller?.quantity,
+      });
 
-      return false
+      return false;
     }
   }
   let approval = await NFTcontract.isApprovedForAll(
@@ -208,7 +226,7 @@ export const handleBuyNft = async (
       buyerOrder,
       signature,
       options
-    )
+    );
 
     if (checkCallStatic) {
       completeOrder = await marketplace.completeOrder(
@@ -219,18 +237,16 @@ export const handleBuyNft = async (
         options
       );
 
-
       let req = {
-        "recordID": id,
-        "DBCollection": "Order",
-        "hashStatus": 0,
-        "hash": completeOrder.hash
-      }
+        recordID: id,
+        DBCollection: "Order",
+        hashStatus: 0,
+        hash: completeOrder.hash,
+      };
       try {
-        await UpdateStatus(req)
-      }
-      catch (e) {
-        return false
+        await UpdateStatus(req);
+      } catch (e) {
+        return false;
       }
 
       let res = await completeOrder.wait();
@@ -238,35 +254,35 @@ export const handleBuyNft = async (
         NotificationManager.error("Transaction failed");
         return false;
       }
-
     } else {
       NotificationManager.error("Error while buying NFT");
       return false;
     }
-
   } catch (e) {
-    console.log("error is", e)
+    console.log("error is", e);
     if (e.code === "ACTION_REJECTED" || e.code === 4001) {
       NotificationManager.error("User denied ");
       return false;
     }
-    if (e.code === "CALL_EXCEPTION" && e.toString().includes("Cancelled or complete")) {
+    if (
+      e.code === "CALL_EXCEPTION" &&
+      e.toString().includes("Cancelled or complete")
+    ) {
       NotificationManager.error("Transaction is Cancelled or Completed");
-      return false
+      return false;
     } else {
       NotificationManager.error("Error while buying NFT");
       return false;
     }
-
   }
 
   try {
     let orderDetails = await getOrderDetails({ orderId: id });
-    historyMetaData.hash = completeOrder.hash
+    historyMetaData.hash = completeOrder.hash;
     if (orderDetails.hashStatus === 0) {
       await InsertHistory(historyMetaData);
       if (LazyMintingStatus === 1) {
-        LazyMintingStatus = 2
+        LazyMintingStatus = 2;
       }
       await UpdateOrderStatus({
         orderId: id,
@@ -276,24 +292,27 @@ export const handleBuyNft = async (
         qty_sold: Number(qty),
         oBuyer: account.toLowerCase(),
         LazyMintingStatus: LazyMintingStatus,
-        hashStatus: 1
+        hashStatus: 1,
       });
 
       let req = {
-        "recordID": id,
-        "DBCollection": "Order",
-        "hashStatus": 1,
-
-      }
+        recordID: id,
+        DBCollection: "Order",
+        hashStatus: 1,
+      };
       try {
-        await UpdateStatus(req)
-      }
-      catch (e) {
-        return false
+        await UpdateStatus(req);
+      } catch (e) {
+        return false;
       }
     }
-    DeleteOrder({ orderId: id, isERC721: isERC721 === 1 ? true : false, ownedQty: !seller?.lazyMinted ? usrHaveQuantity - qty : seller?.quantity - qty });
-
+    DeleteOrder({
+      orderId: id,
+      isERC721: isERC721 === 1 ? true : false,
+      ownedQty: !seller?.lazyMinted
+        ? usrHaveQuantity - qty
+        : seller?.quantity - qty,
+    });
   } catch (e) {
     console.log("error in updating order data", e);
     NotificationManager.error("Error while buying NFT");
@@ -301,15 +320,20 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
-  return true
+  return true;
 };
 
-export const handleRemoveFromSale = async (orderId, account, isERC721, LazyMintingStatus) => {
+export const handleRemoveFromSale = async (
+  orderId,
+  account,
+  isERC721,
+  LazyMintingStatus
+) => {
   let marketplace;
   let order;
   let details;
   let options;
-  let usrHaveQuantity
+  let usrHaveQuantity;
   try {
     marketplace = await exportInstance(
       contracts.MARKETPLACE,
@@ -317,14 +341,13 @@ export const handleRemoveFromSale = async (orderId, account, isERC721, LazyMinti
     );
 
     order = await buildSellOrder(orderId);
+    console.log("herere for remove from sale",order,orderId);
     if (order === false) {
-      NotificationManager.info("Something happened on this NFT", "", 3000)
-      await DeleteOrder({ orderId: orderId, isERC721: true })
-      slowRefresh(1000)
-      return false
+      NotificationManager.info("Something happened on this NFT", "", 3000);
+      await DeleteOrder({ orderId: orderId, isERC721: true });
+      slowRefresh(1000);
+      return false;
     }
-
-
 
     if (!LazyMintingStatus) {
       usrHaveQuantity = await GetOwnerOfToken(
@@ -335,59 +358,85 @@ export const handleRemoveFromSale = async (orderId, account, isERC721, LazyMinti
       );
 
       if (usrHaveQuantity === 0 || usrHaveQuantity === false) {
-        NotificationManager.info("Owner has been changed or order deleted", "", 3000)
+        NotificationManager.info(
+          "Owner has been changed or order deleted",
+          "",
+          3000
+        );
         let NFTcontract = await exportInstance(
           order[1],
-          isERC721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi)
-        let owners = []
+          isERC721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi
+        );
+        let owners = [];
         if (isERC721 === 1) {
           let owner = await NFTcontract.ownerOf(order[2]);
           owners.push({
-            "address": owner,
-            "quantity": 1
-          })
-          await updateOwner({ tokenID: order[2], collection: order[1], ownersData: order })
+            address: owner,
+            quantity: 1,
+          });
+          await updateOwner({
+            tokenID: order[2],
+            collection: order[1],
+            ownersData: order,
+          });
+        } else {
+          await checkOwnerChangeAndUpdate(
+            usrHaveQuantity,
+            order[3],
+            order[2],
+            order[1],
+            order[0]
+          );
         }
-        else {
-          await checkOwnerChangeAndUpdate(usrHaveQuantity, order[3], order[2], order[1], order[0])
-        }
-
       }
     }
 
     details = await getOrderDetails({ orderId: orderId });
-
+      console.log("details isss----->>>",details);
     options = {
       from: account,
-      gasLimit: 9000000,
-      value: 0,
+      gasLimit: 900000000,
+      value:0
     };
     try {
-      let checkCallStatic = await marketplace.callStatic.cancelOrder(order,
+      console.log(
+        "order details.oSignature options",
+        order,
         details.oSignature,
-        options)
-
+        options
+      );
+      let checkCallStatic = await marketplace.callStatic.cancelOrder(
+        order,
+        // details.oSignature,
+        options
+      );
+      console.log("check calll static is ------->", checkCallStatic);
 
       if (checkCallStatic) {
-        let res = await marketplace.cancelOrder(order, details.oSignature, options);
+        let res = await marketplace.cancelOrder(
+          order,
+          // details.oSignature,
+          options
+        );
 
         try {
-          res = await res.wait()
+          res = await res.wait();
           if (res.status === false) {
             NotificationManager.error("Transaction Failed");
-            return false
+            return false;
           }
-        }
-        catch (e) {
+        } catch (e) {
           if (e.code === "CALL_EXCEPTION") {
             if (e.toString().includes("Cancelled or complete")) {
-              console.log("Order either completed or cancelled")
+              console.log("Order either completed or cancelled");
               await DeleteOrder({
                 orderId: orderId,
-                isERC721: true
+                isERC721: true,
               });
-              NotificationManager.error("Transaction is Cancelled or Completed");
-              return false
+              NotificationManager.error(
+                "Transaction is Cancelled or Completed"
+              );
+              return false;
             }
           } else {
             if (e?.code === "ACTION_REJECTED" || e?.code === 4001) {
@@ -399,24 +448,23 @@ export const handleRemoveFromSale = async (orderId, account, isERC721, LazyMinti
           }
         }
       }
-    }
-    catch (e) {
-      console.log("error in call static", e, order, details.oSignature)
+    } catch (e) {
+      console.log("error in call static", e, order, details.oSignature);
       if (e.reason === "Bad signature") {
         NotificationManager.error("Bad Signature");
-        return false
+        return false;
       }
       if (e.code === "CALL_EXCEPTION") {
         if (e.toString().includes("Cancelled or complete")) {
-          console.log("Order either completed or cancelled")
+          console.log("Order either completed or cancelled");
           await DeleteOrder({
             orderId: orderId,
-            isERC721: true
+            isERC721: true,
           });
           NotificationManager.error("Transaction is Cancelled or Completed");
-          return false
+          return false;
         }
-        return false
+        return false;
       } else {
         if (e?.code === "ACTION_REJECTED" || e?.code === 4001) {
           NotificationManager.error("User denied ");
@@ -426,7 +474,6 @@ export const handleRemoveFromSale = async (orderId, account, isERC721, LazyMinti
         return false;
       }
     }
-
   } catch (e) {
     console.log("error in contract function call", e);
     if (e.code === "ACTION_REJECTED" || e.code === 4001) {
@@ -435,7 +482,7 @@ export const handleRemoveFromSale = async (orderId, account, isERC721, LazyMinti
     }
     await DeleteOrder({
       orderId: orderId,
-      isERC721: true
+      isERC721: true,
     });
     NotificationManager.error("Order is either completed or cancelled");
     return false;
@@ -443,10 +490,10 @@ export const handleRemoveFromSale = async (orderId, account, isERC721, LazyMinti
   try {
     await DeleteOrder({
       orderId: orderId,
-      isERC721: true
+      isERC721: true,
     });
     NotificationManager.success("Removed from sale successfully");
-    return true
+    return true;
   } catch (e) {
     console.log("error while updating database", e);
     NotificationManager.error("Error while Removing NFT from auction");
@@ -473,13 +520,13 @@ export const putOnMarketplace = async (
       _auctionEndDate = new Date(GENERAL_DATE);
       _price = ethers.utils.parseEther(orderData.price.toString()).toString();
     } else if (orderData.chosenType === 1) {
-      let minBid = orderData.minimumBid.toString()
+      let minBid = orderData.minimumBid.toString();
       let endTime = new Date(orderData.endTime).valueOf() / 1000;
       _deadline = endTime;
       _auctionEndDate = orderData.auctionEndDate;
       _price = ethers.utils.parseEther(minBid).toString();
     } else if (orderData.chosenType === 2) {
-      let minBid = orderData.minimumBid.toString()
+      let minBid = orderData.minimumBid.toString();
       _deadline = GENERAL_TIMESTAMP;
       _auctionEndDate = new Date(GENERAL_DATE);
       _price = ethers.utils.parseEther(minBid).toString();
@@ -497,7 +544,10 @@ export const putOnMarketplace = async (
       [],
       orderData.salt,
     ];
-    let NFTcontract = await exportInstance(orderData.collection, orderData.erc721 ? extendedERC721Abi.abi : extendedERC1155Abi.abi);
+    let NFTcontract = await exportInstance(
+      orderData.collection,
+      orderData.erc721 ? extendedERC721Abi.abi : extendedERC1155Abi.abi
+    );
     if (!LazyMintingStatus) {
       let usrHaveQuantity = await GetOwnerOfToken(
         sellerOrder[1],
@@ -508,17 +558,26 @@ export const putOnMarketplace = async (
 
       if (Number(usrHaveQuantity) < Number(orderData.quantity)) {
         NotificationManager.error("You don't own that much quantity");
-        let owners = []
+        let owners = [];
         if (orderData.erc721 === 1) {
           let owner = await NFTcontract.ownerOf(sellerOrder[2]);
           owners.push({
-            "address": owner,
-            "quantity": 1
-          })
-          await updateOwner({ tokenID: sellerOrder[2], collection: sellerOrder[1], ownersData: owners })
-        }
-        else {
-          await checkOwnerChangeAndUpdate(usrHaveQuantity, sellerOrder[3], sellerOrder[2], sellerOrder[1], sellerOrder[0])
+            address: owner,
+            quantity: 1,
+          });
+          await updateOwner({
+            tokenID: sellerOrder[2],
+            collection: sellerOrder[1],
+            ownersData: owners,
+          });
+        } else {
+          await checkOwnerChangeAndUpdate(
+            usrHaveQuantity,
+            sellerOrder[3],
+            sellerOrder[2],
+            sellerOrder[1],
+            sellerOrder[0]
+          );
         }
         return false;
       }
@@ -582,11 +641,11 @@ export const putOnMarketplace = async (
     try {
       await createOrder(reqParams);
       NotificationManager.success("Order created successfully");
-      return true
+      return true;
     } catch (err) {
       NotificationManager.error("Error while placing order");
-      console.log("err on put on marketplace is", err)
-      return false
+      console.log("err on put on marketplace is", err);
+      return false;
     }
   } catch (err) {
     console.log("error in Api", err);
@@ -600,38 +659,36 @@ export const handleCollectionCreation = async (
   collectionData,
   account
 ) => {
-  console.log("in helper")
+  console.log("in helper");
   let creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
-  console.log("here for export instance",creator);
+  console.log("here for export instance", creator);
   let res1;
   let contractAddress;
   let options;
   try {
-    console.log("account is----->",account);
+    console.log("account is----->", account);
     if (isSingle) {
       options = {
         from: account,
         gasLimit: 900000000,
         value: 0,
       };
-      console.log("in this single section")
+      console.log("in this single section");
       res1 = await creator.deployExtendedERC721(
         collectionData.sName,
         collectionData.symbol,
         collectionData.nftFile,
         collectionData.sRoyaltyPercentage,
-        contracts.USDT,
-        
+        contracts.USDT
       );
-      console.log("here res1 is---->",res1);
-    }
-    else {
+      console.log("here res1 is---->", res1);
+    } else {
       options = {
         from: account,
         gasLimit: 9000000,
         value: 0,
       };
-console.log("in this d=multiple section")
+      console.log("in this d=multiple section");
       res1 = await creator.deployExtendedERC1155(
         collectionData.nftFile,
         collectionData.sRoyaltyPercentage,
@@ -673,10 +730,13 @@ console.log("in this d=multiple section")
     fd.append("sDescription", collectionData.sDescription);
     fd.append("nftFile", collectionData.nftFile);
     fd.append("sContractAddress", contractAddress);
-    fd.append("erc721", isSingle ? JSON.stringify(true) : JSON.stringify(false));
+    fd.append(
+      "erc721",
+      isSingle ? JSON.stringify(true) : JSON.stringify(false)
+    );
     fd.append("sRoyaltyPercentage", collectionData.sRoyaltyPercentage);
     fd.append("quantity", collectionData.quantity);
-    fd.append('sFloorprice',collectionData.floorPrice)
+    fd.append("sFloorprice", collectionData.floorPrice);
 
     await createCollection(fd);
     NotificationManager.success("Collection Created Successfully");
@@ -708,16 +768,16 @@ export const createBid = async (
     let details = await getOrderDetails({ orderId: orderID });
     if (Object.keys(details).length === 0) {
       NotificationManager.error("Order Is Canceled or completed");
-      return false
+      return false;
     }
 
     SellerOrder = await buildSellOrder(orderID);
     if (SellerOrder === false) {
-      NotificationManager.info("Something happened on this NFT", "", 3000)
-      slowRefresh(1000)
-      return false
+      NotificationManager.info("Something happened on this NFT", "", 3000);
+      slowRefresh(1000);
+      return false;
     }
-    const deadline = GENERAL_TIMESTAMP + moment().unix()
+    const deadline = GENERAL_TIMESTAMP + moment().unix();
 
     for (let index = 0; index < 11; index++) {
       switch (index) {
@@ -767,10 +827,12 @@ export const createBid = async (
     }
 
     if (!isEmptyObject(oldBidData)) {
-      let amount = new BigNumber(oldBidData?.oBidPrice?.$numberDecimal.toString())
+      let amount = new BigNumber(
+        oldBidData?.oBidPrice?.$numberDecimal.toString()
+      )
         .multipliedBy(new BigNumber(oldBidData?.oBidQuantity.toString()))
         .toString();
-      let oldBuyerOrder = []
+      let oldBuyerOrder = [];
       let details = await getOrderDetails({ orderId: oldBidData.oOrderId });
       if (oldBidData) {
         for (let key = 0; key < 11; key++) {
@@ -811,12 +873,15 @@ export const createBid = async (
         }
       }
 
-      let cancelOrder = await handleCancelOrder(oldBuyerOrder, oldBidData?.oBuyerSignature, oldBidData._id)
+      let cancelOrder = await handleCancelOrder(
+        oldBuyerOrder,
+        oldBidData?.oBuyerSignature,
+        oldBidData._id
+      );
       if (cancelOrder === false) {
-        return false
+        return false;
       }
     }
-
 
     if (LazyMintingStatus === 2 || LazyMintingStatus === 0) {
       let usrHaveQuantity = await GetOwnerOfToken(
@@ -826,23 +891,43 @@ export const createBid = async (
         sellerOrder[0]
       );
 
-      if (parseInt(usrHaveQuantity) === 0 || parseInt(usrHaveQuantity) < parseInt(buyerOrder[3]) || usrHaveQuantity === false) {
-        NotificationManager.info("Something happened on this NFT", "", 3000)
-        let owners = []
-        let NFTcontract = await exportInstance(sellerOrder[1], erc721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi);
+      if (
+        parseInt(usrHaveQuantity) === 0 ||
+        parseInt(usrHaveQuantity) < parseInt(buyerOrder[3]) ||
+        usrHaveQuantity === false
+      ) {
+        NotificationManager.info("Something happened on this NFT", "", 3000);
+        let owners = [];
+        let NFTcontract = await exportInstance(
+          sellerOrder[1],
+          erc721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi
+        );
         if (erc721 === 1) {
           let owner = await NFTcontract.ownerOf(sellerOrder[2]);
           owners.push({
-            "address": owner,
-            "quantity": 1
-          })
-          await updateOwner({ tokenID: sellerOrder[2], collection: sellerOrder[1], ownersData: owners })
+            address: owner,
+            quantity: 1,
+          });
+          await updateOwner({
+            tokenID: sellerOrder[2],
+            collection: sellerOrder[1],
+            ownersData: owners,
+          });
+        } else {
+          await checkOwnerChangeAndUpdate(
+            usrHaveQuantity,
+            sellerOrder[3],
+            sellerOrder[2],
+            sellerOrder[1],
+            sellerOrder[0]
+          );
         }
-        else {
-          await checkOwnerChangeAndUpdate(usrHaveQuantity, sellerOrder[3], sellerOrder[2], sellerOrder[1], sellerOrder[0])
-        }
-        await DeleteOrder({ orderId: orderID, isERC721: erc721 === 1 ? true : false, ownedQty: usrHaveQuantity })
-        return false
+        await DeleteOrder({
+          orderId: orderID,
+          isERC721: erc721 === 1 ? true : false,
+          ownedQty: usrHaveQuantity,
+        });
+        return false;
       }
     }
 
@@ -888,13 +973,12 @@ export const createBid = async (
           oBidDeadline: deadline,
           tokenId: sellerOrder[2],
           tokenAddress: sellerOrder[1],
-          salt: sellerOrder[10]
+          salt: sellerOrder[10],
         };
         await createBidNft(reqParams);
         NotificationManager.success("Bid Placed Successfully");
-        return true
+        return true;
       }
-
     } catch (e) {
       console.log("error in api", e);
       NotificationManager.error("Error while creating bid");
@@ -907,7 +991,12 @@ export const createBid = async (
   }
 };
 
-export const handleRemoveFromAuction = async (orderId, account, erc721, LazyMintingStatus) => {
+export const handleRemoveFromAuction = async (
+  orderId,
+  account,
+  erc721,
+  LazyMintingStatus
+) => {
   let marketplace;
   let options;
   try {
@@ -918,13 +1007,13 @@ export const handleRemoveFromAuction = async (orderId, account, erc721, LazyMint
 
     let order = await buildSellOrder(orderId);
     if (order === false) {
-      NotificationManager.info("Something happened on this NFT", "", 3000)
+      NotificationManager.info("Something happened on this NFT", "", 3000);
       await DeleteOrder({
         orderId: orderId,
-        isERC721: true
+        isERC721: true,
       });
-      slowRefresh(1000)
-      return false
+      slowRefresh(1000);
+      return false;
     }
     if (!LazyMintingStatus) {
       let usrHaveQuantity = await GetOwnerOfToken(
@@ -935,27 +1024,43 @@ export const handleRemoveFromAuction = async (orderId, account, erc721, LazyMint
       );
 
       if (usrHaveQuantity === 0 || usrHaveQuantity === false) {
-        NotificationManager.info("Owner has been changed or order deleted", "", 3000)
-        let owners = []
-        let NFTcontract = await exportInstance(order[1], erc721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi);
+        NotificationManager.info(
+          "Owner has been changed or order deleted",
+          "",
+          3000
+        );
+        let owners = [];
+        let NFTcontract = await exportInstance(
+          order[1],
+          erc721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi
+        );
 
         if (erc721 === 1) {
           let owner = await NFTcontract.ownerOf(order[2]);
           owners.push({
-            "address": owner,
-            "quantity": 1
-          })
-          await updateOwner({ tokenID: order[2], collection: order[1], ownersData: owners })
-        }
-        else {
-          await checkOwnerChangeAndUpdate(usrHaveQuantity, order[3], order[2], order[1], order[0])
+            address: owner,
+            quantity: 1,
+          });
+          await updateOwner({
+            tokenID: order[2],
+            collection: order[1],
+            ownersData: owners,
+          });
+        } else {
+          await checkOwnerChangeAndUpdate(
+            usrHaveQuantity,
+            order[3],
+            order[2],
+            order[1],
+            order[0]
+          );
         }
         try {
           await DeleteOrder({
             orderId: orderId,
-            isERC721: true
+            isERC721: true,
           });
-          return true
+          return true;
         } catch (e) {
           console.log("error in contract api call", e);
           return false;
@@ -971,31 +1076,37 @@ export const handleRemoveFromAuction = async (orderId, account, erc721, LazyMint
     };
 
     try {
-      let checkCallStatic = await marketplace.callStatic.cancelOrder(order,
+      let checkCallStatic = await marketplace.callStatic.cancelOrder(
+        order,
         details.oSignature,
-        options)
-
+        options
+      );
 
       if (checkCallStatic) {
-        let res = await marketplace.cancelOrder(order, details.oSignature, options);
+        let res = await marketplace.cancelOrder(
+          order,
+          details.oSignature,
+          options
+        );
 
         try {
-          res = await res.wait()
+          res = await res.wait();
           if (res.status === false) {
             NotificationManager.error("Transaction Failed");
-            return false
+            return false;
           }
-        }
-        catch (e) {
+        } catch (e) {
           if (e.code === "CALL_EXCEPTION") {
             if (e.toString().includes("Cancelled or complete")) {
-              console.log("Order either completed or cancelled")
+              console.log("Order either completed or cancelled");
               await DeleteOrder({
                 orderId: orderId,
-                isERC721: true
+                isERC721: true,
               });
-              NotificationManager.error("Transaction is Cancelled or Completed");
-              return false
+              NotificationManager.error(
+                "Transaction is Cancelled or Completed"
+              );
+              return false;
             }
           } else {
             if (e?.code === "ACTION_REJECTED" || e?.code === 4001) {
@@ -1007,22 +1118,21 @@ export const handleRemoveFromAuction = async (orderId, account, erc721, LazyMint
           }
         }
       }
-    }
-    catch (e) {
-      console.log("error in call static", e, order, details.oSignature)
+    } catch (e) {
+      console.log("error in call static", e, order, details.oSignature);
       if (e.reason === "Bad signature") {
         NotificationManager.error("Bad Signature");
-        return false
+        return false;
       }
       if (e.code === "CALL_EXCEPTION") {
         if (e.toString().includes("Cancelled or complete")) {
-          console.log("Order either completed or cancelled")
+          console.log("Order either completed or cancelled");
           await DeleteOrder({
             orderId: orderId,
-            isERC721: true
+            isERC721: true,
           });
           NotificationManager.error("Transaction is Cancelled or Completed");
-          return false
+          return false;
         }
       } else {
         if (e?.code === "ACTION_REJECTED" || e?.code === 4001) {
@@ -1037,10 +1147,10 @@ export const handleRemoveFromAuction = async (orderId, account, erc721, LazyMint
     try {
       await DeleteOrder({
         orderId: orderId,
-        isERC721: true
+        isERC721: true,
       });
       NotificationManager.success("Removed from Auction successfully");
-      return true
+      return true;
     } catch (e) {
       console.log("error in contract function call", e);
       if (e.code === "ACTION_REJECTED" || e.code === 4001) {
@@ -1049,7 +1159,7 @@ export const handleRemoveFromAuction = async (orderId, account, erc721, LazyMint
       }
       await DeleteOrder({
         orderId: orderId,
-        isERC721: true
+        isERC721: true,
       });
       NotificationManager.error("Order is either completed or cancelled");
       return false;
@@ -1065,7 +1175,6 @@ export const handleRemoveFromAuction = async (orderId, account, erc721, LazyMint
   }
 };
 
-
 export const handleNftTransfer = async (
   collection,
   account,
@@ -1076,10 +1185,9 @@ export const handleNftTransfer = async (
   nftId,
   ownedQuantity,
   orderId = false
-
 ) => {
   let options;
-  let usrHaveQuantity
+  let usrHaveQuantity;
 
   try {
     let nftContract;
@@ -1093,32 +1201,46 @@ export const handleNftTransfer = async (
         account
       );
 
-      if (parseInt(usrHaveQuantity) === 0 || usrHaveQuantity === false || parseInt(usrHaveQuantity) < parseInt(amount)) {
-        NotificationManager.info("Something happened on this NFT", "", 3000)
+      if (
+        parseInt(usrHaveQuantity) === 0 ||
+        usrHaveQuantity === false ||
+        parseInt(usrHaveQuantity) < parseInt(amount)
+      ) {
+        NotificationManager.info("Something happened on this NFT", "", 3000);
 
-        let owners = []
-        let NFTcontract = await exportInstance(collection, isERC721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi);
+        let owners = [];
+        let NFTcontract = await exportInstance(
+          collection,
+          isERC721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi
+        );
 
         if (isERC721 === 1) {
           let owner = await NFTcontract.ownerOf(tokenId);
           owners.push({
-            "address": owner,
-            "quantity": 1
-          })
-          await updateOwner({ tokenID: tokenId, collection: collection, ownersData: owners })
+            address: owner,
+            quantity: 1,
+          });
+          await updateOwner({
+            tokenID: tokenId,
+            collection: collection,
+            ownersData: owners,
+          });
+        } else {
+          await checkOwnerChangeAndUpdate(
+            usrHaveQuantity,
+            amount,
+            tokenId,
+            collection,
+            account
+          );
         }
-        else {
-          await checkOwnerChangeAndUpdate(usrHaveQuantity, amount, tokenId, collection, account)
-        }
-        return { res: false, hash: "" }
+        return { res: false, hash: "" };
       }
-    }
-    catch (err) {
-      console.log("err", err)
-      return false
+    } catch (err) {
+      console.log("err", err);
+      return false;
     }
     try {
-
       if (isERC721 === 1) {
         nftContract = await exportInstance(collection, extendedERC721Abi.abi);
         options = {
@@ -1132,8 +1254,7 @@ export const handleNftTransfer = async (
           tokenId,
           options
         );
-      }
-      else {
+      } else {
         nftContract = await exportInstance(collection, extendedERC1155Abi.abi);
         options = {
           from: account,
@@ -1150,7 +1271,7 @@ export const handleNftTransfer = async (
         );
       }
     } catch (e) {
-      console.log("e is ", e)
+      console.log("e is ", e);
       let error = e.toString();
       if (error.includes("user rejected transaction")) {
         console.log("user rejected transaction");
@@ -1158,7 +1279,7 @@ export const handleNftTransfer = async (
         return false;
       }
       NotificationManager.error("Error while Transferring NFT");
-      return false
+      return false;
     }
     res = await res.wait();
     if (res.status === 0) {
@@ -1176,9 +1297,8 @@ export const handleNftTransfer = async (
             await DeleteOrder({
               orderId: orderId,
               isERC721: isERC721 === 1 ? true : false,
-              ownedQty: ownedQuantity - amount
+              ownedQty: ownedQuantity - amount,
             });
-
           } catch (e) {
             console.log("error in contract api call", e);
             return false;
@@ -1186,23 +1306,23 @@ export const handleNftTransfer = async (
         }
         await TransferNfts(reqParams);
         NotificationManager.success("Nft Transferred Successfully", "", 1500);
-        return true
+        return true;
       } catch (e) {
         console.log("error in api", e);
         NotificationManager.error("Error while Transferring NFT");
         return false;
       }
     }
-
   } catch (e) {
     console.log("error in contract interaction", e);
 
     if (e.code === "ACTION_REJECTED" || e.code === 4001) {
       NotificationManager.error("User denied ");
       return false;
-    } if (e.code === "CALL_EXCEPTION") {
+    }
+    if (e.code === "CALL_EXCEPTION") {
       NotificationManager.error("Transaction is Cancelled or Completed");
-      return false
+      return false;
     } else {
       NotificationManager.error("Error while Transferring NFT");
       return false;
@@ -1217,7 +1337,7 @@ export const handleUpdateBidStatus = async (
   isERC721,
   LazyMintingStatus,
   keyword,
-  account = "",
+  account = ""
 ) => {
   try {
     let reqParams = {
@@ -1225,22 +1345,24 @@ export const handleUpdateBidStatus = async (
       action: action,
     };
 
-    let buyerOrder = await buildBuyerOrder(bidData)
+    let buyerOrder = await buildBuyerOrder(bidData);
 
     if (action === "Cancelled") {
-      let result = await handleCancelOrder(buyerOrder, bidData.buyerSignature, bidID)
+      let result = await handleCancelOrder(
+        buyerOrder,
+        bidData.buyerSignature,
+        bidID
+      );
       if (result === false) {
-        return false
+        return false;
       }
     }
 
     let res = await updateBidNft(reqParams);
 
-
     NotificationManager.success(`${keyword} ${action} Successfully`);
-    return true
+    return true;
   } catch (e) {
-
     console.log("error in api", e);
     NotificationManager.error(`Error while ${action}ing ${keyword}`);
     return false;
@@ -1258,14 +1380,14 @@ export const handleAcceptBids = async (
   let order;
   let details;
   let options;
-  let usrHaveQuantity
+  let usrHaveQuantity;
   try {
     order = await buildSellOrder(bidData.orderId);
     if (order === false) {
-      NotificationManager.info("Something happened on this NFT", "", 3000)
-      await deleteBids({ bidID: bidData.bidId })
-      slowRefresh(1000)
-      return false
+      NotificationManager.info("Something happened on this NFT", "", 3000);
+      await deleteBids({ bidID: bidData.bidId });
+      slowRefresh(1000);
+      return false;
     }
     details = await getOrderDetails({ orderId: bidData.orderId });
   } catch (e) {
@@ -1277,8 +1399,6 @@ export const handleAcceptBids = async (
   let amount = new BigNumber(bidData.bidPrice.toString())
     .multipliedBy(new BigNumber(bidData.bidQuantity.toString()))
     .toString();
-
-
 
   for (let key = 0; key < 11; key++) {
     switch (key) {
@@ -1336,25 +1456,45 @@ export const handleAcceptBids = async (
       isERC721,
       sellerOrder[0]
     );
-    if (parseInt(usrHaveQuantity) === 0 || usrHaveQuantity === false || parseInt(usrHaveQuantity) < parseInt(buyerOrder[3])) {
-      NotificationManager.info("Something happened on this NFT", "", 3000)
-      await deleteBids({ bidID: bidData.bidId })
-      let owners = []
-      let NFTcontract = await exportInstance(sellerOrder[1], isERC721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi);
+    if (
+      parseInt(usrHaveQuantity) === 0 ||
+      usrHaveQuantity === false ||
+      parseInt(usrHaveQuantity) < parseInt(buyerOrder[3])
+    ) {
+      NotificationManager.info("Something happened on this NFT", "", 3000);
+      await deleteBids({ bidID: bidData.bidId });
+      let owners = [];
+      let NFTcontract = await exportInstance(
+        sellerOrder[1],
+        isERC721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi
+      );
 
       if (isERC721 === 1) {
         let owner = await NFTcontract.ownerOf(sellerOrder[2]);
         owners.push({
-          "address": owner,
-          "quantity": 1
-        })
-        let result = await updateOwner({ tokenID: sellerOrder[2], collection: sellerOrder[1], ownersData: owners })
+          address: owner,
+          quantity: 1,
+        });
+        let result = await updateOwner({
+          tokenID: sellerOrder[2],
+          collection: sellerOrder[1],
+          ownersData: owners,
+        });
+      } else {
+        let result = await checkOwnerChangeAndUpdate(
+          usrHaveQuantity,
+          amount,
+          sellerOrder[2],
+          sellerOrder[1],
+          sellerOrder[0]
+        );
       }
-      else {
-        let result = await checkOwnerChangeAndUpdate(usrHaveQuantity, amount, sellerOrder[2], sellerOrder[1], sellerOrder[0])
-      }
-      DeleteOrder({ orderId: bidData.orderId, isERC721: isERC721 === 1 ? true : false, ownedQty: usrHaveQuantity });
-      return false
+      DeleteOrder({
+        orderId: bidData.orderId,
+        isERC721: isERC721 === 1 ? true : false,
+        ownedQty: usrHaveQuantity,
+      });
+      return false;
     }
   }
 
@@ -1391,13 +1531,13 @@ export const handleAcceptBids = async (
     NotificationManager.error("Buyer don't have enough Tokens");
     return false;
   }
-console.log(
-  "sellerOrder sellerSignature  buyerOrder buyerSignature",
-  sellerOrder,
-  sellerSignature,
-  buyerOrder,
-  buyerSignature
-);
+  console.log(
+    "sellerOrder sellerSignature  buyerOrder buyerSignature",
+    sellerOrder,
+    sellerSignature,
+    buyerOrder,
+    buyerSignature
+  );
   try {
     let marketplace = await exportInstance(
       contracts.MARKETPLACE,
@@ -1405,7 +1545,6 @@ console.log(
     );
     let completeOrder;
     try {
-
       options = {
         from: sellerOrder[0],
         gasLimit: 9000000,
@@ -1420,25 +1559,24 @@ console.log(
           buyerOrder,
           buyerSignature,
           options
-        )
+        );
       } catch (e) {
-        console.log("checkcall static", e)
+        console.log("checkcall static", e);
         if (e.code === "CALL_EXCEPTION") {
           if (e.toString().includes("Cancelled or complete")) {
-            console.log("Order either completed or cancelled")
-            await deleteBids({ bidID: bidData.bidId })
+            console.log("Order either completed or cancelled");
+            await deleteBids({ bidID: bidData.bidId });
             NotificationManager.error("Transaction is Cancelled or Completed");
-            return false
+            return false;
           }
         } else {
           NotificationManager.error("Transaction Failed");
           return false;
         }
-        return
+        return;
       }
 
       if (checkCallStatic) {
-
         completeOrder = await marketplace.completeOrder(
           sellerOrder,
           sellerSignature,
@@ -1447,34 +1585,27 @@ console.log(
           options
         );
         let req = {
-          "recordID": bidData.bidId,
-          "DBCollection": "Bids",
-          "hashStatus": 0,
-          "hash": completeOrder.hash
-        }
-
-
+          recordID: bidData.bidId,
+          DBCollection: "Bids",
+          hashStatus: 0,
+          hash: completeOrder.hash,
+        };
 
         try {
-          await UpdateStatus(req)
+          await UpdateStatus(req);
+        } catch (e) {
+          console.log("error", e);
+          return false;
         }
-        catch (e) {
-          console.log("error", e)
-          return false
-        }
-
 
         completeOrder = await completeOrder.wait();
         if (completeOrder.status === 0) {
           // NotificationManager.error("Transaction Failed");
           return false;
         }
-
-
       } else {
-        console.log("error in check call static")
+        console.log("error in check call static");
       }
-
     } catch (e) {
       console.log("error in contract", e);
       console.log("error in contract", e);
@@ -1484,23 +1615,19 @@ console.log(
       }
       NotificationManager.error("Error during accepting bid");
       return false;
-
     }
     try {
-
       let req = {
-        "recordID": bidData.bidId,
-        "DBCollection": "Bids",
-        "hashStatus": 1
-      }
+        recordID: bidData.bidId,
+        DBCollection: "Bids",
+        hashStatus: 1,
+      };
       try {
-
         let updateRes = await UpdateStatus(req);
         if (updateRes === false) {
           console.log("data already inserted");
         }
-      }
-      catch (e) {
+      } catch (e) {
         NotificationManager.error("Error while accepting bid");
       }
 
@@ -1517,14 +1644,17 @@ console.log(
       try {
         try {
           if (isERC721 === 1) {
-
             DeleteOrder({ orderId: bidData.orderId, isERC721: true });
           } else {
-
             if (
-              Number(details.quantity_sold) + Number(bidData.bidQuantity) >= details.oQuantity
+              Number(details.quantity_sold) + Number(bidData.bidQuantity) >=
+              details.oQuantity
             ) {
-              DeleteOrder({ orderId: bidData.orderId, isERC721: isERC721 === 1 ? true : false, ownedQty: usrHaveQuantity });
+              DeleteOrder({
+                orderId: bidData.orderId,
+                isERC721: isERC721 === 1 ? true : false,
+                ownedQty: usrHaveQuantity,
+              });
             }
           }
 
@@ -1533,11 +1663,13 @@ console.log(
             userId: bidData.owner,
             action: "Bids",
             actionMeta: "Accept",
-            message: `Bid accepted for ${bidData.bidQuantity} of ${details.oQuantity
-              } editions at ${convertToEth(bidData.bidPrice)} ${paymentTokenData.symbol
-              } by ${sellerUsername}`,
+            message: `Bid accepted for ${bidData.bidQuantity} of ${
+              details.oQuantity
+            } editions at ${convertToEth(bidData.bidPrice)} ${
+              paymentTokenData.symbol
+            } by ${sellerUsername}`,
             created_ts: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-            hash: completeOrder.transactionHash
+            hash: completeOrder.transactionHash,
           };
 
           await InsertHistory(historyMetaData);
@@ -1567,8 +1699,15 @@ console.log(
     NotificationManager.error("Error while accepting bid");
     return false;
   }
-  await handleUpdateBidStatus(bidData.bidId, "Accepted", bidData, isERC721, LazyMintingStatus, "Bid")
-  return true
+  await handleUpdateBidStatus(
+    bidData.bidId,
+    "Accepted",
+    bidData,
+    isERC721,
+    LazyMintingStatus,
+    "Bid"
+  );
+  return true;
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -1616,14 +1755,16 @@ export const createOffer = async (
   let details = await getOrderDetails({ orderId: orderID });
   if (Object.keys(details).length === 0) {
     NotificationManager.error("Order Is Canceled or completed");
-    return false
+    return false;
   }
   let buyerOrder = [];
   const d = new Date();
   let seconds = d.getSeconds();
-  const deadline = GENERAL_TIMESTAMP + seconds
+  const deadline = GENERAL_TIMESTAMP + seconds;
   let salt = Math.round(Math.random() * 10000000);
-  let amount = new BigNumber(ethers.utils.parseEther(bidPrice.toString()).toString())
+  let amount = new BigNumber(
+    ethers.utils.parseEther(bidPrice.toString()).toString()
+  )
     .multipliedBy(new BigNumber(qty.toString()))
     .toString();
   try {
@@ -1671,10 +1812,12 @@ export const createOffer = async (
     }
 
     if (!isEmptyObject(oldBidData)) {
-      let amount = new BigNumber(oldBidData?.oBidPrice?.$numberDecimal.toString())
+      let amount = new BigNumber(
+        oldBidData?.oBidPrice?.$numberDecimal.toString()
+      )
         .multipliedBy(new BigNumber(oldBidData?.oBidQuantity.toString()))
         .toString();
-      let oldBuyerOrder = []
+      let oldBuyerOrder = [];
       if (oldBidData.oBidStatus === "MakeOffer") {
         for (let key = 0; key < 11; key++) {
           switch (key) {
@@ -1717,11 +1860,14 @@ export const createOffer = async (
           }
         }
       }
-      let cancelOrder = await handleCancelOrder(oldBuyerOrder, oldBidData?.oBuyerSignature, oldBidData._id)
+      let cancelOrder = await handleCancelOrder(
+        oldBuyerOrder,
+        oldBidData?.oBuyerSignature,
+        oldBidData._id
+      );
       if (cancelOrder === false) {
-        return false
+        return false;
       }
-
     }
 
     let userTokenBal = await getUsersTokenBalance(buyerOrder[0], buyerOrder[5]);
@@ -1739,10 +1885,7 @@ export const createOffer = async (
       let paymentData = await getPaymentTokenInfo(buyerAccount, buyerOrder[5]);
       let allowance = paymentData.allowance.toString();
       if (
-        new BigNumber(allowance).isLessThan(
-          new BigNumber(amount)
-            .toString()
-        )
+        new BigNumber(allowance).isLessThan(new BigNumber(amount).toString())
       ) {
         let approvalRes = await handleApproveToken(
           buyerOrder[0],
@@ -1767,15 +1910,19 @@ export const createOffer = async (
           salt: salt,
           tokenId: buyerOrder[2],
           tokenAddress: buyerOrder[1],
-          paymentToken: contracts.USDT
+          paymentToken: contracts.USDT,
         };
         let response = await createOfferNFT(reqParams);
-        if (!response || (Object.keys(response).length === 0 && Object.getPrototypeOf(response) === Object.prototype)) {
+        if (
+          !response ||
+          (Object.keys(response).length === 0 &&
+            Object.getPrototypeOf(response) === Object.prototype)
+        ) {
           NotificationManager.error("Error while creating offer");
         } else {
           NotificationManager.success("Offer Placed Successfully");
         }
-        return true
+        return true;
       }
     } catch (e) {
       NotificationManager.error("Error while creating offer");
@@ -1799,7 +1946,7 @@ export const handleAcceptOffers = async (
 ) => {
   let details;
   let options;
-  let usrHaveQuantity
+  let usrHaveQuantity;
   let completeOrder;
   let checkCallStatic;
   let buyerOrder = [];
@@ -1852,7 +1999,7 @@ export const handleAcceptOffers = async (
           sellerOrder.push(amount.toString());
         } else {
           buyerOrder.push(amount.toString());
-          sellerOrder.push(bidData.bidPrice.toString())
+          sellerOrder.push(bidData.bidPrice.toString());
         }
         break;
       case 7:
@@ -1880,24 +2027,40 @@ export const handleAcceptOffers = async (
       isERC721,
       sellerOrder[0]
     );
-    if (parseInt(usrHaveQuantity) === 0 || usrHaveQuantity === false || parseInt(usrHaveQuantity) < parseInt(buyerOrder[3])) {
-      NotificationManager.info("Something happened on this NFT", "", 3000)
-      await deleteBids({ bidID: bidData.bidId })
-      let owners = []
-      let NFTcontract = await exportInstance(sellerOrder[1], isERC721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi);
+    if (
+      parseInt(usrHaveQuantity) === 0 ||
+      usrHaveQuantity === false ||
+      parseInt(usrHaveQuantity) < parseInt(buyerOrder[3])
+    ) {
+      NotificationManager.info("Something happened on this NFT", "", 3000);
+      await deleteBids({ bidID: bidData.bidId });
+      let owners = [];
+      let NFTcontract = await exportInstance(
+        sellerOrder[1],
+        isERC721 === 1 ? extendedERC721Abi.abi : extendedERC1155Abi.abi
+      );
 
       if (isERC721 === 1) {
         let owner = await NFTcontract.ownerOf(sellerOrder[2]);
         owners.push({
-          "address": owner,
-          "quantity": 1
-        })
-        await updateOwner({ tokenID: sellerOrder[2], collection: sellerOrder[1], ownersData: owners })
+          address: owner,
+          quantity: 1,
+        });
+        await updateOwner({
+          tokenID: sellerOrder[2],
+          collection: sellerOrder[1],
+          ownersData: owners,
+        });
+      } else {
+        await checkOwnerChangeAndUpdate(
+          usrHaveQuantity,
+          amount,
+          sellerOrder[2],
+          sellerOrder[1],
+          sellerOrder[0]
+        );
       }
-      else {
-        await checkOwnerChangeAndUpdate(usrHaveQuantity, amount, sellerOrder[2], sellerOrder[1], sellerOrder[0])
-      }
-      return false
+      return false;
     }
   }
 
@@ -1911,7 +2074,6 @@ export const handleAcceptOffers = async (
     sellerOrder[0],
     contracts.MARKETPLACE
   );
-
 
   if (!approval) {
     NotificationManager.error("Seller didn't approved marketplace");
@@ -1952,23 +2114,22 @@ export const handleAcceptOffers = async (
           buyerOrder,
           buyerSignature,
           options
-        )
+        );
       } catch (e) {
-        console.log("checkcall static", e)
+        console.log("checkcall static", e);
         if (e.code === "CALL_EXCEPTION") {
           if (e.toString().includes("Cancelled or complete")) {
-            console.log("Order either completed or cancelled")
-            await deleteBids({ bidID: bidData.bidId })
+            console.log("Order either completed or cancelled");
+            await deleteBids({ bidID: bidData.bidId });
             NotificationManager.error("Transaction is Cancelled or Completed");
-            return false
+            return false;
           }
         } else {
           NotificationManager.error("Transaction Failed");
           return false;
         }
-        return false
+        return false;
       }
-
 
       if (checkCallStatic) {
         completeOrder = await marketplace.completeOrder(
@@ -1980,18 +2141,17 @@ export const handleAcceptOffers = async (
         );
 
         let req = {
-          "recordID": bidData.bidId,
-          "DBCollection": "Bids",
-          "hashStatus": 0,
-          "hash": completeOrder.hash
-        }
+          recordID: bidData.bidId,
+          DBCollection: "Bids",
+          hashStatus: 0,
+          hash: completeOrder.hash,
+        };
 
         try {
-          await UpdateStatus(req)
-        }
-        catch (e) {
-          console.log("error", e)
-          return false
+          await UpdateStatus(req);
+        } catch (e) {
+          console.log("error", e);
+          return false;
         }
 
         completeOrder = await completeOrder.wait();
@@ -2010,19 +2170,18 @@ export const handleAcceptOffers = async (
     }
     try {
       let req = {
-        "recordID": bidData.bidId,
-        "DBCollection": "Bids",
-        "hashStatus": 1
-      }
+        recordID: bidData.bidId,
+        DBCollection: "Bids",
+        hashStatus: 1,
+      };
       try {
         let updateRes = await UpdateStatus(req);
         if (updateRes === false) {
           console.log("data already inserted");
         }
-      }
-      catch (e) {
+      } catch (e) {
         NotificationManager.error("Error while accepting offer");
-        return false
+        return false;
       }
 
       let reqParams = {
@@ -2032,7 +2191,7 @@ export const handleAcceptOffers = async (
         qty_sold: details.quantity_sold + bidData.bidQuantity,
         LazyMintingStatus: LazyMintingStatus,
       };
-      await checkBidOffer(bidData.bidId)
+      await checkBidOffer(bidData.bidId);
       await acceptOffer(reqParams);
       try {
         let historyMetaData = {
@@ -2040,28 +2199,31 @@ export const handleAcceptOffers = async (
           userId: bidData.owner,
           action: "Offers",
           actionMeta: "Accept",
-          message: `Offer accepted for ${bidData.bidQuantity} of ${details.oQuantity
-            } editions at ${convertToEth(bidData.bidPrice)} ${paymentTokenData.symbol
-            } by ${sellerUsername}`,
+          message: `Offer accepted for ${bidData.bidQuantity} of ${
+            details.oQuantity
+          } editions at ${convertToEth(bidData.bidPrice)} ${
+            paymentTokenData.symbol
+          } by ${sellerUsername}`,
           created_ts: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-          hash: completeOrder.transactionHash
+          hash: completeOrder.transactionHash,
         };
 
         await InsertHistory(historyMetaData);
         try {
-
           if (isERC721 === 1) {
-
             DeleteOrder({ orderId: bidData.orderId, isERC721: true });
           } else {
-
             if (
-              Number(details.quantity_sold) + Number(bidData.bidQuantity) >= details.oQuantity
+              Number(details.quantity_sold) + Number(bidData.bidQuantity) >=
+              details.oQuantity
             ) {
-              DeleteOrder({ orderId: bidData.orderId, isERC721: isERC721 === 1 ? true : false, ownedQty: usrHaveQuantity });
+              DeleteOrder({
+                orderId: bidData.orderId,
+                isERC721: isERC721 === 1 ? true : false,
+                ownedQty: usrHaveQuantity,
+              });
             }
           }
-
         } catch (e) {
           console.log("error in updating order data", e);
           NotificationManager.error("Error while accepting offer");
@@ -2087,13 +2249,13 @@ export const handleAcceptOffers = async (
     return false;
   }
   NotificationManager.success("Offer Accepted Successfully");
-  return true
+  return true;
 };
 
 export const handleCancelOrder = async (order, signature, bidId) => {
   let cancelOrder;
-  let options
-  let checkCallStatic
+  let options;
+  let checkCallStatic;
   let marketplace = await exportInstance(
     contracts.MARKETPLACE,
     marketPlaceABI.abi
@@ -2105,12 +2267,12 @@ export const handleCancelOrder = async (order, signature, bidId) => {
       value: 0,
     };
 
-
     try {
-      checkCallStatic = await marketplace.callStatic.cancelOrder(order,
+      checkCallStatic = await marketplace.callStatic.cancelOrder(
+        order,
         signature,
-        options)
-
+        options
+      );
 
       if (checkCallStatic) {
         try {
@@ -2119,31 +2281,30 @@ export const handleCancelOrder = async (order, signature, bidId) => {
             signature,
             options
           );
-        }
-
-        catch (e) {
-          console.log("e is", e.code, e)
+        } catch (e) {
+          console.log("e is", e.code, e);
           if (e.code === "ACTION_REJECTED" || e.code === 4001) {
             NotificationManager.error("User denied ");
-            return false
+            return false;
           }
           NotificationManager.error("Error while cancelling order");
-          return false
+          return false;
         }
         try {
-          let res = await cancelOrder.wait()
+          let res = await cancelOrder.wait();
           if (res.status === false) {
             NotificationManager.error("Transaction Failed");
-            return false
+            return false;
           }
-        }
-        catch (e) {
+        } catch (e) {
           if (e.code === "CALL_EXCEPTION") {
             if (e.toString().includes("Cancelled or complete")) {
-              console.log("Order either completed or cancelled")
-              await deleteBids({ bidID: bidId })
-              NotificationManager.error("Transaction is Cancelled or Completed");
-              return false
+              console.log("Order either completed or cancelled");
+              await deleteBids({ bidID: bidId });
+              NotificationManager.error(
+                "Transaction is Cancelled or Completed"
+              );
+              return false;
             }
           } else {
             NotificationManager.error("Transaction Failed");
@@ -2151,53 +2312,68 @@ export const handleCancelOrder = async (order, signature, bidId) => {
           }
         }
       }
-    }
-    catch (e) {
-      console.log("error in call static", e, order, signature)
+    } catch (e) {
+      console.log("error in call static", e, order, signature);
       if (e.reason === "Bad signature") {
         NotificationManager.error("Bad Signature");
-        return false
+        return false;
       }
       if (e.code === "CALL_EXCEPTION") {
         if (e.toString().includes("Cancelled or complete")) {
-          console.log("Order either completed or cancelled")
-          await deleteBids({ bidID: bidId })
+          console.log("Order either completed or cancelled");
+          await deleteBids({ bidID: bidId });
           NotificationManager.error("Transaction is Cancelled or Completed");
-          return false
+          return false;
         }
       } else {
         NotificationManager.error("Transaction Failed");
         return false;
       }
     }
-
-  }
-  catch (e) {
-    console.log("error in cancel order", e)
+  } catch (e) {
+    console.log("error in cancel order", e);
     if (e.toString().includes("Cancelled or complete")) {
-      console.log("Order either completed or cancelled")
-      await deleteBids({ bidID: bidId })
+      console.log("Order either completed or cancelled");
+      await deleteBids({ bidID: bidId });
       NotificationManager.error("Transaction is Cancelled or Completed");
-      return false
+      return false;
     }
     NotificationManager.error("Error while cancelling order");
-    return false
+    return false;
   }
-}
+};
 
-
-export const checkOwnerChangeAndUpdate = async (original, owned, tokenID, collection, currentUser) => {
-  console.log("update owner called", original, owned, parseInt(owned) !== parseInt(original))
-  if (parseInt(window.sessionStorage.getItem("chain_id")) === parseInt(process.env.REACT_APP_CHAIN_ID)) {
-    let reqParam = { tokenID: tokenID, collection: collection, owner: currentUser, qty: original }
+export const checkOwnerChangeAndUpdate = async (
+  original,
+  owned,
+  tokenID,
+  collection,
+  currentUser
+) => {
+  console.log(
+    "update owner called",
+    original,
+    owned,
+    parseInt(owned) !== parseInt(original)
+  );
+  if (
+    parseInt(window.sessionStorage.getItem("chain_id")) ===
+    parseInt(process.env.REACT_APP_CHAIN_ID)
+  ) {
+    let reqParam = {
+      tokenID: tokenID,
+      collection: collection,
+      owner: currentUser,
+      qty: original,
+    };
     if (parseInt(owned) !== parseInt(original)) {
-      console.log("hhh")
-      await checkOwnerChange(reqParam)
-      return true
+      console.log("hhh");
+      await checkOwnerChange(reqParam);
+      return true;
     }
   }
-  return false
-}
+  return false;
+};
 
 export const sign = async () => {
   try {
