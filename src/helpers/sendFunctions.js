@@ -341,7 +341,7 @@ export const handleRemoveFromSale = async (
     );
 
     order = await buildSellOrder(orderId);
-    console.log("herere for remove from sale",order,orderId);
+    console.log("herere for remove from sale", order, orderId);
     if (order === false) {
       NotificationManager.info("Something happened on this NFT", "", 3000);
       await DeleteOrder({ orderId: orderId, isERC721: true });
@@ -392,11 +392,11 @@ export const handleRemoveFromSale = async (
     }
 
     details = await getOrderDetails({ orderId: orderId });
-      console.log("details isss----->>>",details);
+    console.log("details isss----->>>", details);
     options = {
       from: account,
       gasLimit: 900000000,
-      value:0
+      value: 0,
     };
     try {
       console.log(
@@ -408,7 +408,7 @@ export const handleRemoveFromSale = async (
       let checkCallStatic = await marketplace.callStatic.cancelOrder(
         order,
         // details.oSignature,
-        options
+        // options
       );
       console.log("check calll static is ------->", checkCallStatic);
 
@@ -416,8 +416,9 @@ export const handleRemoveFromSale = async (
         let res = await marketplace.cancelOrder(
           order,
           // details.oSignature,
-          options
+          // options
         );
+        console.log("res is---->",res);
 
         try {
           res = await res.wait();
@@ -480,10 +481,19 @@ export const handleRemoveFromSale = async (
       NotificationManager.error("User denied ");
       return false;
     }
-    await DeleteOrder({
-      orderId: orderId,
-      isERC721: true,
-    });
+     if (e.toString().includes("Cancelled or complete")) {
+       console.log("Order either completed or cancelled");
+       await DeleteOrder({
+         orderId: orderId,
+         isERC721: true,
+       });
+       NotificationManager.error("Transaction is Cancelled or Completed");
+       return false;
+     }
+    // await DeleteOrder({
+    //   orderId: orderId,
+    //   isERC721: true,
+    // });
     NotificationManager.error("Order is either completed or cancelled");
     return false;
   }
