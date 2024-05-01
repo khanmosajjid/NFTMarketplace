@@ -198,26 +198,26 @@ const Collection = function (props) {
                       <div className="col-8 container-items">
                         
                           <h2 className="title-h">{collectionDetails ? collectionDetails.sName : ""}</h2>
-                          <p style={{color:"white"}} className="title-p">
+                          <p style={{color:"#9b9b9b", marginTop:10}} className="title-p">
                             {collectionDetails.sDescription}
                           </p>
                       
                         <section className="collection-detail-card">
                           <div className="collection-card">
-                            <h4 style={{color:"black"}}>Floor Price</h4>
-                            <h3 style={{fontSize:"30px",color:"black"}}>${collectionDetails?.sFloorPrice}</h3>
+                            <h5 style={{color:"#9b9b9b"}}>Floor Price</h5>
+                            <h5 style={{fontSize:"20px",color:"black",marginTop:8}}>{collectionDetails?.sFloorPrice}</h5>
                           </div>
                           <div className="collection-card">
-                            <h4 style={{color:"black"}}>Trade Volume</h4>
-                            <h3 style={{fontSize:"30px",color:"black"}}>3000</h3>
+                            <h5 style={{color:"#9b9b9b"}}>Trade Volume</h5>
+                            <h5 style={{fontSize:"20px",color:"black",marginTop:8}}>${metaData?.volume!=0?convertToEth(metaData?.volume):0}</h5>
                           </div>
                           <div className="collection-card">
-                            <h4 style={{color:"black"}}>Latest Price</h4>
-                            <h3 style={{fontSize:"30px",color:"black"}}>${convertToEth(metaData?.latestPrice)}</h3>
+                            <h5 style={{color:"#9b9b9b"}}>Latest Price</h5>
+                            <h5 style={{fontSize:"20px",color:"black",marginTop:8}}>${metaData?.latestPrice?convertToEth(metaData?.latestPrice):0}</h5>
                           </div>
                           <div className="collection-card">
-                            <h4 style={{color:"black"}}>Total Items</h4>
-                            <h3 style={{fontSize:"30px",color:"black"}}>{metaData.items}</h3>
+                            <h5 style={{color:"#9b9b9b"}}>Total Items</h5>
+                            <h5 style={{fontSize:"20px",color:"black",marginTop:8}}>{metaData.items}</h5>
                           </div>
                         </section>
                       </div>
@@ -346,7 +346,7 @@ const styles = {
       width: "250px",
       height: "250px",
       marginLeft: "15px",
-      marginTop: "32px",
+      // marginTop: "32px",
       borderRadius: "12px"
   
   }

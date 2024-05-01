@@ -87,7 +87,7 @@ const Author = function (props) {
         setLoading(true);
         let data = await GetIndividualAuthorDetail({
           userId: id,
-          currUserId: "",
+          currUserId: localStorage.getItem('decrypt_userId'),
         });
         setProfileInfo(data);
         // setIsFollowing(data?.user_followings?.length > 0);

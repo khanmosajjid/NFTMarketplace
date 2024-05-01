@@ -63,7 +63,7 @@ export const handleNetworkSwitch = async (account) => {
           },
         ],
       });
-      cookies.set("chain_id", "80001", { path: "/" })
+      cookies.set("chain_id",process.env.REACT_APP_CHAIN_ID, { path: "/" })
 
       return true
     } catch (e) {

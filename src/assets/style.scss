@@ -5448,10 +5448,11 @@ button.btn-main.showHideBtn {
   }
 }
 .coll_profile_img {
-  height: 375px;
+  height: 328px;
   border-radius: 27px;
-  border-color: #000000!important;
+  border-color: #000000 !important;
   margin: auto;
+  padding: -6px;
   background-color: #fff;
   position: relative;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
@@ -5850,24 +5851,24 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   }
 }
 
-
 .collection-card {
-  width: 190px; /* Adjust as needed */
-  height: 168px; /* Adjust as needed */
-  background-color: #fff; /* Adjust background color */
-  border: 1px solid #eaeaea; /* Adjust border properties */
-  border-radius: 8px; /* Adjust border radius to make it slightly rounded */
-  // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adjust shadow */
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-  transition: transform 0.3s ease-in-out; /* Optional: Add a smooth transition effect */
+  width: 190px;
+  height: 138px;
+  background-color: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  transition: transform 0.3s ease-in-out;
   text-align: center;
-  padding-top: 50px;
+  padding-top: 40px;
 }
+
 
 /* Optional: Add hover effect */
 .collection-card:hover {
   transform: translateY(-5px); /* Adjust translateY value to lift the card on hover */
 }
+
 
 
 .collection-detail-card{
@@ -5877,6 +5878,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   align-items: center;
   justify-content: center;
   gap: 35px;
+  padding-left: 0;
 }
 
 .collection-desc{

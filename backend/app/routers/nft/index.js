@@ -31,6 +31,12 @@ router.post(
   nftMiddleware.verifyToken,
   nftController.createCollection
 );
+
+router.post(
+  "/updateCOllectionVolume",
+  nftMiddleware.verifyToken,
+  nftController.updateCollectionVoulme
+);
 router.post(
   "/collectionList",
   // nftMiddleware.verifyToken,

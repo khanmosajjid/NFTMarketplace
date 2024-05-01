@@ -590,12 +590,12 @@ controllers.getTermsData = async (req, res) => {
 controllers.getUserProfilewithNfts = async (req, res) => {
   console.log("req", req.body);
   try {
-    if (!req.body.currUserId) {
-      return res.reply(messages.unauthorized());
-    }
+    // if (!req.body.currUserId) {
+    //   return res.reply(messages.unauthorized());
+    // }
     User.findOne(
       {
-        _id: req.body.currUserId,
+        _id: req.body.userId,
       },
       {
         oName: 1,
@@ -604,7 +604,7 @@ controllers.getUserProfilewithNfts = async (req, res) => {
         sProfilePicUrl: 1,
         sWebsite: 1,
         sBio: 1,
-        user_followings: req.body.currUserId
+        user_followings: req.body.userId
           ? {
               $filter: {
                 input: "$user_followings",
@@ -612,7 +612,7 @@ controllers.getUserProfilewithNfts = async (req, res) => {
                 cond: {
                   $eq: [
                     "$$user_followings",
-                    mongoose.Types.ObjectId(req.body.currUserId),
+                    mongoose.Types.ObjectId(req.body.userId),
                   ],
                 },
               },

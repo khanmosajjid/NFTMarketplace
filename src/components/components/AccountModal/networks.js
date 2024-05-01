@@ -1,5 +1,16 @@
 /* TESTNET */
 export const Networks = {
+
+  AmoyTestnet:{
+    chainId: `0x${Number(process.env.REACT_APP_CHAIN_ID).toString(16)}`,
+    chainName: process.env.REACT_APP_NETWORK,
+    nativeCurrency: {
+      name: "Amoy Token",
+      symbol: "MATIC",
+      decimals: 18,
+    },
+    rpcUrls:['https://rpc-amoy.polygon.technology/']
+  },
   Testnet: {
     chainId: `0x${Number(process.env.REACT_APP_CHAIN_ID).toString(16)}`,
     chainName: process.env.REACT_APP_NETWORK,
