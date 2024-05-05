@@ -1102,8 +1102,7 @@ export const handleRemoveFromAuction = async (
       if (checkCallStatic) {
         let res = await marketplace.cancelOrder(
           order,
-          details.oSignature,
-          options
+         
         );
 
         try {

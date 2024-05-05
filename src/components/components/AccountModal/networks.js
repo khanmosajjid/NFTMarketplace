@@ -1,7 +1,6 @@
 /* TESTNET */
 export const Networks = {
-
-  AmoyTestnet:{
+  AmoyTestnet: {
     chainId: `0x${Number(process.env.REACT_APP_CHAIN_ID).toString(16)}`,
     chainName: process.env.REACT_APP_NETWORK,
     nativeCurrency: {
@@ -9,7 +8,7 @@ export const Networks = {
       symbol: "MATIC",
       decimals: 18,
     },
-    rpcUrls:['https://rpc-amoy.polygon.technology/']
+    rpcUrls: ["https://rpc-amoy.polygon.technology/"],
   },
   Testnet: {
     chainId: `0x${Number(process.env.REACT_APP_CHAIN_ID).toString(16)}`,
@@ -65,6 +64,18 @@ export const Networks = {
     },
 
     rpcUrls: ["https://rpc-amoy.polygon.technology/"],
+    blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+  },
+  Polygon: {
+    chainId: `0x${Number(process.env.REACT_APP_CHAIN_ID).toString(16)}`,
+    chainName: process.env.REACT_APP_NETWORK,
+    nativeCurrency: {
+      name: "MATIC",
+      symbol: "MATIC",
+      decimals: 18,
+    },
+
+    rpcUrls: ["https://polygon-rpc.com/"],
     blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
   },
 };
