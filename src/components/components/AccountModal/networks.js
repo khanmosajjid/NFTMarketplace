@@ -76,7 +76,7 @@ export const Networks = {
     },
 
     rpcUrls: ["https://polygon-rpc.com/"],
-    blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+    blockExplorerUrls: ["https://polygonscan.com/"],
   },
 };
 
