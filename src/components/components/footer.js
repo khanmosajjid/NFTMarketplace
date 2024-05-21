@@ -33,7 +33,7 @@ const footer= () => (
                                     </ul>
                                 </div>
                             </div>
-                            <div className="col-md-4 col-sm-6 col-xs-1">
+                            {/* <div className="col-md-4 col-sm-6 col-xs-1">
                                 <div className="widget">
                                     <h5 className='font_24 text-dark NunitoBold'>Kunstify</h5>
                                     <ul>
@@ -42,10 +42,10 @@ const footer= () => (
                                         <li><a href="/terms">Terms</a></li>
                                         <li><a href="/privacy">Privacy Policy</a></li>
                                         <li><a href="/risk">Risk Notification</a></li>
-                                        {/* <li><Link to="">Mailing List</Link></li> */}
+                                        <li><Link to="">Mailing List</Link></li>
                                     </ul>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <div className="col-md-4 col-sm-6 col-xs-1">
@@ -76,10 +76,10 @@ const footer= () => (
                                     <span onClick={()=> window.open("", "_self")}>
                                         <img alt="" className="f-logo d-1" style={{width:"80px",height:"60px"}} src={logo1} />
                                         <img alt="" className="f-logo d-3" src={logo1} />
-                                        <span className="copy">&copy; Copyright 2024 - Kunstify NFT Marketplace</span>
+                                        {/* <span className="copy">&copy; Copyright 2024 - Kunstify NFT Marketplace</span> */}
                                     </span>
                                 </div>
-                                <div className="de-flex-col">
+                                {/* <div className="de-flex-col">
                                     <div className="social-icons">
                                         <span onClick={()=> window.open("https://www.facebook.com/paiblock/", "_self")}><i className="fa fa-facebook fa-lg"></i></span>
                                         <span onClick={()=> window.open("https://www.instagram.com/paiblockapp/", "_self")}><i className="fa fa-instagram fa-lg"></i></span>
@@ -87,7 +87,7 @@ const footer= () => (
                                         <span onClick={()=> window.open("https://www.pinterest.com/paiblock/", "_self")}><i className="fa fa-pinterest fa-lg"></i></span>
                                         <span onClick={()=> window.open("https://www.youtube.com/channel/UCEd4VIc8MOL4VdZy8U70hFQ", "_self")}><i className="fa fa-youtube fa-lg"></i></span>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
