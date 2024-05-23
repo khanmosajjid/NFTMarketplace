@@ -14,7 +14,7 @@
 .vscode
 
 # Ignoring ENV file
-.env
+# .env
 
 # Ignoring package-lock
 package-lock.json
@@ -23,7 +23,7 @@ package-lock.json
 # production
 /build
 
-**.env
+# **.env
 # misc
 .DS_Store
 .env.local

@@ -11,9 +11,9 @@ package-lock.json
 /coverage
 build/
 
-/.env
-.env
-**.env
+# /.env
+# .env
+# **.env
 # production
 # /build
 

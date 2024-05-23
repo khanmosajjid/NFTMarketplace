@@ -238,7 +238,7 @@ controllers.create = async (req, res) => {
 
                   const mOptions = {
                     pinataMetadata: {
-                      name: "hello",
+                      name: req.body.nTokenID,
                     },
                     pinataOptions: {
                       cidVersion: 0,

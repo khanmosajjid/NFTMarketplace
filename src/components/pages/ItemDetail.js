@@ -1267,19 +1267,30 @@ const ItemDetails = function (props) {
     fetchAllBids();
   }, [id, currentUser, reloadContent, userId, ownerChange, currentOrderId]);
 
-
+  const fetchMeta = async () => {
+    if (nftDetails && nftDetails.nHash) {
+      console.log('hh-fetchinggggg',nftDetails.nHash,process.env.REACT_APP_IPFS_URL)
+      let resp = await fetch(
+        process.env.REACT_APP_IPFS_URL+'/' + nftDetails?.nHash,
+        // {
+        //   headers:{
+        //     "x-pinata-gateway-token":"o0xOnJayjR_RDU5YYS52WSR3Zh1qJpjAxhiS9JwoniBAhzQuvTm3RoS1Mfhi4m67"
+        //   }
+        // }
+      );
+      console.log('fetch-2', resp)
+      let data = await resp.json();
+      console.log('fetch-3', data)
+   
+      setMetaData(data.attributes);
+    }
+  };
   useEffect(() => {
-    const fetchMeta = async () => {
-      if (nftDetails && nftDetails.nHash) {
-        let resp = await fetch(
-          process.env.REACT_APP_IPFS_URL + nftDetails?.nHash
-        );
-        resp = await resp.json();
-        setMetaData(eval(resp.attributes));
-      }
-    };
-
-    // fetchMeta();
+    const test=()=>{
+      console.log('fetchinggggg')
+      fetchMeta();
+    }
+   test();
   }, [nftDetails, reloadContent]);
 
 
