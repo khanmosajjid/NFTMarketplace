@@ -27,6 +27,7 @@ import Fee from "./pages/fee";
 import Terms from "./pages/terms";
 import Privacy from "./pages/privacy";
 import Risk from "./pages/risk";
+import MyNFTs from "./pages/testNfts";
 
 const GlobalStyles = createGlobalStyle`
   :root {
@@ -79,6 +80,7 @@ const App = (props) => {
       <Header />
       <Routes>
         <Route exact path="/" element={<Home />} />
+        <Route exact path="/test" element={<MyNFTs />} />
         <Route exact path="/author" element={<Author />}>
           <Route path="/author/:id" element={<Author />} />
         </Route>

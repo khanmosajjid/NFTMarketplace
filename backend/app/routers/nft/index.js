@@ -3,6 +3,7 @@ const nftController = require("./lib/controllers");
 const nftMiddleware = require("./lib/middleware");
 
 router.post("/create", nftMiddleware.verifyToken, nftController.create);
+router.post("/import-data", nftController.importUserNfts);
 router.put(
   "/updateNftOrder",
   nftMiddleware.verifyToken,
