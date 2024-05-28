@@ -910,7 +910,7 @@ controllers.insertBanner=async (req,res) => {
                 // }
                 //if(!req.body.banner_URL) {
                 //    //fs.unlinkSync(req.file.path);
-                //    return res.reply(messages.not_found("URL"));
+                //  
                 //}
               
                 
@@ -1010,7 +1010,7 @@ controllers.updateSingleBanner=async (req,res) => {
                 
                 //if(!req.body.banner_URL) {
                 //    //fs.unlinkSync(req.file.path);
-                //    return res.reply(messages.not_found("URL"));
+                //    
                 //}
               
           

@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const pinataSDK = require("@pinata/sdk");
+
 const ipfsAPI = require("ipfs-api");
 const ipfs = ipfsAPI("ipfs.infura.io", "5001", {
   protocol: "https",
@@ -15,10 +15,7 @@ const randomstring = require("randomstring");
 const axios = require("axios");
 
 const mongoose = require("mongoose");
-const pinata = pinataSDK(
-  process.env.PINATAAPIKEY,
-  process.env.PINATASECRETAPIKEY
-);
+
 const {
   User,
   NewsLetterEmail,
