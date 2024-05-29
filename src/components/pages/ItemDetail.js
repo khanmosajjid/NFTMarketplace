@@ -3038,6 +3038,7 @@ const ItemDetails = function (props) {
                                 <div className="nft_attr">
                                   <h5>{data.trait_type}</h5>
                                   <h4>{data.value}</h4>
+                                  <h4>{nftDetails.attributes.filter((attr)=>attr.trait_type.trim().toLowerCase()==data.trait_type.trim().toLowerCase())[0]?.rarityPercentage.toFixed(2)||0}%</h4>
                                 </div>
                               </div>
                             );

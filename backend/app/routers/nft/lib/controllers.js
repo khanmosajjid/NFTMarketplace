@@ -269,6 +269,7 @@ controllers.create = async (req, res) => {
                   //console.log("user is-->",user)
                   const nft = new NFT({
                     nTitle: req.body.nTitle,
+                    attributes:metaData,
                     nCollection:
                       req.body.nCollection && req.body.nCollection != undefined
                         ? req.body.nCollection
@@ -318,6 +319,7 @@ controllers.create = async (req, res) => {
                       collection.save();
 
                       return res.reply(messages.created("NFT"), result);
+                      await GetTraitsRarity()
                     })
                     .catch((error) => {
                       console.log("Created NFT error", error);
@@ -3925,9 +3927,11 @@ controllers.getUnlockableContent = async (req, res) => {
 
 // const sdk = require('@api/opensea')
 const https = require('https');
+const GetTraitsRarity = require("./helpers");
 
 
 controllers.importUserNfts = async (req, res) => {
+  // 
   try {
     const url = `https://testnets-api.opensea.io/api/v2/chain/amoy/account/0x37E536e9a748262bd5912cc9D73B3fdf636BaDdf/nfts`;
     const options = {

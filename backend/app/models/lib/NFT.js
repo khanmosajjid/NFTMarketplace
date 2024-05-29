@@ -80,6 +80,13 @@ const nftSchema = mongoose.Schema({
     type: String,
     require: true
   },
+  attributes:[
+    {
+      trait_type:String,
+      value:String,
+      rarityPercentage:Number
+    }
+  ],
   nLazyMintingStatus: {
     type: Number,
     default: 0,
