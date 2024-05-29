@@ -900,10 +900,13 @@ const CreateSingle = (props) => {
           });
         }
 
+        // let metaDataJson = JSON.stringify(metaData);
+        console.log('yok', process.env.REACT_APP_IPFS_URL +'/'+ res?.data?.nHash)
+        let tokenURI = process.env.REACT_APP_IPFS_URL +'/'+ res?.data?.nHash
         try {
           let tokenUri = await NFTcontract.setCustomTokenUri(
             nextId,
-            process.env.REACT_APP_IPFS_URL + res?.data?.nHash,
+            tokenURI,
             { from: currentUser, value: 0 }
           );
           tokenUri = await tokenUri.wait()

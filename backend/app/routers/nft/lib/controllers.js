@@ -238,7 +238,7 @@ controllers.create = async (req, res) => {
 
                   const mOptions = {
                     pinataMetadata: {
-                      name: "hello",
+                      name: req.body.nTokenID,
                     },
                     pinataOptions: {
                       cidVersion: 0,
@@ -1389,13 +1389,13 @@ controllers.nftID = async (req, res) => {
       if (aNFT.nLockedContent) {
         aNFT.nLockedContent = 1;
       }
-      if (aNFT.nCreater.sEmail) {
+      if (aNFT.nCreater?.sEmail) {
         delete aNFT.nCreater.sEmail;
       }
       return res.reply(messages.success(), aNFT);
     }
   } catch (error) {
-    //console.log("Error in 1172",error)
+    console.log("Error in 1172",error)
     return res.reply(messages.server_error());
   }
 };
@@ -1426,11 +1426,11 @@ controllers.getCollectionDetails = (req, res) => {
   }
 };
 
-controllers.updateCollectionVoulme=  async(req,res)=>{
-  const {id,price} = req.body
+controllers.updateCollectionVoulme = async (req, res) => {
+  const { id, price } = req.body
   try {
-    let collection= await Collection.updateOne({sContractAddress:id},{$inc:{volume:price}})
-     return res.reply(messages.no_prefix("Volume updated."), collection);
+    let collection = await Collection.updateOne({ sContractAddress: id }, { $inc: { volume: price } })
+    return res.reply(messages.no_prefix("Volume updated."), collection);
   } catch (error) {
     console.log(error)
     return res.reply(messages.server_error());
@@ -1484,15 +1484,15 @@ controllers.getMetaDataOfCollection = async (req, res) => {
     console.log('nfts', nfts[0]);
     const floorPrice = nfts.length > 0 ? nfts[0].nOrders[0]?.oPrice.toString() : 0;
     const latestPrice = nfts.length > 0 ? nfts[nfts.length - 1].nOrders[0]?.oPrice.toString() : 0;
-    
 
-    const Price = await Collection.findOne({sContractAddress:req.body.collectionId})
+
+    const Price = await Collection.findOne({ sContractAddress: req.body.collectionId })
     console.log(floorPrice);
     let metaData = {
       "floorPrice": floorPrice || 0,
       "items": nfts.length,
       "latestPrice": latestPrice,
-      "volume":Price?.volume || 0,
+      "volume": Price?.volume || 0,
     }
     return res.reply(messages.no_prefix("MetaData Details"), metaData);
   } catch (error) {
@@ -2668,6 +2668,7 @@ controllers.getOwnedNFTlist = async (req, res) => {
         .skip(startIndex)
         .exec()
         .then((res) => {
+          console.log(res)
           data.push(res);
         })
         .catch((e) => {
@@ -3921,5 +3922,109 @@ controllers.getUnlockableContent = async (req, res) => {
     return res.reply(messages.server_error());
   }
 };
+
+// const sdk = require('@api/opensea')
+const https = require('https');
+
+
+controllers.importUserNfts = async (req, res) => {
+  try {
+    const url = `https://testnets-api.opensea.io/api/v2/chain/amoy/account/0x37E536e9a748262bd5912cc9D73B3fdf636BaDdf/nfts`;
+    const options = {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+        'x-api-key': '2e214afea34e408a8caa90d9059dcb2e'
+      }
+    };
+    https.get(url, options, (response) => {
+      let data = '';
+
+      response.on('data', (chunk) => {
+        data += chunk;
+      });
+      // console.log('data',data)
+      response.on('end', async () => {
+        if (response.statusCode === 200) {
+          const nfts = JSON.parse(data).nfts
+          const dbNfts = await NFT.find()
+          console.log(dbNfts)
+          const filteredOtherNfts = nfts.filter(otherNft => {
+            const isInDbNfts = dbNfts.some(dbNft => {
+              return (
+                dbNft.nCollection === otherNft.contract &&
+                dbNft.nTokenID === parseInt(otherNft.identifier)
+              );
+            });
+            return !isInDbNfts;
+          });
+          console.log(filteredOtherNfts)
+          filteredOtherNfts.map(async(nft) => {
+            const newNft = new NFT({
+              nTitle: nft.name,
+              nCollection:
+                nft.contract ? nft.contract
+                  : "",
+              nHash: nft?.image_url?.split("/").pop() || null,
+              nOwnedBy: [{
+                address: "0x37E536e9a748262bd5912cc9D73B3fdf636BaDdf",
+                quantity: 1,
+                // name: user.sUserName,
+                // lazyMinted: req.body.nLazyMintingStatus
+              }], //setting ownedby for first time empty
+              nQuantity: 1,
+              nCollaborator: null,
+              nCollaboratorPercentage: null,
+              nRoyaltyPercentage: null,
+              nDescription: nft.description,
+              nCreater: req.userId,
+              nTokenID: nft.identifier,
+              nType: 1,
+              nLockedContent: null,
+              nNftImage: nft?.image_url,
+              nLazyMintingStatus: null,
+              nNftImageType: "image",
+              isBlocked: false,
+              hash: null,
+              hashStatus: null,
+            });
+            const nftData=await newNft.save()
+            console.log(nftData)
+            const order = new Order({
+              oNftId: nftData._id,
+              oSellerWalletAddress: nftData.nOwnedBy?.address,
+              oTokenId: nftData.nTokenId,
+              oTokenAddress: nftData.nCollection,
+              oQuantity: nftData.nQuantity,
+              oType: nftData.nType,
+              oPaymentToken:null,
+              oPrice: 0,
+              oSalt: null,
+              oSignature: null,
+              oValidUpto: null,
+              oBundleTokens: [],
+              oBundleTokensQuantities: [],
+              oSeller: req.userId,
+              auction_end_date: null,
+            });
+            const orderData=await order.save()
+            await NFT.updateOne({_id:nftData._id},{ $push: { nOrders: orderData._id } })
+          }
+          )
+          res.json(JSON.parse(data));
+        } else {
+          res.status(response.statusCode).json({ error: 'Failed to fetch NFTs' });
+        }
+      });
+    }).on('error', (error) => {
+      console.error('Error fetching NFTs:', error);
+      res.status(500).json({ error: 'An error occurred while fetching data' });
+    });
+
+  } catch (error) {
+    console.log('error', error)
+    return res.reply(messages.server_error());
+  }
+}
 
 module.exports = controllers;
