@@ -6,8 +6,6 @@ import { exportInstance } from '../../apiServices';
 const MyNFTs = () => {
     const [nfts, setNfts] = useState([]);
 
-
-
     async function fetchNfts() {
         if (window.ethereum) {
             const web3 = new Web3(window.ethereum);

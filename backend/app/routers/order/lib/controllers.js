@@ -5,12 +5,9 @@ const ipfs = ipfsAPI("ipfs.infura.io", "5001", {
   auth: "21w11zfV67PHKlkAEYAZWoj2tsg:f2b73c626c9f1df9f698828420fa8439",
 });
 const { Order, NFT, Bid, User, Collection } = require("../../../models");
-const pinataSDK = require("@pinata/sdk");
-const multer = require("multer");
-const pinata = pinataSDK(
-  process.env.PINATAAPIKEY,
-  process.env.PINATASECRETAPIKEY
-);
+
+
+
 const mongoose = require("mongoose");
 const validators = require("./validators");
 var jwt = require("jsonwebtoken");

@@ -1005,22 +1005,7 @@ const CreateSingle = (props) => {
             currentUser,
             `https://ipfs.io/ipfs/${res.data.nHash}`
           );
-          //try {
-          //  let tokenUri=await NFTcontract.setCustomTokenUri(
-          //    nextId,
-          //    process.env.REACT_APP_IPFS_URL+res?.data?.nHash,
-          //    {from: currentUser,value: 0}
-          //  );
-          //  if(tokenUri&&tokenUri.status===0) {
-          //    return;
-          //  }
-          //}
-          //catch(e) {
-          //  console.log("e",e)
-          //  setisPutOnSalePopupClass("errorIcon");
-          //  stopCreateNFTPopup();
-          //  return
-          //}
+          
 
 
           let signature = await getSignature(currentUser, ...sellerOrder);

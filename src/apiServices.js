@@ -1537,3 +1537,32 @@ export const updateVolume = async (data) => {
     return err;
   }
 };
+
+export const importNFT = async (data) => {
+  console.log("data is ---->",data)
+  let data1={walletAddress:data}
+  const requestOptions = {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getHeaders(),
+    },
+    body: JSON.stringify(data1),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/nft/import-data",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};

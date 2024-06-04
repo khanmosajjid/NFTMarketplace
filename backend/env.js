@@ -57,3 +57,11 @@ process.env.SMTP_PASSWORD = process.env.SMTP_PASSWORD || "example@123"; // Your 
 process.env.PINATAAPIKEY = process.env.PINATAAPIKEY;
 process.env.PINATASECRETAPIKEY = process.env.PINATASECRETAPIKEY;
 
+
+
+// # CreatorV1 proxy deployed at: 0x7932f5F04F96ea09CD2A50F5316058d662d4Cbe5
+// # CreatorV1 implementation deployed at: 0xE0e360e510D26450377131Af7769E72892C86034
+// # Initializing implementation contract. Signer is: 0xad4d8484B7F6944985F761F1f752027FdD06AEd6
+// # Deploying Marketplace proxy
+// # Marketplace proxy deployed at: 0x4ce659B2408641D5A1D700990d7DfB0Df82DdD9d
+// # Marketplace implementation deployed at: 0xc2bE4AA6aff350ECaFa9a093CD222081CBAEE1EF

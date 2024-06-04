@@ -908,7 +908,7 @@ const CreateMultiple = (props) => {
         setisRoyaltyPopupClass("checkiconCompleted");
         setisUploadPopupClass("clockloader");
 
-        // if (!isLazyMinting) {
+       
         try {
           let tokenUri = await NFTcontract.setCustomTokenUri(
             nextId,
@@ -928,7 +928,7 @@ const CreateMultiple = (props) => {
           stopCreateNFTPopup();
           return;
         }
-        // }
+      
         if (
           res.message ===
           "Invalid file type! Only JPG, JPEG, PNG, GIF, MP3 & MPEG  files are allowed. "
