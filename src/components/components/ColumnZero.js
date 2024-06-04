@@ -40,7 +40,7 @@ const OnSaleItems = (props) => {
       if (props.isAuthor) {
         setProfile(props.profile);
         if (props.profile) {
-
+          console.log('hh')
           data = await getUsersNFTs(
             currPage,
             perPageCount,

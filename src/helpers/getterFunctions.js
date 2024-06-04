@@ -335,7 +335,7 @@ export const getUsersNFTs = async (
                 ? data.nOrders[0].auction_end_date
                 : ""
               : "";
-          data.authorLink = `/author/${data.nCreater._id}`;
+          data.authorLink = `/author/${data.nCreater?._id}`;
           data.previewLink = "#";
           data.nftLink = "#";
           data.bidLink = "#";
