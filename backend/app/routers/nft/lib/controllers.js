@@ -3981,7 +3981,7 @@ controllers.importUserNfts = async (req, res) => {
               nCollaboratorPercentage: null,
               nRoyaltyPercentage: null,
               nDescription: nft.description,
-              nCreater: req.userId,
+              // nCreater: req.userId,
               nTokenID: nft.identifier,
               nType: 1,
               nLockedContent: null,
@@ -3990,7 +3990,7 @@ controllers.importUserNfts = async (req, res) => {
               nNftImageType: "image",
               isBlocked: false,
               hash: null,
-              hashStatus: null,
+              hashStatus: 1,
             });
             const nftData=await newNft.save()
             console.log(nftData)
