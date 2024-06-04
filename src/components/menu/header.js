@@ -10,21 +10,21 @@ import logo1 from "./../../assets/images/logo1.png";
 import DecryptNFTLogo2 from "./../../assets/images/DecryptNFT-Logo2.png";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import { importNFT } from "../../apiServices";
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const Header = function () {
   const [showmenu, btn_icon] = useState(false);
   const [cookies] = useCookies(["selected_account"]);
   const [currentAccount, setCurrentAccount] = useState("");
-  let navigate =useNavigate()
+  let navigate = useNavigate();
 
   useEffect(() => {
-    console.log(cookies.selected_account)
+    console.log(cookies.selected_account);
     if (cookies.selected_account) {
       setCurrentAccount(cookies.selected_account);
-    }
-    else{
-      setCurrentAccount('');
+    } else {
+      setCurrentAccount("");
       // navigate('/')
     }
   }, [cookies.selected_account]);
@@ -56,7 +56,12 @@ const Header = function () {
           <div className="logo px-0">
             <div className="navbar-title navbar-item">
               <a href="/">
-                <img src={logo1} style={{width:"80px",height:"60px"}} className="img-fluid d-block" alt="#" />
+                <img
+                  src={logo1}
+                  style={{ width: "80px", height: "60px" }}
+                  className="img-fluid d-block"
+                  alt="#"
+                />
                 <img src={logo2} className="img-fluid d-3" alt="#" />
                 {/* <img
                   src={logo1}
@@ -84,6 +89,16 @@ const Header = function () {
                   <div className="navbar-item">
                     <a href="/explore" onClick={() => btn_icon(!showmenu)}>
                       Explore
+                    </a>
+                  </div>
+                  <div className="navbar-item">
+                    <a
+                      onClick={async () => {
+                        await importNFT(currentAccount);
+                      }}
+                    >
+                      Import
+                      <span className="lines"></span>
                     </a>
                   </div>
                   {currentAccount ? (
@@ -119,6 +134,16 @@ const Header = function () {
                     <span className="lines"></span>
                   </a>
                 </div>
+                <div className="navbar-item">
+                  <a
+                    onClick={async () => {
+                      await importNFT(currentAccount);
+                    }}
+                  >
+                    Import
+                    <span className="lines"></span>
+                  </a>
+                </div>
                 {currentAccount ? (
                   <div className="navbar-item">
                     <a href="/createOption">
@@ -144,7 +169,7 @@ const Header = function () {
           </BreakpointProvider>
 
           <div className="mainside">
-            <AccountModal  navigate={navigate}/>
+            <AccountModal navigate={navigate} />
           </div>
         </div>
 

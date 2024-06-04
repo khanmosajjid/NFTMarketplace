@@ -213,9 +213,7 @@ controllers.create = async (req, res) => {
           const request = http.get(`${fileUrl}`, function (response) {
             var stream = response.pipe(file);
             //console.log("strema is------>",stream)
-            const readableStreamForFile = fs.createReadStream(
-              filePath
-            );
+            const readableStreamForFile = fs.createReadStream(filePath);
 
             stream.on("finish", async function () {
               pinata
@@ -269,7 +267,7 @@ controllers.create = async (req, res) => {
                   //console.log("user is-->",user)
                   const nft = new NFT({
                     nTitle: req.body.nTitle,
-                    attributes:metaData,
+                    attributes: metaData,
                     nCollection:
                       req.body.nCollection && req.body.nCollection != undefined
                         ? req.body.nCollection
@@ -319,7 +317,7 @@ controllers.create = async (req, res) => {
                       collection.save();
 
                       return res.reply(messages.created("NFT"), result);
-                      await GetTraitsRarity()
+                      await GetTraitsRarity();
                     })
                     .catch((error) => {
                       console.log("Created NFT error", error);
@@ -666,9 +664,7 @@ controllers.createCollection = async (req, res) => {
               console.log("here");
               var stream = response.pipe(file);
               const filePath = path.join(tempDir, req.file.originalname);
-              const readableStreamForFile = fs.createReadStream(
-                filePath
-              );
+              const readableStreamForFile = fs.createReadStream(filePath);
               console.log("herer for testing");
 
               stream.on("finish", async function () {
@@ -1327,10 +1323,7 @@ controllers.nftID = async (req, res) => {
         options: {
           limit: 1,
         },
-
-      },
-
-      );
+      });
       if (!aNFT) return res.reply(messages.not_found("NFT"));
     } catch (e) {
       console.log("error in NFt find by ID", e);
@@ -1338,14 +1331,16 @@ controllers.nftID = async (req, res) => {
 
     aNFT = aNFT.toObject();
     aNFT.sCollectionDetail = {};
-    console.log('nftttt', aNFT)
+    console.log("nftttt", aNFT);
     // aNFT.sCollectionDetail = await Collection.findOne({
     //   sName:
     //     aNFT.sCollection && aNFT.sCollection != undefined
     //       ? aNFT.sCollection
     //       : "-",
     // });
-    aNFT.sCollectionDetail = await Collection.findOne({ sContractAddress: aNFT.nCollection })
+    aNFT.sCollectionDetail = await Collection.findOne({
+      sContractAddress: aNFT.nCollection,
+    });
     console.log("aNFT.nCreater.sEmail", aNFT?.nCreater?.sEmail);
 
     var token = req.headers.authorization;
@@ -1397,7 +1392,7 @@ controllers.nftID = async (req, res) => {
       return res.reply(messages.success(), aNFT);
     }
   } catch (error) {
-    console.log("Error in 1172",error)
+    console.log("Error in 1172", error);
     return res.reply(messages.server_error());
   }
 };
@@ -1429,15 +1424,18 @@ controllers.getCollectionDetails = (req, res) => {
 };
 
 controllers.updateCollectionVoulme = async (req, res) => {
-  const { id, price } = req.body
+  const { id, price } = req.body;
   try {
-    let collection = await Collection.updateOne({ sContractAddress: id }, { $inc: { volume: price } })
+    let collection = await Collection.updateOne(
+      { sContractAddress: id },
+      { $inc: { volume: price } }
+    );
     return res.reply(messages.no_prefix("Volume updated."), collection);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.reply(messages.server_error());
   }
-}
+};
 
 controllers.getCollectionDetailsByAddress = (req, res) => {
   try {
@@ -1456,9 +1454,11 @@ controllers.getCollectionDetailsByAddress = (req, res) => {
 
 controllers.getMetaDataOfCollection = async (req, res) => {
   try {
-    console.log(req.body.collectionId)
-    const nfts = await NFT.find({ nCollection: req.body.collectionId }).populate('nOrders')
-    nfts.sort((a, b) => a.nOrders[0]?.oPrice - b.nOrders[0]?.oPrice)
+    console.log(req.body.collectionId);
+    const nfts = await NFT.find({
+      nCollection: req.body.collectionId,
+    }).populate("nOrders");
+    nfts.sort((a, b) => a.nOrders[0]?.oPrice - b.nOrders[0]?.oPrice);
     // const nfts = await NFT.aggregate([
     //   // Match NFTs belonging to the specified collection
     //   { $match: { nCollection: req.body.collectionId } },
@@ -1483,25 +1483,28 @@ controllers.getMetaDataOfCollection = async (req, res) => {
     //   // Limit to 1 document to get the minimum price
     //   // { $limit: 1 }
     // ]);
-    console.log('nfts', nfts[0]);
-    const floorPrice = nfts.length > 0 ? nfts[0].nOrders[0]?.oPrice.toString() : 0;
-    const latestPrice = nfts.length > 0 ? nfts[nfts.length - 1].nOrders[0]?.oPrice.toString() : 0;
+    console.log("nfts", nfts[0]);
+    const floorPrice =
+      nfts.length > 0 ? nfts[0].nOrders[0]?.oPrice.toString() : 0;
+    const latestPrice =
+      nfts.length > 0 ? nfts[nfts.length - 1].nOrders[0]?.oPrice.toString() : 0;
 
-
-    const Price = await Collection.findOne({ sContractAddress: req.body.collectionId })
+    const Price = await Collection.findOne({
+      sContractAddress: req.body.collectionId,
+    });
     console.log(floorPrice);
     let metaData = {
-      "floorPrice": floorPrice || 0,
-      "items": nfts.length,
-      "latestPrice": latestPrice,
-      "volume": Price?.volume || 0,
-    }
+      floorPrice: floorPrice || 0,
+      items: nfts.length,
+      latestPrice: latestPrice,
+      volume: Price?.volume || 0,
+    };
     return res.reply(messages.no_prefix("MetaData Details"), metaData);
   } catch (error) {
-    console.log('Error getting metadata for collection', error);
+    console.log("Error getting metadata for collection", error);
     return res.reply(messages.server_error());
   }
-}
+};
 
 controllers.setTransactionHash = async (req, res) => {
   try {
@@ -1608,8 +1611,8 @@ controllers.landing = async (req, res) => {
                         $eq: [
                           "$$user_likes",
                           req.userId &&
-                            req.userId != undefined &&
-                            req.userId != null
+                          req.userId != undefined &&
+                          req.userId != null
                             ? mongoose.Types.ObjectId(req.userId)
                             : "",
                         ],
@@ -1732,8 +1735,8 @@ controllers.landing = async (req, res) => {
                         $eq: [
                           "$$user_likes",
                           req.userId &&
-                            req.userId != undefined &&
-                            req.userId != null
+                          req.userId != undefined &&
+                          req.userId != null
                             ? mongoose.Types.ObjectId(req.userId)
                             : "",
                         ],
@@ -1856,8 +1859,8 @@ controllers.landing = async (req, res) => {
                         $eq: [
                           "$$user_likes",
                           req.userId &&
-                            req.userId != undefined &&
-                            req.userId != null
+                          req.userId != undefined &&
+                          req.userId != null
                             ? mongoose.Types.ObjectId(req.userId)
                             : "",
                         ],
@@ -2271,7 +2274,7 @@ controllers.updateNftOrder = async (req, res) => {
       nftownerID,
       { $inc: { nQuantityLeft: -req.body.putOnSaleQty } },
       { new: true },
-      function (err, response) { }
+      function (err, response) {}
     );
     if (req.body.erc721) {
       await NFT.findByIdAndUpdate(sId, {
@@ -2309,8 +2312,8 @@ controllers.likeNFT = async (req, res) => {
           let likeARY =
             NFTData.nUser_likes && NFTData.nUser_likes.length
               ? NFTData.nUser_likes.filter(
-                (v) => v.toString() == req.userId.toString()
-              )
+                  (v) => v.toString() == req.userId.toString()
+                )
               : [];
 
           //console.log("like Array",likeARY);
@@ -2495,7 +2498,7 @@ controllers.getOnSaleItems = async (req, res) => {
     NFTSearchArray["isBlocked"] = 0;
     if (sTextsearch !== "") {
       NFTSearchArray["nTitle"] = {
-        $regex: new RegExp(sTextsearch,),
+        $regex: new RegExp(sTextsearch),
         $options: "i",
       };
     }
@@ -2670,7 +2673,7 @@ controllers.getOwnedNFTlist = async (req, res) => {
         .skip(startIndex)
         .exec()
         .then((res) => {
-          console.log(res)
+          console.log(res);
           data.push(res);
         })
         .catch((e) => {
@@ -3088,10 +3091,10 @@ controllers.transferNfts = async (req, res) => {
         (o) => o.address === req.body.receiver.toLowerCase()
       ).quantity
         ? parseInt(
-          _NFTB.nOwnedBy.find(
-            (o) => o.address === req.body.receiver.toLowerCase()
-          ).quantity
-        )
+            _NFTB.nOwnedBy.find(
+              (o) => o.address === req.body.receiver.toLowerCase()
+            ).quantity
+          )
         : 0;
       boughtQty = req.body.qty;
       let ownedQty = parseInt(currentQty) + parseInt(boughtQty);
@@ -3449,7 +3452,7 @@ controllers.getSearchedNft = async (req, res) => {
 controllers.updateCollectionToken = async (req, res) => {
   try {
     console.log("update collection token is called", req.body);
-    console.log('reqdddd', req.params.collectionAddress);
+    console.log("reqdddd", req.params.collectionAddress);
     if (!req.params.collectionAddress)
       return res.reply(messages.not_found("Contract Address Not Found"));
     const contractAddress = req.params.collectionAddress;
@@ -3457,12 +3460,12 @@ controllers.updateCollectionToken = async (req, res) => {
     const collection = await Collection.findOne({
       sContractAddress: contractAddress,
     });
-    console.log("colelellel", collection)
+    console.log("colelellel", collection);
     let nextId = collection.getNextId();
-    console.log(nextId)
+    console.log(nextId);
     collection.nextId = nextId + 1;
     collection.save();
-    console.log("Work donee")
+    console.log("Work donee");
     return res.reply(messages.success("Token Updated", nextId + 1));
   } catch (error) {
     return res.reply(messages.server_error());
@@ -3926,109 +3929,119 @@ controllers.getUnlockableContent = async (req, res) => {
 };
 
 // const sdk = require('@api/opensea')
-const https = require('https');
+const https = require("https");
 const GetTraitsRarity = require("./helpers");
 
-
 controllers.importUserNfts = async (req, res) => {
-  // 
+  let walletAddress = req.body.walletAddress;
+  console.log("wallet address is",req.body)
   try {
-    const url = `https://testnets-api.opensea.io/api/v2/chain/amoy/account/0x37E536e9a748262bd5912cc9D73B3fdf636BaDdf/nfts`;
+    const url = `https://testnets-api.opensea.io/api/v2/chain/amoy/account/${walletAddress}/nfts`;
+    
     const options = {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'accept': 'application/json',
-        'x-api-key': '2e214afea34e408a8caa90d9059dcb2e'
-      }
+        accept: "application/json",
+        "x-api-key": "2e214afea34e408a8caa90d9059dcb2e",
+      },
     };
-    https.get(url, options, (response) => {
-      let data = '';
+    https
+      .get(url, options, (response) => {
+        let data = "";
 
-      response.on('data', (chunk) => {
-        data += chunk;
-      });
-      // console.log('data',data)
-      response.on('end', async () => {
-        if (response.statusCode === 200) {
-          const nfts = JSON.parse(data).nfts
-          const dbNfts = await NFT.find()
-          console.log(dbNfts)
-          const filteredOtherNfts = nfts.filter(otherNft => {
-            const isInDbNfts = dbNfts.some(dbNft => {
-              return (
-                dbNft.nCollection === otherNft.contract &&
-                dbNft.nTokenID === parseInt(otherNft.identifier)
+        response.on("data", (chunk) => {
+          data += chunk;
+        });
+        console.log('data',data)
+        response.on("end", async () => {
+          if (response.statusCode === 200) {
+            const nfts = JSON.parse(data).nfts;
+
+            console.log("nfts are------>>>",nfts);
+            const dbNfts = await NFT.find();
+            console.log("dbNfts",dbNfts);
+            const filteredOtherNfts = nfts.filter((otherNft) => {
+              const isInDbNfts = dbNfts.some((dbNft) => {
+                return (
+                  dbNft.nCollection === otherNft.contract &&
+                  dbNft.nTokenID === parseInt(otherNft.identifier)
+                );
+              });
+              return !isInDbNfts;
+            });
+            console.log("filteredOtherNfts", filteredOtherNfts);
+            filteredOtherNfts.map(async (nft) => {
+              const newNft = new NFT({
+                nTitle: nft.name,
+                nCollection: nft.contract ? nft.contract : "",
+                nHash: nft?.image_url?.split("/").pop() || null,
+                nOwnedBy: [
+                  {
+                    address: "0x37E536e9a748262bd5912cc9D73B3fdf636BaDdf",
+                    quantity: 1,
+                    // name: user.sUserName,
+                    // lazyMinted: req.body.nLazyMintingStatus
+                  },
+                ], //setting ownedby for first time empty
+                nQuantity: 1,
+                nCollaborator: null,
+                nCollaboratorPercentage: null,
+                nRoyaltyPercentage: null,
+                nDescription: nft.description,
+                nCreater: req.userId,
+                nTokenID: nft.identifier,
+                nType: 1,
+                nLockedContent: null,
+                nNftImage: nft?.image_url,
+                nLazyMintingStatus: null,
+                nNftImageType: "image",
+                isBlocked: false,
+                hash: null,
+                hashStatus: null,
+              });
+              const nftData = await newNft.save();
+              console.log(nftData);
+              const order = new Order({
+                oNftId: nftData._id,
+                oSellerWalletAddress: nftData.nOwnedBy?.address,
+                oTokenId: nftData.nTokenId,
+                oTokenAddress: nftData.nCollection,
+                oQuantity: nftData.nQuantity,
+                oType: nftData.nType,
+                oPaymentToken: null,
+                oPrice: 0,
+                oSalt: null,
+                oSignature: null,
+                oValidUpto: null,
+                oBundleTokens: [],
+                oBundleTokensQuantities: [],
+                oSeller: req.userId,
+                auction_end_date: null,
+              });
+              const orderData = await order.save();
+              await NFT.updateOne(
+                { _id: nftData._id },
+                { $push: { nOrders: orderData._id } }
               );
             });
-            return !isInDbNfts;
-          });
-          console.log(filteredOtherNfts)
-          filteredOtherNfts.map(async(nft) => {
-            const newNft = new NFT({
-              nTitle: nft.name,
-              nCollection:
-                nft.contract ? nft.contract
-                  : "",
-              nHash: nft?.image_url?.split("/").pop() || null,
-              nOwnedBy: [{
-                address: "0x37E536e9a748262bd5912cc9D73B3fdf636BaDdf",
-                quantity: 1,
-                // name: user.sUserName,
-                // lazyMinted: req.body.nLazyMintingStatus
-              }], //setting ownedby for first time empty
-              nQuantity: 1,
-              nCollaborator: null,
-              nCollaboratorPercentage: null,
-              nRoyaltyPercentage: null,
-              nDescription: nft.description,
-              nCreater: req.userId,
-              nTokenID: nft.identifier,
-              nType: 1,
-              nLockedContent: null,
-              nNftImage: nft?.image_url,
-              nLazyMintingStatus: null,
-              nNftImageType: "image",
-              isBlocked: false,
-              hash: null,
-              hashStatus: null,
-            });
-            const nftData=await newNft.save()
-            console.log(nftData)
-            const order = new Order({
-              oNftId: nftData._id,
-              oSellerWalletAddress: nftData.nOwnedBy?.address,
-              oTokenId: nftData.nTokenId,
-              oTokenAddress: nftData.nCollection,
-              oQuantity: nftData.nQuantity,
-              oType: nftData.nType,
-              oPaymentToken:null,
-              oPrice: 0,
-              oSalt: null,
-              oSignature: null,
-              oValidUpto: null,
-              oBundleTokens: [],
-              oBundleTokensQuantities: [],
-              oSeller: req.userId,
-              auction_end_date: null,
-            });
-            const orderData=await order.save()
-            await NFT.updateOne({_id:nftData._id},{ $push: { nOrders: orderData._id } })
+            res.json(JSON.parse(data));
+          } else {
+            res
+              .status(response.statusCode)
+              .json({ error: "Failed to fetch NFTs" });
           }
-          )
-          res.json(JSON.parse(data));
-        } else {
-          res.status(response.statusCode).json({ error: 'Failed to fetch NFTs' });
-        }
+        });
+      })
+      .on("error", (error) => {
+        console.error("Error fetching NFTs:", error);
+        res
+          .status(500)
+          .json({ error: "An error occurred while fetching data" });
       });
-    }).on('error', (error) => {
-      console.error('Error fetching NFTs:', error);
-      res.status(500).json({ error: 'An error occurred while fetching data' });
-    });
-
   } catch (error) {
-    console.log('error', error)
+    console.log("error", error);
     return res.reply(messages.server_error());
   }
-}
+};
 
 module.exports = controllers;
