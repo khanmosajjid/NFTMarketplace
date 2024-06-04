@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from '@reach/router';
+
 import logo1 from "./../../assets/images/logo1.png";
+import { Link } from 'react-router-dom';
 const footer= () => (
   <footer className="footer-light">
             <div className="container">
@@ -22,30 +23,29 @@ const footer= () => (
                             </div>
                             <div className="col-md-4 col-sm-6 col-xs-1">
                                 <div className="widget">
-                                    <h5 className='font_24 text-dark NunitoBold'>Resources</h5>
+                                    <h5 className='font_24 text-dark NunitoBold'>Legal</h5>
                                     <ul>
-                                        {/* <li><Link to="">About Us</Link></li> */}
-                                        {/* <li><Link to="">Privacy Policy</Link></li> */}
-                                        <li><Link to="">Suggestions</Link></li>
+                                        <li><Link to="/terms">Terms</Link></li>
+                                        <li><Link to="/privacy">Privacy Policy</Link></li>
+                                        <li><Link to="/risk">Risk Notification</Link></li>
+                                        {/* <li><Link to="">Suggestions</Link></li> */}
                                         {/* <li><Link to="">Terms & Conditions</Link></li> */}
-                                        <li><Link to="">Docs</Link></li>
-                                        <li><Link to="">Newsletter</Link></li>
+                                        {/* <li><Link to="">Docs</Link></li> */}
+                                        {/* <li><Link to="">Newsletter</Link></li> */}
                                     </ul>
                                 </div>
                             </div>
-                            {/* <div className="col-md-4 col-sm-6 col-xs-1">
+                            <div className="col-md-4 col-sm-6 col-xs-1">
                                 <div className="widget">
                                     <h5 className='font_24 text-dark NunitoBold'>Kunstify</h5>
                                     <ul>
-                                        <li><a href="/about-us">About us</a></li>
-                                        <li><a href="/fee">Fees</a></li>
-                                        <li><a href="/terms">Terms</a></li>
-                                        <li><a href="/privacy">Privacy Policy</a></li>
-                                        <li><a href="/risk">Risk Notification</a></li>
-                                        <li><Link to="">Mailing List</Link></li>
+                                        <li><Link to="/about-us">About us</Link></li>
+                                        <li><Link to="/fee">Fees</Link></li>
+                                        <li><a href="https://paiblock.io/data-deletion/" target='_blank'>Account Deletion</a></li>
+                                        
                                     </ul>
                                 </div>
-                            </div> */}
+                            </div>
                         </div>
                     </div>
                     <div className="col-md-4 col-sm-6 col-xs-1">
