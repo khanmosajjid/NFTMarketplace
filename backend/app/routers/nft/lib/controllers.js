@@ -3960,13 +3960,15 @@ controllers.importUserNfts = async (req, res) => {
             console.log("response of imports is------>>>", nfts);
            
             if (nfts.token_standard === "erc721") {
-              let con = new web3.eth.Contract(ERC721ABI.abi, ContractAddress);
+              let con = new web3.eth.Contract(ERC721ABI.abi, nft.contract);
               let creator = await con.methods.owner().call();
+              console.log("creator of contract",creator);
               let collectionName = await con.methods.name().call();
-              console.log("currentOwnerAddress", currentOwnerAddress);
+             
             } else {
-              let con = new web3.eth.Contract(ERC1155ABI.abi, ContractAddress);
+              let con = new web3.eth.Contract(ERC1155ABI.abi, nft.contract);
                let creator = await con.methods.owner().call();
+               console.log("creator of contract", creator);
               let quantity = await con.methods
                 .balanceOf(walletAddress, tokenID)
                 .call();
