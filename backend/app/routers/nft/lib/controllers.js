@@ -3983,7 +3983,7 @@ controllers.importUserNfts = async (req, res) => {
                  let creator = await con.methods.owner().call();
                  console.log("creator of contract", creator);
                  let quantity = await con.methods
-                   .balanceOf(walletAddress, tokenID)
+                   .balanceOf(walletAddress, nft.identifier)
                    .call();
                  console.log("qauntity", quantity);
                }
