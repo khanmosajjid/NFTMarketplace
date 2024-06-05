@@ -3958,6 +3958,20 @@ controllers.importUserNfts = async (req, res) => {
             const nfts = JSON.parse(data).nfts;
             const dbNfts = await NFT.find();
             console.log("response of imports is------>>>", nfts);
+           
+            if (nfts.token_standard === "erc721") {
+              let con = new web3.eth.Contract(ERC721ABI.abi, ContractAddress);
+              let creator = await con.methods.owner().call();
+              let collectionName = await con.methods.name().call();
+              console.log("currentOwnerAddress", currentOwnerAddress);
+            } else {
+              let con = new web3.eth.Contract(ERC1155ABI.abi, ContractAddress);
+               let creator = await con.methods.owner().call();
+              let quantity = await con.methods
+                .balanceOf(walletAddress, tokenID)
+                .call();
+              console.log("qauntity", quantity);
+            }
             const filteredOtherNfts = nfts.filter((otherNft) => {
               const isInDbNfts = dbNfts.some((dbNft) => {
                 return (
@@ -3992,9 +4006,9 @@ controllers.importUserNfts = async (req, res) => {
                 nLockedContent: "",
                 nNftImage: nft?.image_url,
                 nLazyMintingStatus: 0,
-                nNftImageType: "image",
+                nNftImageType: "Image",
                 isBlocked: false,
-                hash: null,
+                hash: "",
                 hashStatus: 1,
               });
               const nftData = await newNft.save();
@@ -4015,7 +4029,7 @@ controllers.importUserNfts = async (req, res) => {
                 oBundleTokensQuantities: [],
                 oSeller: req.userId,
                 auction_end_date: null,
-                hashStatus:1
+                hashStatus: 1,
               });
               const orderData = await order.save();
               await NFT.updateOne(
