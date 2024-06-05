@@ -1105,6 +1105,8 @@ const ItemDetails = function (props) {
       let data;
       if (id && id !== undefined) {
         data = await GetNftDetails(id);
+        console.log("data of get nft details is",data);
+
         if (isEmptyObject(data)) {
           window.location.href = "/profile";
         }
@@ -1119,9 +1121,7 @@ const ItemDetails = function (props) {
       if (datas?.length > 0) {
         _ownedQuantity = datas[0].quantity;
       }
-      // let bal = await GetOwnerOfToken(data.nCollection, data.nTokenID, data.nType, currentUser, true);
-      // console.log("ball", bal, _ownedQuantity, isLazyMint)
-      console.log("refreeeeeeeee", currentUser, data);
+   
       if (
         currentUser &&
         currentUser !== "null" &&
@@ -1135,15 +1135,15 @@ const ItemDetails = function (props) {
           typeof data?.nLazyMintingStatus
         );
         if (data?.nLazyMintingStatus == 2 || data?.nLazyMintingStatus == 0) {
-          console.log("refreeeeeeeee", "now work");
+         
           let bal = await GetOwnerOfToken(
             data.nCollection,
             data.nTokenID,
             data.nType,
             currentUser,
-            true
+            
           );
-          console.log("refreeeeeeeee", bal);
+          console.log("balllancee----", bal);
           setOriginalQty(bal);
 
           let res = await checkOwnerChangeAndUpdate(

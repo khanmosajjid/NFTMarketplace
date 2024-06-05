@@ -1,5 +1,3 @@
-
-
 import {
   exportInstance,
   GetCollectionsByAddress,
@@ -53,7 +51,7 @@ export const buildSellOrder = async (id) => {
       details.oSalt,
     ];
     if (isEmptyObject(details)) {
-      return false
+      return false;
     }
     return order;
   } catch (e) {
@@ -62,7 +60,7 @@ export const buildSellOrder = async (id) => {
 };
 
 export const buildBuyerOrder = async (bidData) => {
-  let buyerOrder = []
+  let buyerOrder = [];
   let amount = new BigNumber(bidData?.bidPrice?.toString())
     .multipliedBy(new BigNumber(bidData.bidQuantity?.toString()))
     .toString();
@@ -107,14 +105,12 @@ export const buildBuyerOrder = async (bidData) => {
           buyerOrder.push(parseInt(bidData?.salt));
       }
     }
-  }
-  else {
+  } else {
     let sellerOrder = await buildSellOrder(bidData?.orderId);
     if (sellerOrder === false) {
-      slowRefresh(1000)
-      return false
+      slowRefresh(1000);
+      return false;
     }
-
 
     for (let key = 0; key < 11; key++) {
       switch (key) {
@@ -159,8 +155,8 @@ export const buildBuyerOrder = async (bidData) => {
     }
   }
 
-  return buyerOrder
-}
+  return buyerOrder;
+};
 
 export const getAllBidsByNftId = async (nftId) => {
   let dummyData = await fetchBidNft({
@@ -170,8 +166,6 @@ export const getAllBidsByNftId = async (nftId) => {
     bidStatus: "All",
   });
 
-
-
   let data = [];
   let highestBid = 0;
   let highestBidData = {};
@@ -179,83 +173,85 @@ export const getAllBidsByNftId = async (nftId) => {
   let offerLength = 0;
   let bidLength = 0;
 
-  let bidsWithNoOrder = []
+  let bidsWithNoOrder = [];
   for (let i = 0; i < dummyData?.data?.length; i++) {
     try {
-      if (dummyData.data[i]?.oBidStatus !== "Accepted" && dummyData.data[i]?.oBidStatus !== "Rejected") {
-        console.log("dummyData.data[i].oOrderId", dummyData, dummyData.data[i].oOrderId)
+      if (
+        dummyData.data[i]?.oBidStatus !== "Accepted" &&
+        dummyData.data[i]?.oBidStatus !== "Rejected"
+      ) {
+        console.log(
+          "dummyData.data[i].oOrderId",
+          dummyData,
+          dummyData.data[i].oOrderId
+        );
         let _orderPaymentToken = await getOrderDetails({
           orderId: dummyData.data[i].oOrderId,
         });
-        console.log("hhh", _orderPaymentToken)
+        console.log("hhh", _orderPaymentToken);
         if (isEmptyObject(_orderPaymentToken)) {
-          bidsWithNoOrder.push(i)
-        }
-        else
-          orderPaymentToken.push(_orderPaymentToken.oPaymentToken);
+          bidsWithNoOrder.push(i);
+        } else orderPaymentToken.push(_orderPaymentToken.oPaymentToken);
+      } else {
+        bidsWithNoOrder.push(i);
       }
-      else {
-        bidsWithNoOrder.push(i)
-      }
-    }
-    catch (e) {
-      console.log("err", e)
-      bidsWithNoOrder.push(i)
+    } catch (e) {
+      console.log("err", e);
+      bidsWithNoOrder.push(i);
     }
   }
-  console.log("bids with no order", bidsWithNoOrder)
+  console.log("bids with no order", bidsWithNoOrder);
 
   dummyData?.data
     ? // eslint-disable-next-line array-callback-return
-    dummyData.data.map(async (d, i) => {
-      if (!bidsWithNoOrder.includes(i)) {
-        console.log("bids with no iii", i)
-        if (d.oBidStatus !== "Accepted" && d.oBidStatus !== "Rejected") {
-          let paymentSymbol = "";
-          if (orderPaymentToken[i] !== ZERO_ADDRESS) {
-            paymentSymbol = getTokenSymbolByAddress(orderPaymentToken[i]);
-          }
-          if (Number(d.oBidPrice.$numberDecimal) > Number(highestBid)) {
-            highestBid = Number(d.oBidPrice.$numberDecimal);
-            highestBidData = d;
-            highestBidData.paymentSymbol = paymentSymbol;
-          }
-          if (d.oBidStatus === "MakeOffer") {
-            offerLength += 1
-          }
-          if (d.oBidStatus === "Bid") {
-            bidLength += 1
-          }
+      dummyData.data.map(async (d, i) => {
+        if (!bidsWithNoOrder.includes(i)) {
+          console.log("bids with no iii", i);
+          if (d.oBidStatus !== "Accepted" && d.oBidStatus !== "Rejected") {
+            let paymentSymbol = "";
+            if (orderPaymentToken[i] !== ZERO_ADDRESS) {
+              paymentSymbol = getTokenSymbolByAddress(orderPaymentToken[i]);
+            }
+            if (Number(d.oBidPrice.$numberDecimal) > Number(highestBid)) {
+              highestBid = Number(d.oBidPrice.$numberDecimal);
+              highestBidData = d;
+              highestBidData.paymentSymbol = paymentSymbol;
+            }
+            if (d.oBidStatus === "MakeOffer") {
+              offerLength += 1;
+            }
+            if (d.oBidStatus === "Bid") {
+              bidLength += 1;
+            }
 
-
-          data.push({
-            bidId: d._id,
-            bidQuantity: d.oBidQuantity,
-            bidPrice: d.oBidPrice.$numberDecimal,
-            seller: d.oOwner.sWalletAddress,
-            orderId: d.oOrderId,
-            bidder: d.oBidder.sWalletAddress,
-            bidderProfile: d.oBidder.sProfilePicUrl,
-            buyerSignature: d.oBuyerSignature,
-            bidderFullName: d.oBidder.oName
-              ? d.oBidder.oName.sFirstname
-              : d.oBidder
+            data.push({
+              bidId: d._id,
+              bidQuantity: d.oBidQuantity,
+              bidPrice: d.oBidPrice.$numberDecimal,
+              seller: d.oOwner.sWalletAddress,
+              orderId: d.oOrderId,
+              bidder: d.oBidder.sWalletAddress,
+              bidderProfile: d.oBidder.sProfilePicUrl,
+              buyerSignature: d.oBuyerSignature,
+              bidderFullName: d.oBidder.oName
+                ? d.oBidder.oName.sFirstname
+                : d.oBidder
                 ? d.oBidder.sWalletAddress
                 : "Unnamed",
-            nftId: d.oNFTId,
-            owner: d.oSeller,
-            oBidDeadline: d.oBidDeadline,
-            paymentSymbol: paymentSymbol,
-            isOffer: d.isOffer,
-            bidStatus: d.oBidStatus,
-            salt: d.salt,
-            tokenId: d.tokenId,
-            tokenAddress: d.tokenAddress,
-            paymentToken: d.paymentToken
-          });
+              nftId: d.oNFTId,
+              owner: d.oSeller,
+              oBidDeadline: d.oBidDeadline,
+              paymentSymbol: paymentSymbol,
+              isOffer: d.isOffer,
+              bidStatus: d.oBidStatus,
+              salt: d.salt,
+              tokenId: d.tokenId,
+              tokenAddress: d.tokenAddress,
+              paymentToken: d.paymentToken,
+            });
+          }
         }
-      }
-    })
+      })
     : data.push([]);
 
   return { data: data, highestBid: highestBidData, offerLength, bidLength };
@@ -392,26 +388,26 @@ export const getCollections = async (
     let arr = result.results;
     arr
       ? arr.map((data, key) => {
-        return formattedData.push({
-          collectionImage: data.collectionImage
-            ? data.collectionImage
-            : "./img/author/author-7.jpg",
-          authorImage:
-            data.oUser.length > 0
-              ? data.oUser[0].sProfilePicUrl
+          return formattedData.push({
+            collectionImage: data.collectionImage
+              ? data.collectionImage
+              : "./img/author/author-7.jpg",
+            authorImage:
+              data.oUser.length > 0
                 ? data.oUser[0].sProfilePicUrl
-                : Avatar
-              : Avatar,
-          collectionName: data.sName,
-          collectionType: data.erc721 ? "ERC721" : "ERC1155",
-          collectionAddress: data.sContractAddress,
-          createdBy: data.sCreatedBy,
-          authorId: data.oUser.length > 0 ? data.oUser[0]._id : "",
-          count: result.count,
-          authorAddress:
-            data.oUser.length > 0 ? data.oUser[0].sWalletAddress : "",
-        });
-      })
+                  ? data.oUser[0].sProfilePicUrl
+                  : Avatar
+                : Avatar,
+            collectionName: data.sName,
+            collectionType: data.erc721 ? "ERC721" : "ERC1155",
+            collectionAddress: data.sContractAddress,
+            createdBy: data.sCreatedBy,
+            authorId: data.oUser.length > 0 ? data.oUser[0]._id : "",
+            count: result.count,
+            authorAddress:
+              data.oUser.length > 0 ? data.oUser[0].sWalletAddress : "",
+          });
+        })
       : formattedData.push([]);
 
     return formattedData;
@@ -419,7 +415,6 @@ export const getCollections = async (
     console.log("error in api", e);
   }
 };
-
 
 const toTypedOrder = (
   account,
@@ -477,7 +472,7 @@ const toTypedOrder = (
 export const getSignature = async (signer, ...args) => {
   try {
     const order = toTypedOrder(...args);
-    console.log("order is---->",order);
+    console.log("order is---->", order);
     let provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer1 = provider.getSigner();
     const signedTypedHash = await signer1._signTypedData(
@@ -485,7 +480,7 @@ export const getSignature = async (signer, ...args) => {
       order.types,
       order.value
     );
-    console.log("signed type Hash",signedTypedHash)
+    console.log("signed type Hash", signedTypedHash);
     const sig = ethers.utils.splitSignature(signedTypedHash);
 
     return [sig.v, sig.r, sig.s];
@@ -586,7 +581,6 @@ export const checkIfLiked = async (nftId, authorId) => {
   return data?.length > 0;
 };
 
-
 export const GetNftsByCollection = async (
   currPage,
   pagePerCount,
@@ -615,41 +609,40 @@ export const GetNftsByCollection = async (
     arr = details.results[0];
   else return [];
 
-
   arr
     ? arr.map(async (data, key) => {
-      formattedData[key] = {
-        deadline:
-          data && data.nOrders.length > 0
-            ? data.nOrders[0].oValidUpto !== GENERAL_TIMESTAMP
-              ? data.nOrders[0].oValidUpto
-              : ""
-            : "",
-        auction_end_date:
-          data && data.nOrders.length > 0
-            ? data.nOrders[0].auction_end_date !== GENERAL_DATE
-              ? data.nOrders[0].auction_end_date
-              : ""
-            : "",
-        authorLink: `/author/${data.nCreater._id}`,
-        previewLink: "#",
-        nftLink: "#",
-        bidLink: "#",
-        authorImg: data.nCreater.sProfilePicUrl
-          ? data.nCreater.sProfilePicUrl
-          : Avatar,
-        previewImg: data.nNftImage ? data.nNftImage : Avatar,
-        title: data ? data.nTitle : "",
-        imageType: data ? data.nNftImageType : "",
-        price: "",
-        bid: "",
-        likes: data.nUser_likes?.length,
-        id: data ? data._id : "",
-        count: details.count,
-        isBlocked: data.isBlocked
-        // creator: authorData.sProfilePicUrl?`https://decryptnft.mypinata.cloud/ipfs/${authorData.sProfilePicUrl}`:"",
-      };
-    })
+        formattedData[key] = {
+          deadline:
+            data && data.nOrders.length > 0
+              ? data.nOrders[0].oValidUpto !== GENERAL_TIMESTAMP
+                ? data.nOrders[0].oValidUpto
+                : ""
+              : "",
+          auction_end_date:
+            data && data.nOrders.length > 0
+              ? data.nOrders[0].auction_end_date !== GENERAL_DATE
+                ? data.nOrders[0].auction_end_date
+                : ""
+              : "",
+          authorLink: `/author/${data.nCreater._id}`,
+          previewLink: "#",
+          nftLink: "#",
+          bidLink: "#",
+          authorImg: data.nCreater.sProfilePicUrl
+            ? data.nCreater.sProfilePicUrl
+            : Avatar,
+          previewImg: data.nNftImage ? data.nNftImage : Avatar,
+          title: data ? data.nTitle : "",
+          imageType: data ? data.nNftImageType : "",
+          price: "",
+          bid: "",
+          likes: data.nUser_likes?.length,
+          id: data ? data._id : "",
+          count: details.count,
+          isBlocked: data.isBlocked,
+          // creator: authorData.sProfilePicUrl?`https://decryptnft.mypinata.cloud/ipfs/${authorData.sProfilePicUrl}`:"",
+        };
+      })
     : (formattedData[0] = {});
 
   return formattedData;
@@ -662,40 +655,50 @@ export const GetOwnerOfToken = async (
   account,
   calledThroughItemDetailPage = false
 ) => {
-  try {
+  console.log(
+    "collection tokenId isERC721 account ",
+    collection,
+    tokenId,
+    isERC721,
+    account
+  );
 
+  try {
     let collectionInstance = await exportInstance(
       collection,
       isERC721 === 1 ? erc721Abi.abi : erc1155Abi.abi
     );
 
-    console.log('jjjjjjjjjjjjjjj',collectionInstance)
+    console.log("collection instance", collectionInstance);
     let balance = 0;
     if (isERC721 === 1) {
-      console.log('blll-if',tokenId)
-      let owner = await collectionInstance.ownerOf(tokenId)
-      console.log('bll-if',owner)
+      console.log("bal-if", tokenId);
+      let owner = await collectionInstance.ownerOf(tokenId);
+      console.log("bll-if", owner);
       if (owner.toLowerCase() === account.toLowerCase()) {
         balance = "1";
       }
-    } 
-    else {
-      console.log('blll',"else")
+    } else {
+      console.log("blll", "else");
       balance = await collectionInstance.balanceOf(account, tokenId);
     }
-    console.log("blllllll",balance);
+    console.log("blllllll", balance);
     if (balance === 0) {
-      return 0
+      return 0;
     }
-    console.log("balance",balance);
+    console.log("balance", balance);
     return balance.toString();
-  }
-  catch (err) {
-    console.log("err", err)
-    if (err.toString().includes("unknown account #0") && calledThroughItemDetailPage) {
-      NotificationManager.error("Not able to detect account, Please check if wallet is locked")
+  } catch (err) {
+    console.log("err", err);
+    if (
+      err.toString().includes("unknown account #0") &&
+      calledThroughItemDetailPage
+    ) {
+      NotificationManager.error(
+        "Not able to detect account, Please check if wallet is locked"
+      );
     }
-    return 0
+    return 0;
   }
 };
 
@@ -718,10 +721,8 @@ export const getBalance = async (account) => {
   return bal.toString();
 };
 
-
 //getting allOfferbyNFTId
 export const getAllOffersByNftId = async (nftId) => {
-
   let dummyData = await fetchOfferNft({
     nftID: nftId,
     buyerID: "All",
@@ -732,51 +733,50 @@ export const getAllOffersByNftId = async (nftId) => {
 
   dummyData?.data
     ? // eslint-disable-next-line array-callback-return
-    dummyData.data.map((d, i) => {
-      data.push({
-        bidId: d._id,
-        bidQuantity: d.oBidQuantity,
-        bidPrice: d.oBidPrice.$numberDecimal,
-        seller: d.oOwner.sWalletAddress,
-        orderId: d.oOrderId,
-        bidder: d.oBidder.sWalletAddress,
-        bidderProfile: d.oBidder.sProfilePicUrl,
-        buyerSignature: d.oBuyerSignature,
-        bidderFullName: d.oBidder.oName
-          ? d.oBidder.oName.sFirstname
-          : d.oBidder
+      dummyData.data.map((d, i) => {
+        data.push({
+          bidId: d._id,
+          bidQuantity: d.oBidQuantity,
+          bidPrice: d.oBidPrice.$numberDecimal,
+          seller: d.oOwner.sWalletAddress,
+          orderId: d.oOrderId,
+          bidder: d.oBidder.sWalletAddress,
+          bidderProfile: d.oBidder.sProfilePicUrl,
+          buyerSignature: d.oBuyerSignature,
+          bidderFullName: d.oBidder.oName
+            ? d.oBidder.oName.sFirstname
+            : d.oBidder
             ? d.oBidder.sWalletAddress
             : "Unnamed",
-        nftId: d.oNFTId,
-        owner: d.oSeller,
-      });
-    })
+          nftId: d.oNFTId,
+          owner: d.oSeller,
+        });
+      })
     : data.push([]);
 
   return data;
 };
 
-
-
 export const connect = async () => {
   if (window.ethereum) {
     // commented for future use
     return new Promise((resolve, reject) => {
-
       let temp = window.ethereum.enable();
       // web3.eth.accounts.create();
       if (temp) {
-        resolve(temp)
+        resolve(temp);
       } else {
         reject(temp);
       }
-
-    })
+    });
   } else {
-    this.toaster.error('No account found! Make sure the Ethereum client is configured properly. ', 'Error!')
-    return 'error'
+    this.toaster.error(
+      "No account found! Make sure the Ethereum client is configured properly. ",
+      "Error!"
+    );
+    return "error";
   }
-}
+};
 
 export const getAllCollectionsList = async (
   currPage,
@@ -808,26 +808,26 @@ export const getAllCollectionsList = async (
     let arr = result.results;
     arr
       ? arr.map((data, key) => {
-        return formattedData.push({
-          collectionImage: data.collectionImage
-            ? data.collectionImage
-            : "./img/author/author-7.jpg",
-          authorImage:
-            data.oUser.length > 0
-              ? data.oUser[0].sProfilePicUrl
+          return formattedData.push({
+            collectionImage: data.collectionImage
+              ? data.collectionImage
+              : "./img/author/author-7.jpg",
+            authorImage:
+              data.oUser.length > 0
                 ? data.oUser[0].sProfilePicUrl
-                : Avatar
-              : Avatar,
-          collectionName: data.sName,
-          collectionType: data.erc721 ? "ERC721" : "ERC1155",
-          collectionAddress: data.sContractAddress,
-          createdBy: data.sCreatedBy,
-          authorId: data.oUser.length > 0 ? data.oUser[0]._id : "",
-          count: result.count,
-          authorAddress:
-            data.oUser.length > 0 ? data.oUser[0].sWalletAddress : "",
-        });
-      })
+                  ? data.oUser[0].sProfilePicUrl
+                  : Avatar
+                : Avatar,
+            collectionName: data.sName,
+            collectionType: data.erc721 ? "ERC721" : "ERC1155",
+            collectionAddress: data.sContractAddress,
+            createdBy: data.sCreatedBy,
+            authorId: data.oUser.length > 0 ? data.oUser[0]._id : "",
+            count: result.count,
+            authorAddress:
+              data.oUser.length > 0 ? data.oUser[0].sWalletAddress : "",
+          });
+        })
       : formattedData.push([]);
 
     return formattedData;
@@ -836,34 +836,35 @@ export const getAllCollectionsList = async (
   }
 };
 
-const getButtonsBySaleType = (haveOrder, saleType, haveBid, haveOffer, isOwned) => {
-  let buttons = []
+const getButtonsBySaleType = (
+  haveOrder,
+  saleType,
+  haveBid,
+  haveOffer,
+  isOwned
+) => {
+  let buttons = [];
   if (haveOrder && isOwned) {
     if (saleType === 0) {
-      buttons.push("RemoveFromSale")
+      buttons.push("RemoveFromSale");
+    } else if (saleType === 1) {
+      buttons.push("RemoveFromAuction");
     }
-    else if (saleType === 1) {
-      buttons.push("RemoveFromAuction")
-    }
-  }
-  else if (!haveOrder) {
+  } else if (!haveOrder) {
     if (saleType === 0) {
-      buttons.push("BuyNow")
-    }
-    else if (saleType === 1) {
+      buttons.push("BuyNow");
+    } else if (saleType === 1) {
       if (haveBid) {
-        buttons.push("UpdateBid")
-      }
-      else {
-        buttons.push("PlaceBid")
+        buttons.push("UpdateBid");
+      } else {
+        buttons.push("PlaceBid");
       }
     }
 
     if (haveOffer) {
-      buttons.push("UpdateOffer")
-    }
-    else {
-      buttons.push("MakeOffer")
+      buttons.push("UpdateOffer");
+    } else {
+      buttons.push("MakeOffer");
     }
   }
   // else {
@@ -871,89 +872,116 @@ const getButtonsBySaleType = (haveOrder, saleType, haveBid, haveOffer, isOwned) 
   //     buttons.push("PutOnMarketplace")
   //   }
   // }
-  return buttons
-}
+  return buttons;
+};
 
-export const getButtonsGroup = (isLazyMint, saleType, haveOrder, haveBid, haveOffer, ownedQty, originalQty, currUser, _orders) => {
+export const getButtonsGroup = (
+  isLazyMint,
+  saleType,
+  haveOrder,
+  haveBid,
+  haveOffer,
+  ownedQty,
+  originalQty,
+  currUser,
+  _orders
+) => {
+  let isOwned = checkIfOwned(isLazyMint, ownedQty, originalQty);
 
-  let isOwned = checkIfOwned(isLazyMint, ownedQty, originalQty)
-
-  if (_orders && _orders?.length >= 1 && !isEmpty(_orders[0]) && currUser && _orders !== "null") {
+  if (
+    _orders &&
+    _orders?.length >= 1 &&
+    !isEmpty(_orders[0]) &&
+    currUser &&
+    _orders !== "null"
+  ) {
     let datas = _orders?.filter((data, key) => {
       return (
-        data.oSellerWalletAddress?.toLowerCase() ===
-        currUser?.toLowerCase()
+        data.oSellerWalletAddress?.toLowerCase() === currUser?.toLowerCase()
       );
     });
     if (datas?.length >= 1) {
-      haveOrder = true
+      haveOrder = true;
     } else {
-      haveOrder = false
+      haveOrder = false;
     }
   }
-  let buttons = []
+  let buttons = [];
   if (isOwned) {
-
     if (!haveOrder) {
-      buttons.push("PutOnMarketplace")
+      buttons.push("PutOnMarketplace");
     }
   }
 
-  return buttons
-}
+  return buttons;
+};
 
 export const checkIfOwned = (isLazyMint, ownedQty, originalQty) => {
+  console.log(
+    "isLazyMint ownedQty originalQty",
+    isLazyMint,
+    ownedQty,
+    originalQty
+  );
   if (isLazyMint) {
     if (Number(ownedQty) > 0) {
-      return true
-    }
-    else return false
-  }
-  else {
-
+      return true;
+    } else return false;
+  } else {
     if (Number(originalQty) > 0) {
-      return true
-    }
-    else return false
+      return true;
+    } else return false;
   }
-}
+};
 
 const checkIfHaveOrder = (orderData, currUser) => {
   if (orderData === "") {
-    return false
+    return false;
   }
-  if (orderData.oSellerWalletAddress?.toLowerCase() === currUser?.toLowerCase()) {
-    return true
-  }
-  else
-    return false
-}
+  if (
+    orderData.oSellerWalletAddress?.toLowerCase() === currUser?.toLowerCase()
+  ) {
+    return true;
+  } else return false;
+};
 
-export const getButtonsByOrderGroup = (isLazyMint, ownedQty, originalQty, currUser, orders) => {
-  let isOwned = checkIfOwned(isLazyMint, ownedQty, originalQty)
-  let orderBtn = []
+export const getButtonsByOrderGroup = (
+  isLazyMint,
+  ownedQty,
+  originalQty,
+  currUser,
+  orders
+) => {
+  let isOwned = checkIfOwned(isLazyMint, ownedQty, originalQty);
+  console.log("isOwned------->>>>", isOwned, ownedQty);
+  let orderBtn = [];
   for (let i = 0; i < orders.length; i++) {
-    let haveOrder = checkIfHaveOrder(orders[i], currUser)
+    let haveOrder = checkIfHaveOrder(orders[i], currUser);
 
-    let buttonsG1 = []
-    buttonsG1 = getButtonsBySaleType(haveOrder, orders[i].oType, false, false, isOwned)
-    orderBtn.push(buttonsG1)
-
+    let buttonsG1 = [];
+    buttonsG1 = getButtonsBySaleType(
+      haveOrder,
+      orders[i].oType,
+      false,
+      false,
+      isOwned
+    );
+    orderBtn.push(buttonsG1);
   }
-  return orderBtn
-}
+  return orderBtn;
+};
 
 export const fetchPageData = async (id, currentUser) => {
-  let data = {}
-  let response = {}
-  response.errorStatus = false
+  let data = {};
+  let response = {};
+  response.errorStatus = false;
   try {
     if (id && id !== undefined) {
       data = await GetNftDetails(id);
     }
-    response.isLazyMint = data.nLazyMintingStatus
+    response.isLazyMint = data.nLazyMintingStatus;
     if (data && data.nOwnedBy && currentUser && currentUser !== "null") {
-      response.owners = data.nOwnedBy
+      response.owners = data.nOwnedBy;
       let datas = data.nOwnedBy.filter((d, key) => {
         if (d.address) {
           return d?.address?.toLowerCase() === currentUser?.toLowerCase();
@@ -961,13 +989,12 @@ export const fetchPageData = async (id, currentUser) => {
       });
 
       if (datas?.length >= 1) {
-        response.isOwned = true
-        response.ownedQuantity = datas[0].quantity
-        response.currUserLazyMinted = datas[0].lazyMinted
-      }
-      else {
-        response.isOwned = false
-        response.ownedQuantity = 0
+        response.isOwned = true;
+        response.ownedQuantity = datas[0].quantity;
+        response.currUserLazyMinted = datas[0].lazyMinted;
+      } else {
+        response.isOwned = false;
+        response.ownedQuantity = 0;
       }
     }
 
@@ -982,8 +1009,8 @@ export const fetchPageData = async (id, currentUser) => {
     let d = await GetOrdersByNftId(searchParams);
 
     if (d.results?.length === 0) {
-      response.orders = []
-      response.haveOrder = false
+      response.orders = [];
+      response.haveOrder = false;
     } else {
       let _orderState = [];
       for (let i = 0; i < d.results?.length; i++) {
@@ -1008,22 +1035,21 @@ export const fetchPageData = async (id, currentUser) => {
             d.results[i].paymentTokenData = paymentData;
           }
           for (let j = 0; j < _data.data?.length; j++) {
-
             if (
               _data.data[j]?.oBidder?.sWalletAddress?.toLowerCase() ===
-              currentUser?.toLowerCase() && _data.data[j].oBidStatus === "Bid"
+                currentUser?.toLowerCase() &&
+              _data.data[j].oBidStatus === "Bid"
             ) {
               d.results[i].isUserHaveActiveBid = true;
-
             } else if (d.results[i].isUserHaveActiveBid !== true) {
               d.results[i].isUserHaveActiveBid = false;
             }
             if (
               _data.data[j]?.oBidder?.sWalletAddress?.toLowerCase() ===
-              currentUser?.toLowerCase() && _data.data[j].oBidStatus === "MakeOffer"
+                currentUser?.toLowerCase() &&
+              _data.data[j].oBidStatus === "MakeOffer"
             ) {
               d.results[i].isUserHaveActiveOffer = true;
-
             } else if (d.results[i].isUserHaveActiveOffer !== true) {
               d.results[i].isUserHaveActiveOffer = false;
             }
@@ -1037,9 +1063,15 @@ export const fetchPageData = async (id, currentUser) => {
           d.results[i].paymentTokenData = paymentData;
         }
       }
-      response.orderState = _orderState
+      response.orderState = _orderState;
       let _orders = d.results;
-      if (_orders && _orders?.length >= 1 && !isEmpty(_orders[0]) && currentUser && currentUser !== "null") {
+      if (
+        _orders &&
+        _orders?.length >= 1 &&
+        !isEmpty(_orders[0]) &&
+        currentUser &&
+        currentUser !== "null"
+      ) {
         let datas = _orders.filter((data, key) => {
           return (
             data.oSellerWalletAddress?.toLowerCase() ===
@@ -1047,25 +1079,22 @@ export const fetchPageData = async (id, currentUser) => {
           );
         });
         if (datas?.length >= 1) {
-          response.connectedUserOrderId = datas[0]._id
-          response.haveOrder = true
+          response.connectedUserOrderId = datas[0]._id;
+          response.haveOrder = true;
         } else {
-          response.haveOrder = false
+          response.haveOrder = false;
         }
       }
-      response.orders = d.results ? d.results : []
-
+      response.orders = d.results ? d.results : [];
     }
-
+  } catch (e) {
+    console.log("e", e);
+    response.error = e;
+    response.errorStatus = true;
   }
-  catch (e) {
-    console.log("e", e)
-    response.error = e
-    response.errorStatus = true
-  }
-  return response
-}
+  return response;
+};
 
 export const getCurrentProvider = async () => {
-  return new ethers.providers.Web3Provider(window.ethereum)
-}
+  return new ethers.providers.Web3Provider(window.ethereum);
+};

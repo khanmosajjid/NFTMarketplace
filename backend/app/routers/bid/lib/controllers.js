@@ -231,6 +231,7 @@ controllers.fetchBidNft = async (req, res) => {
     console.log("Datat is------------->" , data[0].bids);
     let iFiltered = data[0].bids.length;
     if (data[0].totalCount[0] == undefined) {
+      console.log("hrere for teting---->>")
       return res.reply(messages.no_prefix("Bid Details"), {
         data: [],
         draw: req.body.draw,
