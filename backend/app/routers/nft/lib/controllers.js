@@ -1611,8 +1611,8 @@ controllers.landing = async (req, res) => {
                         $eq: [
                           "$$user_likes",
                           req.userId &&
-                          req.userId != undefined &&
-                          req.userId != null
+                            req.userId != undefined &&
+                            req.userId != null
                             ? mongoose.Types.ObjectId(req.userId)
                             : "",
                         ],
@@ -1735,8 +1735,8 @@ controllers.landing = async (req, res) => {
                         $eq: [
                           "$$user_likes",
                           req.userId &&
-                          req.userId != undefined &&
-                          req.userId != null
+                            req.userId != undefined &&
+                            req.userId != null
                             ? mongoose.Types.ObjectId(req.userId)
                             : "",
                         ],
@@ -1859,8 +1859,8 @@ controllers.landing = async (req, res) => {
                         $eq: [
                           "$$user_likes",
                           req.userId &&
-                          req.userId != undefined &&
-                          req.userId != null
+                            req.userId != undefined &&
+                            req.userId != null
                             ? mongoose.Types.ObjectId(req.userId)
                             : "",
                         ],
@@ -2274,7 +2274,7 @@ controllers.updateNftOrder = async (req, res) => {
       nftownerID,
       { $inc: { nQuantityLeft: -req.body.putOnSaleQty } },
       { new: true },
-      function (err, response) {}
+      function (err, response) { }
     );
     if (req.body.erc721) {
       await NFT.findByIdAndUpdate(sId, {
@@ -2312,8 +2312,8 @@ controllers.likeNFT = async (req, res) => {
           let likeARY =
             NFTData.nUser_likes && NFTData.nUser_likes.length
               ? NFTData.nUser_likes.filter(
-                  (v) => v.toString() == req.userId.toString()
-                )
+                (v) => v.toString() == req.userId.toString()
+              )
               : [];
 
           //console.log("like Array",likeARY);
@@ -3091,10 +3091,10 @@ controllers.transferNfts = async (req, res) => {
         (o) => o.address === req.body.receiver.toLowerCase()
       ).quantity
         ? parseInt(
-            _NFTB.nOwnedBy.find(
-              (o) => o.address === req.body.receiver.toLowerCase()
-            ).quantity
-          )
+          _NFTB.nOwnedBy.find(
+            (o) => o.address === req.body.receiver.toLowerCase()
+          ).quantity
+        )
         : 0;
       boughtQty = req.body.qty;
       let ownedQty = parseInt(currentQty) + parseInt(boughtQty);
@@ -3934,7 +3934,7 @@ const GetTraitsRarity = require("./helpers");
 
 controllers.importUserNfts = async (req, res) => {
   let walletAddress = req.body.walletAddress;
-  console.log("wallet address is", req.body);
+  // console.log("wallet address is", req.body);
   try {
     const url = `https://testnets-api.opensea.io/api/v2/chain/amoy/account/${walletAddress}/nfts`;
 
@@ -3957,9 +3957,9 @@ controllers.importUserNfts = async (req, res) => {
           if (response.statusCode === 200) {
             const nfts = JSON.parse(data).nfts;
             const dbNfts = await NFT.find();
-            console.log("response of imports is------>>>", nfts);
+            // console.log("response of imports is------>>>", nfts);
 
-           
+
             const filteredOtherNfts = nfts.filter((otherNft) => {
               const isInDbNfts = dbNfts.some((dbNft) => {
                 return (
@@ -3969,25 +3969,54 @@ controllers.importUserNfts = async (req, res) => {
               });
               return !isInDbNfts;
             });
-            console.log(filteredOtherNfts);
+            // console.log(filteredOtherNfts);
             filteredOtherNfts.map(async (nft) => {
+              let con =''
+              let quantity=''
+              if (nft.token_standard === "erc721") {
+                con = new web3.eth.Contract(ERC721ABI.abi, nft.contract);
+                quantity = await con.methods
+                .balanceOf(walletAddress)
+                .call();
+              // console.log("qauntity", quantity);
+                // console.log("collection name is------>", collectionName);
+              } else {
+                 con = new web3.eth.Contract(ERC1155ABI.abi, nft.contract);
+                // console.log("connn", con)
+                quantity = await con.methods
+                .balanceOf(walletAddress, nft.identifier)
+                .call();
+              // console.log("qauntity", quantity);
+                // let creator = await con.methods.owner().call();
+                // console.log("creator of contract", creator);
 
-               if (nft.token_standard === "erc721") {
-                 let con = new web3.eth.Contract(ERC721ABI.abi, nft.contract);
-                 let creator = await con.methods.owner().call();
-                 console.log("creator of contract", creator);
-                 let collectionName = await con.methods.name().call();
-                 console.log("collection name is------>", collectionName);
-               } else {
-                 let con = new web3.eth.Contract(ERC1155ABI.abi, nft.contract);
-                 let creator = await con.methods.owner().call();
-                 console.log("creator of contract", creator);
-                 let quantity = await con.methods
-                   .balanceOf(walletAddress, nft.identifier)
-                   .call();
-                 console.log("qauntity", quantity);
-               }
-
+              }
+             console.log("contract is------>",con)
+                let creator = await con.methods.owner().call();
+              console.log("creator of contract", creator);
+              // let collectionName = await con.methods.name().call();
+              let checkUser = await User.findOne({ sWalletAddress: creator })
+              console.log("nft-contract",nft.contract)
+              let checkCollection= await Collection.findOne({sContractAddress:nft.contract})
+              console.log("chk-cool",checkCollection)
+              try{
+              if(!checkCollection){
+                console.log('hi')
+                const collection= new Collection({
+                  erc721:nft.token_standard === "erc721",
+                  nextId:Number(nft.identifier)+1,
+                  hashStatus:0,
+                  sName:nft.collection,
+                  sDescription:'',
+                  sFloorPrice:0,
+                  sContractAddress:nft.contract,
+                  sRoyaltyPercentage:'',
+                  oCreatedBy:checkUser?checkUser._id:null,
+                  collectionImage:''
+                })
+                await collection.save();
+              }
+              
               const newNft = new NFT({
                 nTitle: nft.name,
                 nCollection: nft.contract ? nft.contract : "",
@@ -3996,18 +4025,18 @@ controllers.importUserNfts = async (req, res) => {
                   {
                     address: walletAddress,
                     quantity: 1,
-                    // name: user.sUserName,
+                    name: checkUser ? checkUser.sUserName : '',
                     // lazyMinted: req.body.nLazyMintingStatus
                   },
                 ], //setting ownedby for first time empty
-                nQuantity: 1,
+                nQuantity: nft.token_standard === "erc721" ? 1 : quantity,
                 nCollaborator: "",
                 nCollaboratorPercentage: 0,
                 nRoyaltyPercentage: null,
                 nDescription: nft.description,
-                // nCreater: req.userId,
+                nCreater: checkUser ? checkUser._id : null,
                 nTokenID: nft.identifier,
-                nType: 1,
+                nType:nft.token_standard === "erc721"? 1:2,
                 nLockedContent: "",
                 nNftImage: nft?.image_url,
                 nLazyMintingStatus: 0,
@@ -4017,7 +4046,7 @@ controllers.importUserNfts = async (req, res) => {
                 hashStatus: 1,
               });
               const nftData = await newNft.save();
-              console.log(nftData);
+              // console.log(nftData);
               const order = new Order({
                 oNftId: null,
                 oSellerWalletAddress: nftData.nOwnedBy?.address,
@@ -4041,6 +4070,10 @@ controllers.importUserNfts = async (req, res) => {
                 { _id: nftData._id },
                 { $push: { nOrders: orderData._id } }
               );
+            }catch(err){
+              console.log("error", err);
+              return res.reply(messages.server_error());
+            }
             });
             res.json(JSON.parse(data));
           } else {
