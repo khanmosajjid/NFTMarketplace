@@ -3958,22 +3958,8 @@ controllers.importUserNfts = async (req, res) => {
             const nfts = JSON.parse(data).nfts;
             const dbNfts = await NFT.find();
             console.log("response of imports is------>>>", nfts);
+
            
-            if (nfts.token_standard === "erc721") {
-              let con = new web3.eth.Contract(ERC721ABI.abi, nft.contract);
-              let creator = await con.methods.owner().call();
-              console.log("creator of contract",creator);
-              let collectionName = await con.methods.name().call();
-             
-            } else {
-              let con = new web3.eth.Contract(ERC1155ABI.abi, nft.contract);
-               let creator = await con.methods.owner().call();
-               console.log("creator of contract", creator);
-              let quantity = await con.methods
-                .balanceOf(walletAddress, tokenID)
-                .call();
-              console.log("qauntity", quantity);
-            }
             const filteredOtherNfts = nfts.filter((otherNft) => {
               const isInDbNfts = dbNfts.some((dbNft) => {
                 return (
@@ -3985,6 +3971,23 @@ controllers.importUserNfts = async (req, res) => {
             });
             console.log(filteredOtherNfts);
             filteredOtherNfts.map(async (nft) => {
+
+               if (nft.token_standard === "erc721") {
+                 let con = new web3.eth.Contract(ERC721ABI.abi, nft.contract);
+                 let creator = await con.methods.owner().call();
+                 console.log("creator of contract", creator);
+                 let collectionName = await con.methods.name().call();
+                 console.log("collection name is------>", collectionName);
+               } else {
+                 let con = new web3.eth.Contract(ERC1155ABI.abi, nft.contract);
+                 let creator = await con.methods.owner().call();
+                 console.log("creator of contract", creator);
+                 let quantity = await con.methods
+                   .balanceOf(walletAddress, tokenID)
+                   .call();
+                 console.log("qauntity", quantity);
+               }
+
               const newNft = new NFT({
                 nTitle: nft.name,
                 nCollection: nft.contract ? nft.contract : "",
