@@ -136,6 +136,7 @@ const Header = function () {
                 </div>
                 <div className="navbar-item">
                   <a
+                  style={{cursor:"pointer"}}
                     onClick={async () => {
                       await importNFT(currentAccount);
                     }}

@@ -27,7 +27,7 @@ import {
   createOffer,
   handleAcceptOffers,
   checkOwnerChangeAndUpdate,
-  sign
+  sign,
 } from "../../helpers/sendFunctions";
 import { convertToEth } from "../../helpers/numberFormatter";
 import { handleRemoveFromSale } from "../../helpers/sendFunctions";
@@ -49,7 +49,7 @@ import {
   getButtonsByOrderGroup,
   checkIfOwned,
   fetchPageData,
-  getBalance
+  getBalance,
 } from "../../helpers/getterFunctions";
 import { isEmpty } from "../../helpers/getterFunctions";
 import "./../components-css/item-detail.css";
@@ -93,8 +93,7 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const ItemDetails = function (props) {
-
-  const [selectedMenu, setSelectedMenu] = useState(0) //0: Action, 1: History, 2: Active Bids, 3: Details, 4: Active Offers
+  const [selectedMenu, setSelectedMenu] = useState(0); //0: Action, 1: History, 2: Active Bids, 3: Details, 4: Active Offers
 
   // LOADERS
   const [loading, setLoading] = useState(false);
@@ -129,7 +128,7 @@ const ItemDetails = function (props) {
   const [bidQty, setBidQty] = useState(1);
   const [bidPrice, setBidPrice] = useState("");
   const [currentOrderId, setCurrentOrderId] = useState();
-  const [currentOrder, setCurrentOrder] = useState([])
+  const [currentOrder, setCurrentOrder] = useState([]);
   const [currentOrderSeller, setCurrentOrderSeller] = useState();
   const [bids, setBids] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -152,65 +151,62 @@ const ItemDetails = function (props) {
   const [offerPrice, setOfferPrice] = useState();
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [reloadContent, setReloadContent] = useState(false);
-  const [deactivated, setDeactivated] = useState(false);;
-  const [offerLength, setOfferLength] = useState(0)
-  const [isActiveBid, setIsActiveBid] = useState(false)
-  const [isActiveOffer, setIsActiveOffer] = useState(false)
-  const [bidsLength, setBidsLength] = useState(0)
-  const [originalQty, setOriginalQty] = useState(null)
+  const [deactivated, setDeactivated] = useState(false);
+  const [offerLength, setOfferLength] = useState(0);
+  const [isActiveBid, setIsActiveBid] = useState(false);
+  const [isActiveOffer, setIsActiveOffer] = useState(false);
+  const [bidsLength, setBidsLength] = useState(0);
+  const [originalQty, setOriginalQty] = useState(null);
   const [userId, setUserId] = useState("");
-  const [currBid, setCurrBid] = useState({})
-  const [currOffer, setCurrOffer] = useState({})
-  const [isLazyMint, setIsLazyMint] = useState("")
+  const [currBid, setCurrBid] = useState({});
+  const [currOffer, setCurrOffer] = useState({});
+  const [isLazyMint, setIsLazyMint] = useState("");
   const [buttons, setButtons] = useState(null);
-  const [owners, setOwners] = useState([])
+  const [owners, setOwners] = useState([]);
   const [ownerChange, setOwnerChange] = useState(false);
-  const [currUserLazyMinted, setCurrUserLazyMinted] = useState(false)
-  const [activeRefresh, setActiveRefresh] = useState(false)
-  const [lockedContent, setLockedContent] = useState("")
-
+  const [currUserLazyMinted, setCurrUserLazyMinted] = useState(false);
+  const [activeRefresh, setActiveRefresh] = useState(false);
+  const [lockedContent, setLockedContent] = useState("");
 
   const resetStates = () => {
-    setIsOfferModal(false)
-    setIsPlaceABidPopup(false)
-    setIsTransferPopup(false)
-    setIsActiveBid(false)
-    setIsActiveOffer(false)
-    setIsPopup(false)
-    setBuyQuantity(1)
-    setHaveOrder("null")
-    setIsOwned("null")
-    setOfferQuantity(1)
-    setOfferPrice("")
-    setHighestBid("")
-    setCurrOrderType("")
-    setCurrentOrderId("")
-    setBidQty(1)
-    setBidPrice("")
-    setCurrentBuyPrice(0)
-    setCurrOrderLeftQty(0)
-    setCurrentOrderMinBid(0)
-    setCurrentOrderSeller("")
-    setCurrOffer({})
+    setIsOfferModal(false);
+    setIsPlaceABidPopup(false);
+    setIsTransferPopup(false);
+    setIsActiveBid(false);
+    setIsActiveOffer(false);
+    setIsPopup(false);
+    setBuyQuantity(1);
+    setHaveOrder("null");
+    setIsOwned("null");
+    setOfferQuantity(1);
+    setOfferPrice("");
+    setHighestBid("");
+    setCurrOrderType("");
+    setCurrentOrderId("");
+    setBidQty(1);
+    setBidPrice("");
+    setCurrentBuyPrice(0);
+    setCurrOrderLeftQty(0);
+    setCurrentOrderMinBid(0);
+    setCurrentOrderSeller("");
+    setCurrOffer({});
     setCurrBid({});
-    setBeneficiary("")
-    setTransferQuantity(1)
-    setOriginalQty("null")
-    setOwnedQuantity("")
-    setLoading(false)
-    setLockedContent("")
-  }
+    setBeneficiary("");
+    setTransferQuantity(1);
+    setOriginalQty("null");
+    setOwnedQuantity("");
+    setLoading(false);
+    setLockedContent("");
+  };
 
   evt.removeAllListeners("resetStates");
   evt.on("resetStates", resetStates);
 
-
   const refreshReload = () => {
-    setReloadContent(!reloadContent)
-  }
+    setReloadContent(!reloadContent);
+  };
   evt.removeAllListeners("refreshReload");
   evt.on("refreshReload", refreshReload);
-
 
   const resetForm = () => {
     setMinimumBid("");
@@ -218,7 +214,7 @@ const ItemDetails = function (props) {
     setMarketplaceQuantity(1);
     setMarketplaceSaleType(0);
     setEndTime();
-  }
+  };
 
   let { id } = useParams();
   const toggleMarketplace = () => {
@@ -236,29 +232,39 @@ const ItemDetails = function (props) {
     setCurrPage(p);
   };
 
-  const renderButtons = (b, seller, price, orderId, qty, qtySold, key, paymentTokenData, timestamp, qtyLeft, orderType,
+  const renderButtons = (
+    b,
+    seller,
+    price,
+    orderId,
+    qty,
+    qtySold,
+    key,
+    paymentTokenData,
+    timestamp,
+    qtyLeft,
+    orderType,
     sellerId,
-    isUserHaveActiveOffer, isUserHaveActiveBid, order) => {
-
+    isUserHaveActiveOffer,
+    isUserHaveActiveBid,
+    order
+  ) => {
     if (b === "RemoveFromSale" && checkIfLoadedWithWallet()) {
-      return RemoveFromSale(seller,
-        price,
-        orderId,
-        qty,
-        qtySold)
-    }
-    else if (b === "RemoveFromAuction" && checkIfLoadedWithWallet()) {
-      return RemoveFromAuction(seller,
+      return RemoveFromSale(seller, price, orderId, qty, qtySold);
+    } else if (b === "RemoveFromAuction" && checkIfLoadedWithWallet()) {
+      return RemoveFromAuction(
+        seller,
         price,
         orderId,
         key,
         qty,
         qtySold,
         paymentTokenData,
-        timestamp)
-    }
-    else if (b === "BuyNow") {
-      return buyNow(seller,
+        timestamp
+      );
+    } else if (b === "BuyNow") {
+      return buyNow(
+        seller,
         price,
         orderId,
         qtyLeft,
@@ -266,10 +272,11 @@ const ItemDetails = function (props) {
         orderType,
         sellerId,
         isUserHaveActiveOffer,
-        order)
-    }
-    else if (b === "PlaceBid") {
-      return placeABid(seller,
+        order
+      );
+    } else if (b === "PlaceBid") {
+      return placeABid(
+        seller,
         price,
         orderId,
         timestamp,
@@ -280,9 +287,10 @@ const ItemDetails = function (props) {
         qtySold,
         isUserHaveActiveBid,
         isUserHaveActiveOffer,
-        order)
+        order
+      );
     }
-  }
+  };
 
   // Buy NFTs
   const modal = (
@@ -305,10 +313,10 @@ const ItemDetails = function (props) {
                 ? nftDetails?.nCreater?.sUserName
                   ? nftDetails?.nCreater?.sUserName
                   : nftDetails?.nCreater?.sWalletAddress
-                    ? nftDetails?.nCreater?.sWalletAddress.slice(0, 11) +
+                  ? nftDetails?.nCreater?.sWalletAddress.slice(0, 11) +
                     "..." +
                     nftDetails?.nCreater?.sWalletAddress.slice(38, 42)
-                    : ""
+                  : ""
                 : ""}
             </strong>
           </p>
@@ -318,8 +326,9 @@ const ItemDetails = function (props) {
             </div>
             <div className="bid_user_address">
               <div>
-                <span className="adr">{`${currentUser?.slice(0, 11) + "..." + currentUser?.slice(38, 42)
-                  }`}</span>
+                <span className="adr">{`${
+                  currentUser?.slice(0, 11) + "..." + currentUser?.slice(38, 42)
+                }`}</span>
                 <span className="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
@@ -357,7 +366,6 @@ const ItemDetails = function (props) {
             ""
           )}
 
-
           <button
             disabled={loading}
             className="btn-main btn-buyNow content-btn1 mt-4"
@@ -368,7 +376,7 @@ const ItemDetails = function (props) {
               setCookie("balance", res1, { path: "/" });
               if (res1 === false) return;
               setIsPopup(false);
-              setBuyQuantity(1)
+              setBuyQuantity(1);
               setCheckoutLoader(true);
               if (!currentUser) {
                 NotificationManager.error(
@@ -380,7 +388,7 @@ const ItemDetails = function (props) {
                 return;
               }
 
-              let bal1 = await getBalance(currentUser)
+              let bal1 = await getBalance(currentUser);
               let bal = new BigNumber(convertToEth(bal1));
 
               let payableAmount;
@@ -412,18 +420,21 @@ const ItemDetails = function (props) {
                 userId: nftDetails.nCreater._id,
                 action: "Purchase",
                 actionMeta: "Default",
-                message: `${buyQuantity} Quantity For ${currentOrderMinBid} ${CURRENCY} by ${profile.sWalletAddress
-                  ? profile.sWalletAddress.slice(0, 3) +
-                  "..." +
-                  profile.sWalletAddress.slice(39, 42)
-                  : ""}`,
-
+                message: `${buyQuantity} Quantity For ${currentOrderMinBid} ${CURRENCY} by ${
+                  profile.sWalletAddress
+                    ? profile.sWalletAddress.slice(0, 3) +
+                      "..." +
+                      profile.sWalletAddress.slice(39, 42)
+                    : ""
+                }`,
               };
 
               let sellerData = owners?.filter((o) => {
-                return o?.address?.toLowerCase() === currentOrder?.oSellerWalletAddress?.toLowerCase()
-              }
-              )
+                return (
+                  o?.address?.toLowerCase() ===
+                  currentOrder?.oSellerWalletAddress?.toLowerCase()
+                );
+              });
               let res = await handleBuyNft(
                 currentOrderId,
                 nftDetails?.nType,
@@ -432,18 +443,15 @@ const ItemDetails = function (props) {
                 isLazyMint,
                 historyMetaData,
                 sellerData?.length > 0 ? sellerData[0] : []
-
               );
               setBuyQuantity(1);
-              setReloadContent(!reloadContent)
+              setReloadContent(!reloadContent);
               setCheckoutLoader(false);
-
             }}
           >
             Buy Now
           </button>
-
-        </div >
+        </div>
       }
       handleClose={() => {
         setIsPopup(!isPopup);
@@ -474,10 +482,10 @@ const ItemDetails = function (props) {
                 ? nftDetails?.nCreater?.sUserName
                   ? nftDetails?.nCreater?.sUserName
                   : nftDetails?.nCreater?.sWalletAddress
-                    ? nftDetails?.nCreater?.sWalletAddress.slice(0, 11) +
+                  ? nftDetails?.nCreater?.sWalletAddress.slice(0, 11) +
                     "..." +
                     nftDetails?.nCreater?.sWalletAddress.slice(38, 42)
-                    : ""
+                  : ""
                 : ""}
             </strong>
           </p>
@@ -487,8 +495,9 @@ const ItemDetails = function (props) {
             </div>
             <div className="bid_user_address">
               <div>
-                <span className="adr">{`${currentUser?.slice(0, 11) + "..." + currentUser?.slice(38, 42)
-                  }`}</span>
+                <span className="adr">{`${
+                  currentUser?.slice(0, 11) + "..." + currentUser?.slice(38, 42)
+                }`}</span>
                 <span className="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
@@ -520,7 +529,6 @@ const ItemDetails = function (props) {
                 return;
               }
               setOfferQuantity(e.target.value);
-
             }}
           ></input>
           <h6 className="enter_price_heading required">
@@ -532,8 +540,6 @@ const ItemDetails = function (props) {
             type="text"
             min="1"
             placeholder="Please Enter Price(USDT)"
-
-
             value={offerPrice}
             onKeyPress={(e) => {
               if (offerPrice?.length > 25) e.preventDefault();
@@ -545,30 +551,27 @@ const ItemDetails = function (props) {
                 const numStr = String(val);
                 if (numStr.includes(".")) {
                   if (numStr.split(".")[1]?.length > 15) {
-                    return
+                    return;
                   }
                 }
                 setOfferPrice(val);
-
               }
             }}
           ></input>
-
 
           <button
             className="btn-main content-btn1 mt-4 btn-placeABid"
             style={{ color: props.color }}
             onClick={async () => {
               if (currentUser === undefined) {
-                setNotConnectedModal(true)
+                setNotConnectedModal(true);
                 return;
               }
 
               if (!offerPrice || isNaN(offerPrice)) {
                 NotificationManager.error("Please Enter Offer Price", "", 1500);
                 return;
-              }
-              else if (offerPrice === 0) {
+              } else if (offerPrice === 0) {
                 NotificationManager.error("Price Not Equal to 0", "", 1500);
                 return;
               }
@@ -577,28 +580,23 @@ const ItemDetails = function (props) {
                 return;
               }
 
-              if (
-                cookies["chain_id"] !==
-                process.env.REACT_APP_CHAIN_ID
-              ) {
-
+              if (cookies["chain_id"] !== process.env.REACT_APP_CHAIN_ID) {
                 let res = await handleNetworkSwitch();
 
                 setCookie("balance", res, { path: "/" });
                 if (res === false) {
                   setPlaceOfferLoader(false);
                   return;
-                };
+                }
               }
               setIsPlaceABidPopup(false);
-              setBidPrice("")
-              setBidQty(1)
+              setBidPrice("");
+              setBidQty(1);
               if (!offerPrice || offerPrice === "") {
                 NotificationManager.error("Please Enter Offer Price", "", 1500);
 
                 return;
-              }
-              else if (offerPrice === 0) {
+              } else if (offerPrice === 0) {
                 NotificationManager.error("Price Not Equal to 0", "", 1500);
 
                 return;
@@ -614,9 +612,6 @@ const ItemDetails = function (props) {
               }
               setCheckoutLoader(true);
               setIsOfferModal(false);
-
-
-
 
               if (
                 nftDetails &&
@@ -637,18 +632,14 @@ const ItemDetails = function (props) {
                 );
 
                 // resetStates()
-                setReloadContent(!reloadContent)
+                setReloadContent(!reloadContent);
                 setOfferQuantity(1);
                 setOfferPrice("");
                 setCheckoutLoader(false);
               }
             }}
           >
-            {
-              isActiveOffer
-                ? "Update Offer"
-                : "Make Offer"
-            }
+            {isActiveOffer ? "Update Offer" : "Make Offer"}
           </button>
         </div>
       }
@@ -657,8 +648,7 @@ const ItemDetails = function (props) {
         //   setOfferQuantity(1);
         //   setOfferPrice("");
         // }
-        setIsOfferModal(!isOfferModal)
-
+        setIsOfferModal(!isOfferModal);
 
         setCheckoutLoader(false);
       }}
@@ -697,7 +687,11 @@ const ItemDetails = function (props) {
               if (!/^\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              let qty = ((Number(isLazyMint) === 2 || Number(isLazyMint) === 0) && !currUserLazyMinted) ? originalQty : ownedQuantity
+              let qty =
+                (Number(isLazyMint) === 2 || Number(isLazyMint) === 0) &&
+                !currUserLazyMinted
+                  ? originalQty
+                  : ownedQuantity;
               if (Number(e.target.value) > qty) {
                 NotificationManager.error(
                   "Transfer quantity should be less than owned quantity",
@@ -719,13 +713,17 @@ const ItemDetails = function (props) {
               let res1 = await handleNetworkSwitch(currentUser);
               setCookie("balance", res1, { path: "/" });
               if (res1 === false) return;
-              setTransferQuantity(transferQuantity)
-              setBeneficiary("")
+              setTransferQuantity(transferQuantity);
+              setBeneficiary("");
               setIsTransferPopup(false);
 
               setTransferLoader(true);
               if (!checkIfValidAddress(beneficiary)) {
-                NotificationManager.error("Please enter the wallet address", "", 1500);
+                NotificationManager.error(
+                  "Please enter the wallet address",
+                  "",
+                  1500
+                );
                 setTransferLoader(false);
                 return;
               }
@@ -757,8 +755,6 @@ const ItemDetails = function (props) {
                     nftDetails._id,
                     ownedQuantity,
                     connectedUserOrderId
-
-
                   );
                 } else {
                   res = await handleNftTransfer(
@@ -770,55 +766,51 @@ const ItemDetails = function (props) {
                     nftDetails.nType,
                     nftDetails._id,
                     ownedQuantity,
-                    connectedUserOrderId,
+                    connectedUserOrderId
                   );
                 }
 
                 if (res === true) {
-
                   try {
                     let historyMetaData = {
                       nftId: nftDetails._id,
                       userId: nftDetails.nCreater._id,
                       action: "Transfer",
                       actionMeta: "Default",
-                      message: `${transferQuantity} Quantity to ${beneficiary.slice(0, 3) +
+                      message: `${transferQuantity} Quantity to ${
+                        beneficiary.slice(0, 3) +
                         "..." +
                         beneficiary.slice(39, 42)
-                        } by ${profile.sWalletAddress
+                      } by ${
+                        profile.sWalletAddress
                           ? profile.sWalletAddress.slice(0, 3) +
-                          "..." +
-                          profile.sWalletAddress.slice(39, 42)
+                            "..." +
+                            profile.sWalletAddress.slice(39, 42)
                           : ""
-                        }`,
-
+                      }`,
                     };
 
                     await InsertHistory(historyMetaData);
-                  }
-                  catch (e) {
+                  } catch (e) {
                     console.log("error in history api", e);
                     return;
                   }
-
-
                 }
-                resetStates()
-                setReloadContent(!reloadContent)
-                setBeneficiary("")
-                setTransferQuantity(1)
+                resetStates();
+                setReloadContent(!reloadContent);
+                setBeneficiary("");
+                setTransferQuantity(1);
                 setTransferLoader(false);
               }
-            }
-            }
+            }}
           >
             Transfer NFT
           </button>
         </div>
       }
       handleClose={() => {
-        setBeneficiary("")
-        setTransferQuantity(1)
+        setBeneficiary("");
+        setTransferQuantity(1);
         setIsTransferPopup(!isTransferPopup);
       }}
     />
@@ -836,9 +828,7 @@ const ItemDetails = function (props) {
           <h4 style={{ color: "#53a0b5" }}>
             {isOwned && isOwned !== "null" && nftDetails ? (
               lockedContent ? (
-                <div className="show-hidden-content">
-                  {lockedContent}
-                </div>
+                <div className="show-hidden-content">{lockedContent}</div>
               ) : (
                 <div className="not-authorized">No Content!!</div>
               )
@@ -851,7 +841,7 @@ const ItemDetails = function (props) {
         </div>
       }
       handleClose={() => {
-        setLockedContent("")
+        setLockedContent("");
         setIsUnlocked(!isUnlocked);
       }}
     />
@@ -877,10 +867,10 @@ const ItemDetails = function (props) {
                 ? nftDetails?.nCreater?.sUserName
                   ? nftDetails?.nCreater?.sUserName
                   : nftDetails?.nCreater?.sWalletAddress
-                    ? nftDetails?.nCreater?.sWalletAddress.slice(0, 11) +
+                  ? nftDetails?.nCreater?.sWalletAddress.slice(0, 11) +
                     "..." +
                     nftDetails?.nCreater?.sWalletAddress.slice(38, 42)
-                    : ""
+                  : ""
                 : ""}
             </strong>
           </p>
@@ -890,8 +880,9 @@ const ItemDetails = function (props) {
             </div>
             <div className="bid_user_address">
               <div>
-                <span className="adr">{`${currentUser?.slice(0, 11) + "..." + currentUser?.slice(38, 42)
-                  }`}</span>
+                <span className="adr">{`${
+                  currentUser?.slice(0, 11) + "..." + currentUser?.slice(38, 42)
+                }`}</span>
                 <span className="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
@@ -923,7 +914,6 @@ const ItemDetails = function (props) {
                 return;
               }
               setBidQty(e.target.value);
-
             }}
           ></input>
           <h6 className="enter_price_heading required">
@@ -946,11 +936,10 @@ const ItemDetails = function (props) {
                 const numStr = String(val);
                 if (numStr.includes(".")) {
                   if (numStr.split(".")[1]?.length > 15) {
-                    return
+                    return;
                   }
                 }
                 setBidPrice(val);
-
               }
             }}
           ></input>
@@ -959,12 +948,7 @@ const ItemDetails = function (props) {
             className="btn-main content-btn1 mt-4 btn-placeABid"
             style={{ color: props.color }}
             onClick={async () => {
-
-              if (
-                cookies["chain_id"] !==
-                process.env.REACT_APP_CHAIN_ID
-              ) {
-
+              if (cookies["chain_id"] !== process.env.REACT_APP_CHAIN_ID) {
                 let res = await handleNetworkSwitch();
 
                 setCookie("balance", res, { path: "/" });
@@ -1000,8 +984,8 @@ const ItemDetails = function (props) {
               }
               setPlaceBidLoader(true);
               setIsPlaceABidPopup(false);
-              setBidPrice("")
-              setBidQty(1)
+              setBidPrice("");
+              setBidQty(1);
 
               if (!isActiveBid) {
                 setCurrBid({});
@@ -1010,7 +994,8 @@ const ItemDetails = function (props) {
                 nftDetails &&
                 currentOrderId &&
                 currentUser &&
-                currentOrderSeller && isLazyMint !== ""
+                currentOrderSeller &&
+                isLazyMint !== ""
               ) {
                 await createBid(
                   nftDetails._id,
@@ -1024,22 +1009,17 @@ const ItemDetails = function (props) {
                   currBid
                 );
 
-
-                resetStates()
-                setReloadContent(!reloadContent)
+                resetStates();
+                setReloadContent(!reloadContent);
 
                 setPlaceBidLoader(false);
                 setBidQty(1);
                 setBidPrice("");
-
-
-
               }
             }}
           >
             {isActiveBid ? "Update Bid" : "Place A Bid"}
           </button>
-
         </div>
       }
       handleClose={() => {
@@ -1048,77 +1028,86 @@ const ItemDetails = function (props) {
           setBidQty(1);
           setBidPrice("");
         }
-
       }}
     />
   );
 
   const fetchData = async (isWithoutLoader = false) => {
-    console.log("btnnnnnnnnnnnnnnnnnnnnn","Helloo");
+    
     if (!isWithoutLoader) {
-      setLoading(true)
+      setLoading(true);
     }
     let resp = await fetchPageData(id, currentUser);
+    console.log("response of fetch nft data is------->>>",resp);
     if (resp.errorStatus !== true) {
-      setOrders(resp.orders)
-      setConnectedUserOrderId(resp.connectedUserOrderId)
-      setHaveOrder(resp.haveOrder)
-      setIsLazyMint(resp.isLazyMint)
-      setOrderState(resp.orderState)
-      setOwnedQuantity(resp.ownedQuantity)
-      setIsOwned(resp.isOwned)
-      setOwners(resp.owners)
-      setCurrUserLazyMinted(resp.currUserLazyMinted)
-      console.log('qnnnnnnnn',originalQty)
+      setOrders(resp.orders);
+      setConnectedUserOrderId(resp.connectedUserOrderId);
+      setHaveOrder(resp.haveOrder);
+      setIsLazyMint(resp.isLazyMint);
+      setOrderState(resp.orderState);
+      setOwnedQuantity(resp.ownedQuantity);
+      setIsOwned(resp.isOwned);
+      setOwners(resp.owners);
+      setCurrUserLazyMinted(resp.currUserLazyMinted);
+      console.log("qnnnnnnnn", originalQty);
       if (originalQty !== "null") {
-        let btns = getButtonsByOrderGroup(resp.currUserLazyMinted, resp.ownedQuantity, originalQty, currentUser, resp.orders)
-        console.log("btnnnnnnnnnnnnnnnnnnnnn",btns);
-        setButtons(btns)
+        let btns = getButtonsByOrderGroup(
+          resp.currUserLazyMinted,
+          resp.ownedQuantity,
+          originalQty,
+          currentUser,
+          resp.orders
+        );
+        console.log("btnnnnnnnnnnnnnnnnnnnnn", btns);
+        setButtons(btns);
       }
       setLoading(false);
-
+    } else {
+      setLoading(false);
     }
-    else {
-      setLoading(false)
-    }
-
-  }
+  };
 
   useEffect(() => {
     const fetch = async () => {
       setCurrentUser(cookies.selected_account);
       setNotConnectedModal(false);
       if (localStorage.getItem("decrypt_userId")) {
-        setUserId(localStorage.getItem("decrypt_userId"))
+        setUserId(localStorage.getItem("decrypt_userId"));
       }
       if (cookies.selected_account) {
         let _profile = await getProfile();
         if (_profile.data.sStatus === "deactivated") {
           setTimeout(() => {
-            NotificationManager.error("Admin Has Deactivated Your Account", "", 1200);
+            NotificationManager.error(
+              "Admin Has Deactivated Your Account",
+              "",
+              1200
+            );
 
-            setDeactivated(true)
-          }, 1200)
+            setDeactivated(true);
+          }, 1200);
         }
 
         setProfile(_profile.data);
       }
-
-    }
-    fetch()
+    };
+    fetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cookies.selected_account, reloadContent, localStorage.getItem("decrypt_userId"), reloadContent]);
-
+  }, [
+    cookies.selected_account,
+    reloadContent,
+    localStorage.getItem("decrypt_userId"),
+    reloadContent,
+  ]);
 
   useEffect(() => {
     const fetch = async () => {
-      let data
+      let data;
       if (id && id !== undefined) {
         data = await GetNftDetails(id);
         if (isEmptyObject(data)) {
           window.location.href = "/profile";
         }
-
       }
       let datas = data.nOwnedBy.filter((d, key) => {
         if (d.address) {
@@ -1126,76 +1115,88 @@ const ItemDetails = function (props) {
         }
       });
 
-      let _ownedQuantity = ""
+      let _ownedQuantity = "";
       if (datas?.length > 0) {
-        _ownedQuantity = datas[0].quantity
+        _ownedQuantity = datas[0].quantity;
       }
       // let bal = await GetOwnerOfToken(data.nCollection, data.nTokenID, data.nType, currentUser, true);
       // console.log("ball", bal, _ownedQuantity, isLazyMint)
-      console.log('refreeeeeeeee',currentUser,data)
-      if (currentUser && currentUser !== "null" && _ownedQuantity !== undefined && parseInt(window.sessionStorage.getItem("chain_id")) === parseInt(process.env.REACT_APP_CHAIN_ID)) {
-        console.log('refreeeeeeeee-2',data?.nLazyMintingStatus,typeof(data?.nLazyMintingStatus))
-        if ((data?.nLazyMintingStatus) == 2 || (data?.nLazyMintingStatus) == 0) {
-          console.log('refreeeeeeeee',"now work")
-          let bal = await GetOwnerOfToken(data.nCollection, data.nTokenID, data.nType, currentUser, true);
-          console.log('refreeeeeeeee',bal)
-          setOriginalQty(bal)
+      console.log("refreeeeeeeee", currentUser, data);
+      if (
+        currentUser &&
+        currentUser !== "null" &&
+        _ownedQuantity !== undefined &&
+        parseInt(window.sessionStorage.getItem("chain_id")) ===
+          parseInt(process.env.REACT_APP_CHAIN_ID)
+      ) {
+        console.log(
+          "refreeeeeeeee-2",
+          data?.nLazyMintingStatus,
+          typeof data?.nLazyMintingStatus
+        );
+        if (data?.nLazyMintingStatus == 2 || data?.nLazyMintingStatus == 0) {
+          console.log("refreeeeeeeee", "now work");
+          let bal = await GetOwnerOfToken(
+            data.nCollection,
+            data.nTokenID,
+            data.nType,
+            currentUser,
+            true
+          );
+          console.log("refreeeeeeeee", bal);
+          setOriginalQty(bal);
 
-          let res = await checkOwnerChangeAndUpdate(bal, _ownedQuantity, data.nTokenID, data.nCollection, currentUser)
-          console.log("respp", res)
+          let res = await checkOwnerChangeAndUpdate(
+            bal,
+            _ownedQuantity,
+            data.nTokenID,
+            data.nCollection,
+            currentUser
+          );
+          console.log("respp", res);
           if (res) {
-            // await fetchData(true)
-            setOwnerChange(!ownerChange)
+            setOwnerChange(!ownerChange);
           }
           return;
+        } else {
+          console.log("refreeeeeeeee", "else");
+          setOriginalQty(0);
+          return;
         }
-        else {
-          console.log('refreeeeeeeee','else')
-          setOriginalQty(0)
-          return
-        }
-       
       }
 
-
-      if (parseInt(window.sessionStorage.getItem("chain_id")) !== parseInt(process.env.REACT_APP_CHAIN_ID)) {
-        setOriginalQty(_ownedQuantity)
+      if (
+        parseInt(window.sessionStorage.getItem("chain_id")) !==
+        parseInt(process.env.REACT_APP_CHAIN_ID)
+      ) {
+        setOriginalQty(_ownedQuantity);
       }
-    }
-    fetch()
+    };
+    fetch();
   }, [currentUser, reloadContent]);
 
   useEffect(() => {
     async function fetch() {
-      //setLoading(true);
-
       if (id && id !== undefined) {
         let data = await GetNftDetails(id);
 
-        // if (isEmptyObject(data)) {
-        //   window.location.href = "/profile";
-        // }
-        console.log("datta",data);
+        console.log("datta", data);
         setNftDetails(data);
       }
-      //setLoading(false);
     }
     fetch();
-  }, [id, currentUser])
+  }, [id, currentUser]);
 
   useEffect(
     () => {
-      fetchData(false)
+      fetchData(false);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [profile, id, currentUser, currOrderType, reloadContent, originalQty]
   );
 
-
-
-
   useEffect(() => {
-    console.log("currentOrderId", currentOrderId)
+    console.log("currentOrderId", currentOrderId);
     const fetchCurrOffer = async () => {
       let searchParams = {
         nftID: id,
@@ -1206,13 +1207,12 @@ const ItemDetails = function (props) {
 
       let _data = await fetchOfferNft(searchParams);
       if (_data && _data?.data?.length > 0) {
-
-        console.log("offerrs", _data?.data)
+        console.log("offerrs", _data?.data);
 
         const b = _data.data[0];
-        setCurrOffer(b)
+        setCurrOffer(b);
         setOfferPrice(convertToEth(b?.oBidPrice?.$numberDecimal));
-        setOfferQuantity(b?.oBidQuantity)
+        setOfferQuantity(b?.oBidQuantity);
       }
     };
 
@@ -1226,21 +1226,19 @@ const ItemDetails = function (props) {
 
       let _data = await fetchBidNft(searchParams);
       if (_data && _data?.data?.length > 0) {
-        console.log("bidd", _data?.data)
+        console.log("bidd", _data?.data);
         const b = _data.data[0];
 
-        setCurrBid(b)
+        setCurrBid(b);
         setBidPrice(convertToEth(b?.oBidPrice?.$numberDecimal));
-        setBidQty(b?.oBidQuantity)
+        setBidQty(b?.oBidQuantity);
       }
-
     };
 
     const fetchAllBids = async () => {
-
       if (id) {
         let data = await getAllBidsByNftId(id);
-        console.log('oferrrs',data)
+        console.log("oferrrs", data);
         let _highestBid = {};
         let bidLength, offerLength;
         _highestBid = data?.highestBid;
@@ -1249,13 +1247,13 @@ const ItemDetails = function (props) {
         data = data?.data;
 
         if (data?.length > 0 && isEmpty(data[0])) data = [];
-        if (data?.length === 0) data = []
+        if (data?.length === 0) data = [];
 
         setBids(data);
-        console.log("offer data", data)
+        console.log("offer data", data);
         setHighestBid(_highestBid);
         setBidsLength(bidLength);
-        setOfferLength(offerLength)
+        setOfferLength(offerLength);
       }
       //setLoading(false);
     };
@@ -1269,30 +1267,33 @@ const ItemDetails = function (props) {
 
   const fetchMeta = async () => {
     if (nftDetails && nftDetails.nHash) {
-      console.log('hh-fetchinggggg',nftDetails.nHash,process.env.REACT_APP_IPFS_URL)
+      console.log(
+        "hh-fetchinggggg",
+        nftDetails.nHash,
+        process.env.REACT_APP_IPFS_URL
+      );
       let resp = await fetch(
-        process.env.REACT_APP_IPFS_URL+'/' + nftDetails?.nHash,
+        process.env.REACT_APP_IPFS_URL + "/" + nftDetails?.nHash
         // {
         //   headers:{
         //     "x-pinata-gateway-token":"o0xOnJayjR_RDU5YYS52WSR3Zh1qJpjAxhiS9JwoniBAhzQuvTm3RoS1Mfhi4m67"
         //   }
         // }
       );
-      console.log('fetch-2', resp)
+      console.log("fetch-2", resp);
       let data = await resp.json();
-      console.log('fetch-3', data)
-   
+      console.log("fetch-3", data);
+
       setMetaData(data.attributes);
     }
   };
   useEffect(() => {
-    const test=()=>{
-      console.log('fetchinggggg')
+    const test = () => {
+      console.log("fetchinggggg");
       fetchMeta();
-    }
-   test();
+    };
+    test();
   }, [nftDetails, reloadContent]);
-
 
   useEffect(() => {
     const fetch = async () => {
@@ -1315,16 +1316,21 @@ const ItemDetails = function (props) {
   }, [nftDetails, currPage, reloadContent]);
 
   const checkIfLoadedWithWallet = () => {
-    if (orders === "null" || isOwned === "null" || originalQty === "null" || haveOrder === "null" || currentUser === "null" || buttons === "null") {
-      return false
-    }
-    else
-      return true
-  }
+    if (
+      orders === "null" ||
+      isOwned === "null" ||
+      originalQty === "null" ||
+      haveOrder === "null" ||
+      currentUser === "null" ||
+      buttons === "null"
+    ) {
+      return false;
+    } else return true;
+  };
 
   const Transfer = () => (
-    < div >
-      {checkIfLoadedWithWallet() && Number(originalQty) > 0 &&
+    <div>
+      {checkIfLoadedWithWallet() && Number(originalQty) > 0 && (
         <span
           className={
             transferLoader
@@ -1342,29 +1348,22 @@ const ItemDetails = function (props) {
               return;
             }
             setIsTransferPopup(true);
-            setBeneficiary("")
-            setTransferQuantity(1)
+            setBeneficiary("");
+            setTransferQuantity(1);
           }}
         >
           Transfer NFT
         </span>
-      }
-    </div >
-
+      )}
+    </div>
   );
 
-  const RemoveFromSale = (
-    seller,
-    price,
-    orderId,
-    qty,
-    qtySold
-  ) => (
+  const RemoveFromSale = (seller, price, orderId, qty, qtySold) => (
     <div className="de_tab">
       {removeFromSaleLoader
         ? showProcessingModal(
-          `Removing ${qty} qty from sale. Please do not refresh...`
-        )
+            `Removing ${qty} qty from sale. Please do not refresh...`
+          )
         : ""}
 
       <div className="row">
@@ -1389,8 +1388,8 @@ const ItemDetails = function (props) {
                   <h6>
                     {seller?.length > 20
                       ? seller.slice(0, 6) +
-                      "...." +
-                      seller.slice(seller?.length - 6, seller?.length)
+                        "...." +
+                        seller.slice(seller?.length - 6, seller?.length)
                       : seller}
                   </h6>
                   <p>
@@ -1406,7 +1405,6 @@ const ItemDetails = function (props) {
                   </p>
                 </div>
                 <div className="d-flex flex-wrap">
-
                   <div className="vCenter itemDet-btn make_offer">
                     <span
                       className={
@@ -1435,8 +1433,8 @@ const ItemDetails = function (props) {
                         );
                         if (res === false) {
                           setRemoveFromSaleLoader(false);
-                          resetStates()
-                          setReloadContent(!reloadContent)
+                          resetStates();
+                          setReloadContent(!reloadContent);
                           return;
                         }
                         try {
@@ -1445,16 +1443,18 @@ const ItemDetails = function (props) {
                             userId: nftDetails.nCreater._id,
                             action: "Marketplace",
                             actionMeta: "Unlisted",
-                            message: `${qty} editions by ${profile.sWalletAddress
-                              ? profile.sWalletAddress.slice(0, 3) +
-                              "..." +
-                              profile.sWalletAddress.slice(39, 42)
-                              : ""}`,
+                            message: `${qty} editions by ${
+                              profile.sWalletAddress
+                                ? profile.sWalletAddress.slice(0, 3) +
+                                  "..." +
+                                  profile.sWalletAddress.slice(39, 42)
+                                : ""
+                            }`,
                           };
 
                           await InsertHistory(historyMetaData);
-                          resetStates()
-                          setReloadContent(!reloadContent)
+                          resetStates();
+                          setReloadContent(!reloadContent);
                         } catch (e) {
                           return;
                         }
@@ -1509,8 +1509,8 @@ const ItemDetails = function (props) {
                   <h6>
                     {seller?.length > 20
                       ? seller.slice(0, 6) +
-                      "...." +
-                      seller.slice(seller?.length - 6, seller?.length)
+                        "...." +
+                        seller.slice(seller?.length - 6, seller?.length)
                       : seller}{" "}
                   </h6>
                   <p>
@@ -1535,13 +1535,23 @@ const ItemDetails = function (props) {
                   </p>
                   <div className="Auctions_ends">
                     {timestamp !== GENERAL_TIMESTAMP ? (
-                      !orderState[key] && Date.parse(moment.utc(timestamp * 1000).local().format()) - Date.parse(new Date()) > 0 ? (
+                      !orderState[key] &&
+                      Date.parse(
+                        moment
+                          .utc(timestamp * 1000)
+                          .local()
+                          .format()
+                      ) -
+                        Date.parse(new Date()) >
+                        0 ? (
                         <>
                           Auction ends in
                           <div className="de_countdown">
-
                             <Clock
-                              deadline={moment.utc(timestamp * 1000).local().format()}
+                              deadline={moment
+                                .utc(timestamp * 1000)
+                                .local()
+                                .format()}
                               onAuctionEnd={onAuctionEnd}
                               index={key}
                             />
@@ -1564,15 +1574,13 @@ const ItemDetails = function (props) {
                           : "btn-main btn-removefromauction"
                       }
                       onClick={async () => {
-
-
                         let res1 = await handleNetworkSwitch(currentUser);
                         setCookie("balance", res1, { path: "/" });
                         if (res1 === false) return;
 
                         if (currentUser === undefined) {
-                          setNotConnectedModal(true)
-                          return
+                          setNotConnectedModal(true);
+                          return;
                         }
 
                         if (!currentUser) {
@@ -1582,7 +1590,11 @@ const ItemDetails = function (props) {
                           return;
                         }
                         if (deactivated === true) {
-                          NotificationManager.error("Admin has deactivated your account", "", 1200);
+                          NotificationManager.error(
+                            "Admin has deactivated your account",
+                            "",
+                            1200
+                          );
                           return;
                         }
                         setRemoveFromSaleLoader(true);
@@ -1594,8 +1606,8 @@ const ItemDetails = function (props) {
                         );
                         if (res === false) {
                           setRemoveFromSaleLoader(false);
-                          resetStates()
-                          setReloadContent(!reloadContent)
+                          resetStates();
+                          setReloadContent(!reloadContent);
                           return;
                         }
                         try {
@@ -1604,18 +1616,18 @@ const ItemDetails = function (props) {
                             userId: nftDetails.nCreater._id,
                             action: "Marketplace",
                             actionMeta: "Unlisted",
-                            message: `${qty} editions by ${profile.sWalletAddress
-                              ? profile.sWalletAddress.slice(0, 3) +
-                              "..." +
-                              profile.sWalletAddress.slice(39, 42)
-                              : ""
-                              }`,
-
+                            message: `${qty} editions by ${
+                              profile.sWalletAddress
+                                ? profile.sWalletAddress.slice(0, 3) +
+                                  "..." +
+                                  profile.sWalletAddress.slice(39, 42)
+                                : ""
+                            }`,
                           };
 
                           await InsertHistory(historyMetaData);
-                          resetStates()
-                          setReloadContent(!reloadContent)
+                          resetStates();
+                          setReloadContent(!reloadContent);
                           setRemoveFromSaleLoader(false);
                         } catch (e) {
                           setRemoveFromSaleLoader(false);
@@ -1675,8 +1687,8 @@ const ItemDetails = function (props) {
                   <h6>
                     {seller?.length > 20
                       ? seller.slice(0, 6) +
-                      "...." +
-                      seller.slice(seller?.length - 6, seller?.length)
+                        "...." +
+                        seller.slice(seller?.length - 6, seller?.length)
                       : seller}
                   </h6>
                   <p>
@@ -1690,7 +1702,7 @@ const ItemDetails = function (props) {
                     <span>
                       at {qty - qtySold}/{nftDetails ? nftDetails.nQuantity : 0}{" "}
                       {qty - qtySold / (nftDetails ? nftDetails.nQuantity : 0) >
-                        1
+                      1
                         ? "editions"
                         : "edition"}{" "}
                       for{" "}
@@ -1702,15 +1714,23 @@ const ItemDetails = function (props) {
                   </p>
                   <div className="Auctions_ends">
                     {timestamp !== GENERAL_TIMESTAMP ? (
-                      !orderState[key] && Date.parse(moment.utc(timestamp * 1000).local().format()) - Date.parse(new Date()) > 0 ? (
+                      !orderState[key] &&
+                      Date.parse(
+                        moment
+                          .utc(timestamp * 1000)
+                          .local()
+                          .format()
+                      ) -
+                        Date.parse(new Date()) >
+                        0 ? (
                         <>
-
                           <div>Auction ends in</div>
                           <div className="de_countdown">
-
-
                             <Clock
-                              deadline={moment.utc(timestamp * 1000).local().format()}
+                              deadline={moment
+                                .utc(timestamp * 1000)
+                                .local()
+                                .format()}
                               onAuctionEnd={onAuctionEnd}
                               index={key}
                             />
@@ -1727,18 +1747,22 @@ const ItemDetails = function (props) {
                 <div className="vCenter d-flex itemDet-btn make_offer">
                   <span
                     className={
-                      orderState[key] || Date.parse(moment.utc(timestamp * 1000).local().format()) - Date.parse(new Date()) <= 0
+                      orderState[key] ||
+                      Date.parse(
+                        moment
+                          .utc(timestamp * 1000)
+                          .local()
+                          .format()
+                      ) -
+                        Date.parse(new Date()) <=
+                        0
                         ? "spn-disabled  btn-placeABid"
                         : "btn-main btn-placeABid"
                     }
                     onClick={async () => {
-
-
                       if (
-                        cookies["chain_id"] !==
-                        process.env.REACT_APP_CHAIN_ID
+                        cookies["chain_id"] !== process.env.REACT_APP_CHAIN_ID
                       ) {
-
                         NotificationManager.error("Please switch chain");
                         let res = await handleNetworkSwitch();
                         setCookie("balance", res, { path: "/" });
@@ -1750,23 +1774,30 @@ const ItemDetails = function (props) {
                       if (res === false) return;
 
                       if (isUserHaveActiveBid) {
-                        setIsActiveBid(true)
-                      }
-                      else {
-                        setIsActiveBid(false)
+                        setIsActiveBid(true);
+                      } else {
+                        setIsActiveBid(false);
                       }
                       if (isUserHaveActiveOffer) {
-                        setIsActiveOffer(true)
-                      }
-                      else {
-                        setIsActiveOffer(false)
+                        setIsActiveOffer(true);
+                      } else {
+                        setIsActiveOffer(false);
                       }
                       if (deactivated === true) {
-                        NotificationManager.error("Admin has deactivated your account", "", 1200);
+                        NotificationManager.error(
+                          "Admin has deactivated your account",
+                          "",
+                          1200
+                        );
                         return;
                       }
 
-                      if (moment.utc(timestamp * 1000).local().format() < moment(new Date()).format()) {
+                      if (
+                        moment
+                          .utc(timestamp * 1000)
+                          .local()
+                          .format() < moment(new Date()).format()
+                      ) {
                         return;
                       }
                       if (!currentUser) {
@@ -1780,37 +1811,42 @@ const ItemDetails = function (props) {
                       setCurrOrderLeftQty(qty - qtySold);
                       setCurrentOrderMinBid(price);
                       setCurrentOrderId(orderId);
-                      setCurrentOrder(order)
+                      setCurrentOrder(order);
                       setCurrentOrderSeller(sellerId);
-                      setCurrentOrder(order)
+                      setCurrentOrder(order);
                       setIsPlaceABidPopup(true);
 
-
                       if (!isUserHaveActiveBid) {
-                        setBidPrice("")
-                        setBidQty(1)
-                        setCurrBid({})
+                        setBidPrice("");
+                        setBidQty(1);
+                        setCurrBid({});
                       }
                     }}
                   >
-
-                    {moment.utc(timestamp * 1000).local().format() >= moment(new Date()).format() &&
-                      !orderState[key] && Date.parse(moment.utc(timestamp * 1000).local().format()) - Date.parse(new Date()) > 0
+                    {moment
+                      .utc(timestamp * 1000)
+                      .local()
+                      .format() >= moment(new Date()).format() &&
+                    !orderState[key] &&
+                    Date.parse(
+                      moment
+                        .utc(timestamp * 1000)
+                        .local()
+                        .format()
+                    ) -
+                      Date.parse(new Date()) >
+                      0
                       ? isUserHaveActiveBid
                         ? "Update Bid"
                         : "Place A Bid"
                       : "Auction Ended"}
                   </span>
                   <span
-                    className=
-                    "btn-main btn-placeABid"
-
+                    className="btn-main btn-placeABid"
                     onClick={async () => {
                       if (
-                        cookies["chain_id"] !==
-                        process.env.REACT_APP_CHAIN_ID
+                        cookies["chain_id"] !== process.env.REACT_APP_CHAIN_ID
                       ) {
-
                         NotificationManager.error("Please switch chain");
                         let res = await handleNetworkSwitch();
                         setCookie("balance", res, { path: "/" });
@@ -1822,7 +1858,7 @@ const ItemDetails = function (props) {
                       if (res === false) return;
                       if (currentUser === undefined) {
                         setNotConnectedModal(true);
-                        return
+                        return;
                       }
 
                       if (!currentUser) {
@@ -1831,9 +1867,12 @@ const ItemDetails = function (props) {
                         return;
                       }
 
-
                       if (deactivated === true) {
-                        NotificationManager.error("Admin has deactivated your account", "", 1200);
+                        NotificationManager.error(
+                          "Admin has deactivated your account",
+                          "",
+                          1200
+                        );
                         return;
                       }
 
@@ -1842,29 +1881,21 @@ const ItemDetails = function (props) {
                       setCurrentOrderMinBid(price);
                       setCurrentOrderId(orderId);
                       setCurrentOrderSeller(sellerId);
-                      setCurrentOrder(order)
-                      setIsPopup(false)
+                      setCurrentOrder(order);
+                      setIsPopup(false);
                       if (isUserHaveActiveOffer) {
-                        setIsActiveOffer(true)
+                        setIsActiveOffer(true);
                       } else {
                         // setBuyQuantity(1)
-                        setOfferPrice("")
-                        setOfferQuantity(1)
-                        setIsActiveOffer(false)
-                        setCurrOffer({})
+                        setOfferPrice("");
+                        setOfferQuantity(1);
+                        setIsActiveOffer(false);
+                        setCurrOffer({});
                       }
                       setIsOfferModal(true);
-
-
                     }}
                   >
-
-                    {
-                      isUserHaveActiveOffer
-                        ? "Update Offer"
-                        : "Make Offer"
-                    }
-
+                    {isUserHaveActiveOffer ? "Update Offer" : "Make Offer"}
                   </span>
                 </div>
               </div>
@@ -1910,13 +1941,13 @@ const ItemDetails = function (props) {
               <h6>
                 {seller?.length > 20
                   ? seller.slice(0, 6) +
-                  "...." +
-                  seller.slice(seller?.length - 6, seller?.length)
+                    "...." +
+                    seller.slice(seller?.length - 6, seller?.length)
                   : seller}
               </h6>
               <p>
-                {qtyLeft} / {qty}{" "}
-                {qtyLeft / qty > 1 ? "editions" : "edition"} for{" "}
+                {qtyLeft} / {qty} {qtyLeft / qty > 1 ? "editions" : "edition"}{" "}
+                for{" "}
                 <b>
                   {price} {CURRENCY}
                 </b>{" "}
@@ -1928,12 +1959,16 @@ const ItemDetails = function (props) {
                   className="btn-main btn-buyNow"
                   onClick={async () => {
                     if (currentUser === undefined) {
-                      setNotConnectedModal(true)
-                      return
+                      setNotConnectedModal(true);
+                      return;
                     }
                     if (deactivated) {
-                      NotificationManager.error("Admin Has Deactivated Your Account", "", 1500)
-                      return
+                      NotificationManager.error(
+                        "Admin Has Deactivated Your Account",
+                        "",
+                        1500
+                      );
+                      return;
                     }
                     let res = await handleNetworkSwitch(currentUser);
                     setCookie("balance", res, { path: "/" });
@@ -1949,10 +1984,10 @@ const ItemDetails = function (props) {
                     setCurrOrderLeftQty(qtyLeft);
                     setCurrOrderType(orderType);
                     setCurrentOrderId(orderId);
-                    setCurrentOrder(order)
+                    setCurrentOrder(order);
                     setCurrentOrderMinBid(price);
                     setIsPopup(true);
-                    setBuyQuantity(1)
+                    setBuyQuantity(1);
                   }}
                 >
                   Buy Now
@@ -1960,16 +1995,14 @@ const ItemDetails = function (props) {
                 <span
                   className="btn-main btn-buyNow"
                   onClick={async () => {
-
                     if (currentUser === undefined) {
-                      setNotConnectedModal(true)
-                      return
+                      setNotConnectedModal(true);
+                      return;
                     }
                     if (isUserHaveActiveOffer) {
-                      setIsActiveOffer(true)
-                    }
-                    else {
-                      setIsActiveOffer(false)
+                      setIsActiveOffer(true);
+                    } else {
+                      setIsActiveOffer(false);
                     }
 
                     let res = await handleNetworkSwitch(currentUser);
@@ -1982,7 +2015,11 @@ const ItemDetails = function (props) {
                       return;
                     }
                     if (deactivated === true) {
-                      NotificationManager.error("Admin has deactivated your account", "", 1200);
+                      NotificationManager.error(
+                        "Admin has deactivated your account",
+                        "",
+                        1200
+                      );
                       return;
                     }
                     setSelectedOrderPaymentTokenData(UsdtTokenAddress.USDT);
@@ -1990,37 +2027,29 @@ const ItemDetails = function (props) {
                     setCurrOrderLeftQty(qtyLeft);
                     setCurrOrderType(orderType);
                     setCurrentOrderId(orderId);
-                    setCurrentOrder(order)
+                    setCurrentOrder(order);
                     setCurrentOrderMinBid(price);
-                    setIsPopup(false)
-
+                    setIsPopup(false);
 
                     setCurrentOrderSeller(sellerId);
-                    setCurrentOrder(order)
+                    setCurrentOrder(order);
                     if (isUserHaveActiveOffer) {
-                      setIsActiveOffer(true)
+                      setIsActiveOffer(true);
                     } else {
-                      setIsActiveOffer(false)
-                      setCurrOffer({})
-                      setOfferPrice("")
-                      setOfferQuantity(1)
+                      setIsActiveOffer(false);
+                      setCurrOffer({});
+                      setOfferPrice("");
+                      setOfferQuantity(1);
                     }
                     setIsOfferModal(true);
                   }}
                 >
-                  {
-                    isUserHaveActiveOffer
-                      ? "Update Offer"
-                      : "Make Offer"
-                  }
+                  {isUserHaveActiveOffer ? "Update Offer" : "Make Offer"}
                 </span>
-
               </div>
-
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -2039,8 +2068,8 @@ const ItemDetails = function (props) {
           Created by{" "}
           {nftDetails && nftDetails?.nCreater
             ? nftDetails?.nCreater?.sWalletAddress?.slice(0, 5) +
-            "......" +
-            nftDetails?.nCreater?.sWalletAddress?.slice(37, 42)
+              "......" +
+              nftDetails?.nCreater?.sWalletAddress?.slice(37, 42)
             : "0x00.."}
         </span>
       </div>
@@ -2072,24 +2101,26 @@ const ItemDetails = function (props) {
                   Created by{" "}
                   {nftDetails?.nCreater?.sWalletAddress?.length > 20
                     ? nftDetails?.nCreater?.sWalletAddress?.slice(0, 6) +
-                    "...." +
-                    nftDetails?.nCreater?.sWalletAddress.slice(
-                      nftDetails?.nCreater?.sWalletAddress?.length - 6,
-                      nftDetails?.nCreater?.sWalletAddress?.length
-                    )
+                      "...." +
+                      nftDetails?.nCreater?.sWalletAddress.slice(
+                        nftDetails?.nCreater?.sWalletAddress?.length - 6,
+                        nftDetails?.nCreater?.sWalletAddress?.length
+                      )
                     : nftDetails?.nCreater?.sWalletAddress}
                 </h6>
 
-                <p> at {(isLazyMint === 2 || isLazyMint === 0) && !currUserLazyMinted ? originalQty : ownedQuantity}/{nftDetails ? nftDetails.nQuantity : 0}{" "}
-                  {parseInt(ownedQuantity) > 1
-                    ? "editions"
-                    : "edition"}{" "}
-                  each
+                <p>
+                  {" "}
+                  at{" "}
+                  {(isLazyMint === 2 || isLazyMint === 0) && !currUserLazyMinted
+                    ? originalQty
+                    : ownedQuantity}
+                  /{nftDetails ? nftDetails.nQuantity : 0}{" "}
+                  {parseInt(ownedQuantity) > 1 ? "editions" : "edition"} each
                 </p>
               </div>
 
               <div className="d-flex flex-wrap">
-
                 <div className="vCenter itemDet-btn make_offer">
                   <span
                     className={
@@ -2099,10 +2130,12 @@ const ItemDetails = function (props) {
                     }
                     onClick={async () => {
                       if (profile.sStatus === "blocked") {
-                        NotificationManager.error("Admin Has Blocked Your Account", "", 1200);
+                        NotificationManager.error(
+                          "Admin Has Blocked Your Account",
+                          "",
+                          1200
+                        );
                         return;
-
-
                       }
                       if (!currentUser || currentUser === undefined) {
                         setNotConnectedModal(true);
@@ -2129,28 +2162,37 @@ const ItemDetails = function (props) {
     </div>
   );
 
-
   const handleDate = (ev) => {
-
     if (!ev.target["validity"].valid) {
-      NotificationManager.error(`Date must be ${moment(new Date()).add(60, "seconds").format('lll')} or later`, "", 1200);
-      setEndTime("")
+      NotificationManager.error(
+        `Date must be ${moment(new Date())
+          .add(60, "seconds")
+          .format("lll")} or later`,
+        "",
+        1200
+      );
+      setEndTime("");
       return;
     }
     const dt = ev.target["value"];
     const ct = moment(new Date()).format();
     if (dt) {
-
       if (dt < ct) {
-        NotificationManager.error(`Date must be ${moment(new Date()).add(60, "seconds").format('lll')} or later`, "", 1200)
-        setEndTime("")
+        NotificationManager.error(
+          `Date must be ${moment(new Date())
+            .add(60, "seconds")
+            .format("lll")} or later`,
+          "",
+          1200
+        );
+        setEndTime("");
         return;
       }
       setEndTime(dt);
     } else {
-      setEndTime("")
+      setEndTime("");
     }
-  }
+  };
 
   return (
     <div>
@@ -2159,19 +2201,20 @@ const ItemDetails = function (props) {
       {isOfferModal ? makeOfferModal : ""}
       {checkoutLoader
         ? showProcessingModal(
-          "Transaction is in progress. Please do not refresh..."
-        )
+            "Transaction is in progress. Please do not refresh..."
+          )
         : ""}
       {putOnMarketplaceLoader
         ? showProcessingModal(
-          `Placing on marketplace. Please do not refresh...`
-        )
+            `Placing on marketplace. Please do not refresh...`
+          )
         : ""}
       {transferLoader
         ? showProcessingModal(
-          `Transferring ${transferQuantity} qty to ${beneficiary.slice(0, 3) + "..." + beneficiary.slice(39, 42)
-          }. Please do not refresh...`
-        )
+            `Transferring ${transferQuantity} qty to ${
+              beneficiary.slice(0, 3) + "..." + beneficiary.slice(39, 42)
+            }. Please do not refresh...`
+          )
         : ""}
       {placeBidLoader
         ? showProcessingModal("Placing Bid. Please do not refresh...")
@@ -2183,8 +2226,8 @@ const ItemDetails = function (props) {
 
       {removeFromSaleLoader
         ? showProcessingModal(
-          "Removing NFT from sale. Please do not refresh..."
-        )
+            "Removing NFT from sale. Please do not refresh..."
+          )
         : ""}
       {loading ? <Loader /> : ""}
       {isTransferPopup ? transferModal : ""}
@@ -2204,32 +2247,40 @@ const ItemDetails = function (props) {
       <section className="container">
         <div className="row mt-md-5 pt-md-4">
           <div className="col-md-6 text-center nft_image_box">
-            {nftDetails && nftDetails.nNftImageType === "mp4" ? <video className="img-fluid nftimg nft_image" controls>
-              <source src={nftDetails.nNftImage} type="video/mp4" />
-            </video> : <img
-              src={nftDetails ? nftDetails.nNftImage : ""}
-              className="img-fluid img-rounded explore_item_img_col nft_image mb-sm-30"
-              alt=""
-            />}
-
+            {nftDetails && nftDetails.nNftImageType === "mp4" ? (
+              <video className="img-fluid nftimg nft_image" controls>
+                <source src={nftDetails.nNftImage} type="video/mp4" />
+              </video>
+            ) : (
+              <img
+                src={nftDetails ? nftDetails.nNftImage : ""}
+                className="img-fluid img-rounded explore_item_img_col nft_image mb-sm-30"
+                alt=""
+              />
+            )}
           </div>
           <div className="col-md-6">
             <div className="item_info mb-4">
-
-              <div className="d-flex justify-content-between align-items-center"> <h2 className="font_48 text-dark NunitoBold mb-0">
-                {nftDetails ? nftDetails.nTitle : ""}
-              </h2>
-                <i title="Reload Content" onClick={async () => {
-                  setActiveRefresh(true);
-                  setReloadContent(!reloadContent)
-                  setTimeout(() => {
-                    setActiveRefresh(false);
-                  }, 5000)
-                }} className={`${activeRefresh ? "active" : ""} fa fa-refresh`} aria-hidden="true"></i></div>
+              <div className="d-flex justify-content-between align-items-center">
+                {" "}
+                <h2 className="font_48 text-dark NunitoBold mb-0">
+                  {nftDetails ? nftDetails.nTitle : ""}
+                </h2>
+                <i
+                  title="Reload Content"
+                  onClick={async () => {
+                    setActiveRefresh(true);
+                    setReloadContent(!reloadContent);
+                    setTimeout(() => {
+                      setActiveRefresh(false);
+                    }, 5000);
+                  }}
+                  className={`${activeRefresh ? "active" : ""} fa fa-refresh`}
+                  aria-hidden="true"
+                ></i>
+              </div>
 
               <div className="item_info_counts ">
-
-
                 {highestBid !== undefined && !isEmptyObject(highestBid) ? (
                   <div className="detail_item ">
                     <div className="detail_btn">
@@ -2237,11 +2288,14 @@ const ItemDetails = function (props) {
                         className="item_info_lock"
                         style={{ cursor: "pointer" }}
                       >
-                        Highest {highestBid.oBidStatus === "Bid" ? "Bid" : "Offer"} at{" "}
+                        Highest{" "}
+                        {highestBid.oBidStatus === "Bid" ? "Bid" : "Offer"} at{" "}
                         {Number(
                           convertToEth(highestBid?.oBidPrice?.$numberDecimal)
                         ).toFixed(4)}{" "}
-                        {highestBid.paymentSymbol ? highestBid.paymentSymbol : "USDT"}
+                        {highestBid.paymentSymbol
+                          ? highestBid.paymentSymbol
+                          : "USDT"}
                       </div>
                     </div>
                   </div>
@@ -2255,11 +2309,16 @@ const ItemDetails = function (props) {
                       <div
                         className="item_info_lock"
                         onClick={async () => {
-                          let sig = await sign()
-                          let data = await getUnlockableContent({ nftId: id, sSignature: sig, sWalletAddress: currentUser, sMessage: USER_MESSAGE })
-                          setLockedContent(data)
-                          console.log("data0", data)
-                          setIsUnlocked(!isUnlocked)
+                          let sig = await sign();
+                          let data = await getUnlockableContent({
+                            nftId: id,
+                            sSignature: sig,
+                            sWalletAddress: currentUser,
+                            sMessage: USER_MESSAGE,
+                          });
+                          setLockedContent(data);
+                          console.log("data0", data);
+                          setIsUnlocked(!isUnlocked);
                         }}
                         style={{ cursor: "pointer" }}
                       >
@@ -2275,7 +2334,9 @@ const ItemDetails = function (props) {
                 )}
               </div>
 
-              <p className="nft_dis">{nftDetails ? nftDetails.nDescription : ""}</p>
+              <p className="nft_dis">
+                {nftDetails ? nftDetails.nDescription : ""}
+              </p>
               <div className="de_tab">
                 <div className="row">
                   <div className="col-md-4">
@@ -2287,19 +2348,20 @@ const ItemDetails = function (props) {
                               title={
                                 nftDetails.nCreater
                                   ? nftDetails.nCreater.sWalletAddress.slice(
-                                    0,
-                                    3
-                                  ) +
-                                  "..." +
-                                  nftDetails.nCreater.sWalletAddress.slice(
-                                    39,
-                                    42
-                                  )
+                                      0,
+                                      3
+                                    ) +
+                                    "..." +
+                                    nftDetails.nCreater.sWalletAddress.slice(
+                                      39,
+                                      42
+                                    )
                                   : ""
                               }
                               className="lazy"
                               src={
-                                nftDetails && nftDetails?.nCreater?.sProfilePicUrl
+                                nftDetails &&
+                                nftDetails?.nCreater?.sProfilePicUrl
                                   ? nftDetails?.nCreater?.sProfilePicUrl
                                   : Avatar
                               }
@@ -2314,9 +2376,15 @@ const ItemDetails = function (props) {
                           {nftDetails && nftDetails?.nCreater?.sWalletAddress
                             ? nftDetails?.nCreater?.sUserName
                               ? nftDetails?.nCreater?.sUserName
-                              : nftDetails?.nCreater?.sWalletAddress.slice(0, 4) +
-                              "..." +
-                              nftDetails?.nCreater?.sWalletAddress.slice(38, 42)
+                              : nftDetails?.nCreater?.sWalletAddress.slice(
+                                  0,
+                                  4
+                                ) +
+                                "..." +
+                                nftDetails?.nCreater?.sWalletAddress.slice(
+                                  38,
+                                  42
+                                )
                             : ""}
                         </p>
                       </div>
@@ -2331,7 +2399,8 @@ const ItemDetails = function (props) {
                               className="lazy"
                               src={
                                 nftDetails && nftDetails.sCollectionDetail
-                                  ? nftDetails.sCollectionDetail?.collectionImage
+                                  ? nftDetails.sCollectionDetail
+                                      ?.collectionImage
                                   : Avatar
                               }
                               alt=""
@@ -2345,33 +2414,44 @@ const ItemDetails = function (props) {
                         <p>
                           {nftDetails && nftDetails.nCollection
                             ? nftDetails.nCollection.slice(0, 4) +
-                            "..." +
-                            nftDetails.nCollection.slice(38, 42)
+                              "..." +
+                              nftDetails.nCollection.slice(38, 42)
                             : ""}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
             <div className="spacer-10"></div>
             <div className="de_tab">
               <ul className="de_nav itemdetail_nav text-left">
-                <li id="Mainbtn1" className={selectedMenu === 0 ? "active" : ""}>
+                <li
+                  id="Mainbtn1"
+                  className={selectedMenu === 0 ? "active" : ""}
+                >
                   <span onClick={() => setSelectedMenu(0)}>Action</span>
                 </li>
                 <li id="Mainbtn" className={selectedMenu === 1 ? "active" : ""}>
                   <span onClick={() => setSelectedMenu(1)}>History</span>
                 </li>
-                <li id="Mainbtn2" className={selectedMenu === 2 ? "active" : ""}>
+                <li
+                  id="Mainbtn2"
+                  className={selectedMenu === 2 ? "active" : ""}
+                >
                   <span onClick={() => setSelectedMenu(2)}>Active Bids</span>
                 </li>
-                <li id="Mainbtn3" className={selectedMenu === 3 ? "active" : ""}>
+                <li
+                  id="Mainbtn3"
+                  className={selectedMenu === 3 ? "active" : ""}
+                >
                   <span onClick={() => setSelectedMenu(3)}>Details</span>
                 </li>
-                <li id="Mainbtn4" className={selectedMenu === 4 ? "active" : ""}>
+                <li
+                  id="Mainbtn4"
+                  className={selectedMenu === 4 ? "active" : ""}
+                >
                   <span onClick={() => setSelectedMenu(4)}>Active Offer</span>
                 </li>
                 {/* <li id="Mainbtn4" className={selectedMenu === 5 ? "active" : ""}>
@@ -2384,7 +2464,6 @@ const ItemDetails = function (props) {
                   <PopupModal
                     content={
                       <div className="popup-content1 text-start">
-
                         <>
                           <h3 className="modal_headeing">Put on Marketplace</h3>
                           <h6 className="formlabel">Select method</h6>
@@ -2392,31 +2471,48 @@ const ItemDetails = function (props) {
                             <ul className="de_nav text-center">
                               <li
                                 id="btn1"
-                                className={marketplaceSaleType === 0 ? "active" : ""}
+                                className={
+                                  marketplaceSaleType === 0 ? "active" : ""
+                                }
                                 onClick={() => setMarketplaceSaleType(0)}
                               >
                                 <span>
                                   <i className="fa fa-tag"></i>Fixed price
                                 </span>
                               </li>
-                              <li id="btn2" className={marketplaceSaleType === 1 ? "active" : ""} onClick={() => setMarketplaceSaleType(1)}>
+                              <li
+                                id="btn2"
+                                className={
+                                  marketplaceSaleType === 1 ? "active" : ""
+                                }
+                                onClick={() => setMarketplaceSaleType(1)}
+                              >
                                 <span>
                                   <i className="fa fa-hourglass-1"></i>Timed
                                   auction
                                 </span>
                               </li>
-                              <li id="btn3" className={marketplaceSaleType === 2 ? "active" : ""} onClick={() => setMarketplaceSaleType(2)}>
+                              <li
+                                id="btn3"
+                                className={
+                                  marketplaceSaleType === 2 ? "active" : ""
+                                }
+                                onClick={() => setMarketplaceSaleType(2)}
+                              >
                                 <span>
                                   <i className="fa fa-users"></i>Open for bids
                                 </span>
                               </li>
                             </ul>
-
-
                           </div>
                         </>
                         <div className="de_tab_content pt-3">
-                          <div id="price" className={marketplaceSaleType === 0 ? "show" : "hide"}>
+                          <div
+                            id="price"
+                            className={
+                              marketplaceSaleType === 0 ? "show" : "hide"
+                            }
+                          >
                             <h5 className="required">Price</h5>
                             <input
                               type="text"
@@ -2426,20 +2522,23 @@ const ItemDetails = function (props) {
                               max="18"
                               value={marketplacePrice}
                               onKeyPress={(e) => {
-                                if (marketplacePrice?.length > 25) e.preventDefault();
+                                if (marketplacePrice?.length > 25)
+                                  e.preventDefault();
                               }}
                               onChange={(e) => {
                                 const re = /^\d*\.?\d*$/;
                                 let val = e.target.value;
-                                if (e.target.value === "" || re.test(e.target.value)) {
+                                if (
+                                  e.target.value === "" ||
+                                  re.test(e.target.value)
+                                ) {
                                   const numStr = String(val);
                                   if (numStr.includes(".")) {
                                     if (numStr.split(".")[1]?.length > 15) {
-                                      return
+                                      return;
                                     }
                                   }
                                   setMarketplacePrice(val);
-
                                 }
                               }}
                               className="form-control"
@@ -2447,10 +2546,13 @@ const ItemDetails = function (props) {
                             />
                           </div>
 
-                          <div id="minimumAmount" className={marketplaceSaleType !== 0 ? "show" : "hide"}>
-                            <h5 className="formlabel required">
-                              Minimum bid
-                            </h5>
+                          <div
+                            id="minimumAmount"
+                            className={
+                              marketplaceSaleType !== 0 ? "show" : "hide"
+                            }
+                          >
+                            <h5 className="formlabel required">Minimum bid</h5>
                             <input
                               type="text"
                               name="item_price_bid"
@@ -2465,11 +2567,14 @@ const ItemDetails = function (props) {
                               onChange={(e) => {
                                 const re = /^\d*\.?\d*$/;
                                 let val = e.target.value;
-                                if (e.target.value === "" || re.test(e.target.value)) {
+                                if (
+                                  e.target.value === "" ||
+                                  re.test(e.target.value)
+                                ) {
                                   const numStr = String(val);
                                   if (numStr.includes(".")) {
                                     if (numStr.split(".")[1]?.length > 15) {
-                                      return
+                                      return;
                                     }
                                   }
                                   setMinimumBid(val);
@@ -2492,10 +2597,10 @@ const ItemDetails = function (props) {
                                 if (!/^\d*$/.test(e.key)) e.preventDefault();
                               }}
                               onChange={(e) => {
-                                let qty = !currUserLazyMinted ? Number(originalQty) : Number(ownedQuantity)
-                                if (
-                                  Number(e.target.value) > qty
-                                ) {
+                                let qty = !currUserLazyMinted
+                                  ? Number(originalQty)
+                                  : Number(ownedQuantity);
+                                if (Number(e.target.value) > qty) {
                                   NotificationManager.error(
                                     "Quantity should be less than owned quantity",
                                     "",
@@ -2512,7 +2617,12 @@ const ItemDetails = function (props) {
                             />
                           </div>
 
-                          <div id="Exp-payment-token" className={marketplaceSaleType !== 0 ? "show" : "hide"}>
+                          <div
+                            id="Exp-payment-token"
+                            className={
+                              marketplaceSaleType !== 0 ? "show" : "hide"
+                            }
+                          >
                             <div className="spacer-20"></div>
                             <div className="row">
                               <div className="col-md-6">
@@ -2523,21 +2633,27 @@ const ItemDetails = function (props) {
                                   className="form-control selectOpt"
                                   onChange={(e) => {
                                     setSelectedTokenAddress(e.target.value);
-
                                   }}
                                 >
                                   {options
                                     ? options?.map((option, key) => {
-                                      return (
-                                        <option value={option.value} key={key}>
-                                          {option.title}
-                                        </option>
-                                      );
-                                    })
+                                        return (
+                                          <option
+                                            value={option.value}
+                                            key={key}
+                                          >
+                                            {option.title}
+                                          </option>
+                                        );
+                                      })
                                     : ""}
                                 </select>
                               </div>
-                              <div className={`col-md-6 ${marketplaceSaleType === 1 ? "show" : "hide"}`}>
+                              <div
+                                className={`col-md-6 ${
+                                  marketplaceSaleType === 1 ? "show" : "hide"
+                                }`}
+                              >
                                 <h5 className="formlabel required">
                                   Expiration date
                                 </h5>
@@ -2545,20 +2661,19 @@ const ItemDetails = function (props) {
                                   type="datetime-local"
                                   id="meeting-time"
                                   name="meeting-time"
-                                  min={moment(new Date()).format().substring(0, 16)}
+                                  min={moment(new Date())
+                                    .format()
+                                    .substring(0, 16)}
                                   className="form-control"
                                   onChange={handleDate}
-                                  value={(endTime || "")?.toString()?.substring(0, 16)}
+                                  value={(endTime || "")
+                                    ?.toString()
+                                    ?.substring(0, 16)}
                                 ></input>
                               </div>
                             </div>
                           </div>
                         </div>
-
-
-
-
-
 
                         <div className="spacer-single"></div>
                         <button
@@ -2571,7 +2686,7 @@ const ItemDetails = function (props) {
                             }
                             if (
                               parseInt(marketplaceQuantity) >
-                              parseInt(nftDetails.nQuantity) ||
+                                parseInt(nftDetails.nQuantity) ||
                               parseInt(marketplaceQuantity) < 1
                             ) {
                               NotificationManager.error(
@@ -2584,30 +2699,67 @@ const ItemDetails = function (props) {
                             }
 
                             if (marketplaceSaleType === 0) {
-                              if (marketplacePrice === undefined || marketplacePrice === "" || marketplacePrice <= 0) {
-                                NotificationManager.error("Please Enter a price", "", 1200);
+                              if (
+                                marketplacePrice === undefined ||
+                                marketplacePrice === "" ||
+                                marketplacePrice <= 0
+                              ) {
+                                NotificationManager.error(
+                                  "Please Enter a price",
+                                  "",
+                                  1200
+                                );
                                 return;
-                              }
-                              else if (marketplaceQuantity === "") {
-                                NotificationManager.error("Please Enter Quantity", "", 800);
+                              } else if (marketplaceQuantity === "") {
+                                NotificationManager.error(
+                                  "Please Enter Quantity",
+                                  "",
+                                  800
+                                );
                                 return;
                               }
                             } else if (marketplaceSaleType === 1) {
-                              if (minimumBid === undefined || minimumBid === "" || minimumBid <= 0) {
-                                NotificationManager.error("Please Enter Minimum Bid", "", 1200);
+                              if (
+                                minimumBid === undefined ||
+                                minimumBid === "" ||
+                                minimumBid <= 0
+                              ) {
+                                NotificationManager.error(
+                                  "Please Enter Minimum Bid",
+                                  "",
+                                  1200
+                                );
                                 return;
                               }
                               if (endTime === "" || endTime === undefined) {
-                                NotificationManager.error("Please Enter Expiration date", "", 1200);
+                                NotificationManager.error(
+                                  "Please Enter Expiration date",
+                                  "",
+                                  1200
+                                );
                                 return;
                               }
                               if (endTime < moment(new Date()).format()) {
-                                NotificationManager.error(`Expiration date must be ${moment(new Date()).add(60, "seconds").format('lll')} or later`, "", 1200)
+                                NotificationManager.error(
+                                  `Expiration date must be ${moment(new Date())
+                                    .add(60, "seconds")
+                                    .format("lll")} or later`,
+                                  "",
+                                  1200
+                                );
                                 return;
                               }
                             } else {
-                              if (minimumBid === undefined || minimumBid === "" || minimumBid <= 0) {
-                                NotificationManager.error("Please Enter Minimum Bid", "", 1200);
+                              if (
+                                minimumBid === undefined ||
+                                minimumBid === "" ||
+                                minimumBid <= 0
+                              ) {
+                                NotificationManager.error(
+                                  "Please Enter Minimum Bid",
+                                  "",
+                                  1200
+                                );
                                 return;
                               }
                             }
@@ -2617,21 +2769,25 @@ const ItemDetails = function (props) {
                             let orderData = {
                               nftId: nftDetails._id,
                               collection: nftDetails.nCollection,
-                              price: marketplacePrice
-                                ? marketplacePrice
-                                : "0",
+                              price: marketplacePrice ? marketplacePrice : "0",
                               quantity: marketplaceQuantity,
                               saleType:
                                 marketplaceSaleType === 1 ||
-                                  marketplaceSaleType === 2
+                                marketplaceSaleType === 2
                                   ? 1
                                   : 0,
                               salt: Math.round(Math.random() * 10000000),
-                              endTime: endTime ? moment.utc(endTime).format("YYYY-MM-DD HH:mm:ss") : GENERAL_TIMESTAMP,
+                              endTime: endTime
+                                ? moment
+                                    .utc(endTime)
+                                    .format("YYYY-MM-DD HH:mm:ss")
+                                : GENERAL_TIMESTAMP,
                               chosenType: marketplaceSaleType,
                               minimumBid: minimumBid !== "" ? minimumBid : 0,
                               auctionEndDate: endTime
-                                ? moment.utc(endTime).format("YYYY-MM-DD HH:mm:ss")
+                                ? moment
+                                    .utc(endTime)
+                                    .format("YYYY-MM-DD HH:mm:ss")
                                 : new Date(GENERAL_DATE),
                               tokenAddress:
                                 marketplaceSaleType === 0
@@ -2649,8 +2805,8 @@ const ItemDetails = function (props) {
 
                             if (res === false) {
                               setPutOnMarketplaceLoader(false);
-                              resetForm()
-                              setReloadContent(!reloadContent)
+                              resetForm();
+                              setReloadContent(!reloadContent);
                               return;
                             }
                             try {
@@ -2659,28 +2815,29 @@ const ItemDetails = function (props) {
                                 userId: nftDetails.nCreater._id,
                                 action: "Marketplace",
                                 actionMeta: "Listed",
-                                message: `${marketplaceQuantity} Quantity For ${marketplacePrice
-                                  ? marketplacePrice
-                                  : minimumBid
+                                message: `${marketplaceQuantity} Quantity For ${
+                                  marketplacePrice
+                                    ? marketplacePrice
+                                    : minimumBid
                                     ? minimumBid
                                     : 0
-                                  } ${marketplaceSaleType === 0
+                                } ${
+                                  marketplaceSaleType === 0
                                     ? CURRENCY
                                     : getTokenSymbolByAddress(
-                                      selectedTokenAddress
-                                    )
-                                  } by ${profile.sWalletAddress
+                                        selectedTokenAddress
+                                      )
+                                } by ${
+                                  profile.sWalletAddress
                                     ? profile.sWalletAddress.slice(0, 3) +
-                                    "..." +
-                                    profile.sWalletAddress.slice(39, 42)
+                                      "..." +
+                                      profile.sWalletAddress.slice(39, 42)
                                     : ""
-                                  }`,
-
+                                }`,
                               };
 
                               await InsertHistory(historyMetaData);
-                              setReloadContent(!reloadContent)
-
+                              setReloadContent(!reloadContent);
                             } catch (e) {
                               return;
                             }
@@ -2699,89 +2856,148 @@ const ItemDetails = function (props) {
                 ""
               )}
               <div className="de_tab_content">
-                {selectedMenu === 0 &&
+                {selectedMenu === 0 && (
                   <div className="tab-2 onStep fadeIn historyTab scrollable">
-                    {console.log("orrr", originalQty)}
-                    {console.log("orders", orders)}
-                    {console.log("buttons", buttons)}
-                    {console.log("currentUser", currentUser)}
-                    {orders === null || buttons === null || currentUser === null?
-                       <Loader /> 
-                    //  <p> hhhhhhhhhhhhhhhhhhhhhhhhh</p>
-                    //  {console.log(orders,)}
-                      : (orders !== null && isOwned !== null && originalQty !== null && currentUser !== null && buttons !== null) ?
-                        getButtonsGroup(isLazyMint, 0, haveOrder, false, false, ownedQuantity, originalQty, currentUser, orders).length > 0 ?
-                          getButtonsGroup(isLazyMint, 0, haveOrder, false, false, ownedQuantity, originalQty, currentUser, orders).map((b, i) => {
-                            // return <button>{b}</button>
-                            return b === "PutOnMarketplace" ? PutOnMarketPlace() : ""
-                          }) : "" : ""}
+                    {console.log("orrr here", originalQty)}
+                    {console.log("orders here", orders)}
+                    {console.log("buttons here", buttons)}
+                    {console.log("currentUser here", currentUser)}
+                    {orders === null ||
+                    buttons === null ||
+                    currentUser === null ? (
+                      <Loader />
+                    ) : //  {console.log(orders,)}
+                    orders !== null &&
+                      isOwned !== null &&
+                      originalQty !== null &&
+                      currentUser !== null &&
+                      buttons !== null ? (
+                      getButtonsGroup(
+                        isLazyMint,
+                        0,
+                        haveOrder,
+                        false,
+                        false,
+                        ownedQuantity,
+                        originalQty,
+                        currentUser,
+                        orders
+                      ).length > 0 ? (
+                        getButtonsGroup(
+                          isLazyMint,
+                          0,
+                          haveOrder,
+                          false,
+                          false,
+                          ownedQuantity,
+                          originalQty,
+                          currentUser,
+                          orders
+                        ).map((b, i) => {
+                          return b === "PutOnMarketplace"
+                            ? PutOnMarketPlace()
+                            : "";
+                        })
+                      ) : (
+                        ""
+                      )
+                    ) : (
+                      ""
+                    )}
 
-                    {!loading && orders?.length >= 1 && buttons?.length > 0 && buttons[0]?.length > 0 && orders !== "null" &&
-                      !isEmpty(orders[0]) ? orders?.map((order, i) => {
+                    {!loading &&
+                    orders?.length >= 1 &&
+                    buttons?.length > 0 &&
+                    buttons[0]?.length > 0 &&
+                    orders !== "null" &&
+                    !isEmpty(orders[0])
+                      ? orders?.map((order, i) => {
+                          if (buttons?.length > 0 && buttons !== "null") {
+                            return buttons[i]?.map((b, i) => {
+                              return renderButtons(
+                                b,
+                                order?.oSellerWalletAddress,
+                                convertToEth(order?.oPrice?.$numberDecimal),
+                                order._id,
+                                order.oQuantity,
+                                order.quantity_sold,
+                                i,
+                                order.paymentTokenData,
+                                order.oValidUpto,
+                                order.oQuantity - order.quantity_sold,
+                                order.oType,
+                                order.oSeller,
+                                order.isUserHaveActiveOffer === undefined
+                                  ? false
+                                  : order.isUserHaveActiveOffer,
+                                order.isUserHaveActiveBid === undefined
+                                  ? false
+                                  : order.isUserHaveActiveBid,
+                                order
+                              );
+                            });
+                          }
+                        })
+                      : !loading &&
+                        orders !== "null" &&
+                        !isOwned &&
+                        buttons !== "null" &&
+                        buttons?.length <= 0 &&
+                        getButtonsGroup(
+                          isLazyMint,
+                          0,
+                          haveOrder,
+                          false,
+                          false,
+                          ownedQuantity,
+                          originalQty,
+                          currentUser,
+                          orders
+                        )?.length <= 0 &&
+                        currentUser !== "null"
+                      ? NotForSale()
+                      : ""}
+                  </div>
+                )}
 
-                        if (buttons?.length > 0 && buttons !== "null") {
-                          return buttons[i]?.map((b, i) => {
-                            return renderButtons(b, order?.oSellerWalletAddress,
-                              convertToEth(order?.oPrice?.$numberDecimal),
-                              order._id,
-                              order.oQuantity,
-                              order.quantity_sold, i, order.paymentTokenData,
-                              order.oValidUpto,
-                              order.oQuantity - order.quantity_sold, order.oType,
-                              order.oSeller,
-                              order.isUserHaveActiveOffer === undefined ? false : order.isUserHaveActiveOffer,
-                              order.isUserHaveActiveBid === undefined ? false : order.isUserHaveActiveBid, order)
-                          })
-                        }
-
-
-                      })
-                      : !loading && orders !== "null" && !isOwned && buttons !== "null" && buttons?.length <= 0 && getButtonsGroup(isLazyMint, 0, haveOrder, false, false, ownedQuantity, originalQty, currentUser, orders)?.length <= 0 && currentUser !== "null" ?
-                        NotForSale() : ""
-                    }
-
-                  </div>}
-
-                {selectedMenu === 1 &&
+                {selectedMenu === 1 && (
                   <div className="tab-1 onStep fadeIn historyTab scrollable">
                     {history && history?.length > 0
                       ? history?.map((h, i) => {
-
-                        return (
-                          <div className="row mb-4" key={i}>
-                            <div className="col-lg-12">
-                              <div className="item_author author_item_list align-items-start">
-                                <div className="author_list_pp">
-                                  <span>
-                                    <img
-                                      className="lazy"
-                                      src={
-                                        h && h.sProfilePicUrl
-                                          ? h.sProfilePicUrl
-                                          : Avatar
-                                      }
-                                      alt=""
-                                    />
-                                  </span>
-                                </div>
-                                <div className="author_list_info">
-                                  <h6>
-                                    {getAction(h.action, h.actionMeta)
-                                      .toString()
-                                      .toUpperCase()}{" "}
-                                    {"  "}
-                                  </h6>
-                                  {h.message}
-                                  <p>
-                                    {moment.utc(h.sCreated).local().fromNow()
-                                    }
-                                  </p>
+                          return (
+                            <div className="row mb-4" key={i}>
+                              <div className="col-lg-12">
+                                <div className="item_author author_item_list align-items-start">
+                                  <div className="author_list_pp">
+                                    <span>
+                                      <img
+                                        className="lazy"
+                                        src={
+                                          h && h.sProfilePicUrl
+                                            ? h.sProfilePicUrl
+                                            : Avatar
+                                        }
+                                        alt=""
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="author_list_info">
+                                    <h6>
+                                      {getAction(h.action, h.actionMeta)
+                                        .toString()
+                                        .toUpperCase()}{" "}
+                                      {"  "}
+                                    </h6>
+                                    {h.message}
+                                    <p>
+                                      {moment.utc(h.sCreated).local().fromNow()}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })
+                          );
+                        })
                       : ""}
                     <div className="row customRow">
                       <div className="col-lg-12">
@@ -2799,15 +3015,18 @@ const ItemDetails = function (props) {
                         )}
                       </div>
                     </div>
-                  </div>}
+                  </div>
+                )}
 
-                {selectedMenu === 2 &&
+                {selectedMenu === 2 && (
                   <div className="tab-1 onStep fadeIn historyTab scrollable">
-                    {bids && bidsLength >= 1 && nftDetails
-                      ? bids?.map((bid, key) => {
+                    {bids && bidsLength >= 1 && nftDetails ? (
+                      bids?.map((bid, key) => {
                         return (
                           <div className="row" key={key}>
-                            {bid.isOffer === false && bid.bidStatus !== "Accepted" && bid.bidStatus === "Bid" ?
+                            {bid.isOffer === false &&
+                            bid.bidStatus !== "Accepted" &&
+                            bid.bidStatus === "Bid" ? (
                               <>
                                 <div className="col item_author_ram ">
                                   <div className="item_list">
@@ -2831,15 +3050,16 @@ const ItemDetails = function (props) {
                                           <h6>
                                             {bid.bidder?.length > 20
                                               ? bid.bidder.slice(0, 6) +
-                                              "...." +
-                                              bid.bidder.slice(
-                                                bid.bidder?.length - 6,
-                                                bid.bidder?.length
-                                              )
+                                                "...." +
+                                                bid.bidder.slice(
+                                                  bid.bidder?.length - 6,
+                                                  bid.bidder?.length
+                                                )
                                               : bid.bidder}
                                             &nbsp; at
                                           </h6>
-                                          <p>Bid Price &nbsp;
+                                          <p>
+                                            Bid Price &nbsp;
                                             {convertToEth(
                                               bid.bidPrice
                                                 ? +" " + bid.bidPrice + " "
@@ -2858,7 +3078,7 @@ const ItemDetails = function (props) {
                                             <div className="button_section">
                                               {currentUser?.toLowerCase() !==
                                                 bid?.bidder?.toLowerCase() &&
-                                                currentUser?.toLowerCase() ===
+                                              currentUser?.toLowerCase() ===
                                                 bid?.seller?.toLowerCase() ? (
                                                 <>
                                                   <button
@@ -2886,12 +3106,24 @@ const ItemDetails = function (props) {
                                                         return;
                                                       }
                                                       setLoading(true);
-                                                      let res2 = await checkBidOffer(bid.bidId)
-                                                      if (res2.message === "Data not found") {
-                                                        setReloadContent(!reloadContent)
-                                                        NotificationManager.error("There is no active bid to accept", "", 1500);
+                                                      let res2 =
+                                                        await checkBidOffer(
+                                                          bid.bidId
+                                                        );
+                                                      if (
+                                                        res2.message ===
+                                                        "Data not found"
+                                                      ) {
+                                                        setReloadContent(
+                                                          !reloadContent
+                                                        );
+                                                        NotificationManager.error(
+                                                          "There is no active bid to accept",
+                                                          "",
+                                                          1500
+                                                        );
                                                         setLoading(false);
-                                                        return
+                                                        return;
                                                       }
                                                       await handleAcceptBids(
                                                         bid,
@@ -2900,18 +3132,20 @@ const ItemDetails = function (props) {
                                                           0,
                                                           3
                                                         ) +
-                                                        "..." +
-                                                        currentUser.slice(
-                                                          39,
-                                                          42
-                                                        ),
+                                                          "..." +
+                                                          currentUser.slice(
+                                                            39,
+                                                            42
+                                                          ),
                                                         nftDetails.nTitle,
                                                         currUserLazyMinted,
                                                         nftDetails
                                                       );
 
-                                                      resetStates()
-                                                      setReloadContent(!reloadContent)
+                                                      resetStates();
+                                                      setReloadContent(
+                                                        !reloadContent
+                                                      );
                                                       setLoading(false);
                                                     }}
                                                   >
@@ -2946,10 +3180,12 @@ const ItemDetails = function (props) {
                                                         nftDetails?.nType,
                                                         isLazyMint,
                                                         "Bid",
-                                                        currentUser,
+                                                        currentUser
                                                       );
-                                                      resetStates()
-                                                      setReloadContent(!reloadContent)
+                                                      resetStates();
+                                                      setReloadContent(
+                                                        !reloadContent
+                                                      );
                                                       setLoading(false);
                                                     }}
                                                   >
@@ -2957,9 +3193,9 @@ const ItemDetails = function (props) {
                                                   </button>
                                                 </>
                                               ) : currentUser?.toLowerCase() ===
-                                                bid?.bidder?.toLowerCase() &&
+                                                  bid?.bidder?.toLowerCase() &&
                                                 currentUser?.toLowerCase() !==
-                                                bid?.seller?.toLowerCase() ? (
+                                                  bid?.seller?.toLowerCase() ? (
                                                 <>
                                                   <button
                                                     className="cancel_btn "
@@ -2992,8 +3228,10 @@ const ItemDetails = function (props) {
                                                         "Bid",
                                                         currentUser
                                                       );
-                                                      resetStates()
-                                                      setReloadContent(!reloadContent)
+                                                      resetStates();
+                                                      setReloadContent(
+                                                        !reloadContent
+                                                      );
 
                                                       setLoading(false);
                                                     }}
@@ -3013,54 +3251,73 @@ const ItemDetails = function (props) {
                                 </div>
                                 <div className="spacer-10"></div>
                               </>
-                              : ""}
+                            ) : (
+                              ""
+                            )}
                           </div>
                         );
                       })
-                      : <div className='col-md-12'>
-                        <h4 className='no_data_text text-muted text-left'>
+                    ) : (
+                      <div className="col-md-12">
+                        <h4 className="no_data_text text-muted text-left">
                           No Bids Available
                         </h4>
-                      </div>}
-                  </div>}
+                      </div>
+                    )}
+                  </div>
+                )}
 
-                {selectedMenu === 3 &&
+                {selectedMenu === 3 && (
                   <div className="tab-1 onStep fadeIn historyTab scrollable">
-
-
                     <div className="spacer-20"></div>
                     <div className="nft_attr_section">
                       <div className="row gx-2">
-                        {metaData && metaData?.length > 0
-                          ? metaData?.map((data, key) => {
+                        {metaData && metaData?.length > 0 ? (
+                          metaData?.map((data, key) => {
                             return (
-                              <div className="col-lg-4 col-md-6 col-sm-6" key={key}>
+                              <div
+                                className="col-lg-4 col-md-6 col-sm-6"
+                                key={key}
+                              >
                                 <div className="nft_attr">
                                   <h5>{data.trait_type}</h5>
                                   <h4>{data.value}</h4>
-                                  <h4>{nftDetails.attributes.filter((attr)=>attr.trait_type.trim().toLowerCase()==data.trait_type.trim().toLowerCase())[0]?.rarityPercentage.toFixed(2)||0}%</h4>
+                                  <h4>
+                                    {nftDetails.attributes
+                                      .filter(
+                                        (attr) =>
+                                          attr.trait_type
+                                            .trim()
+                                            .toLowerCase() ==
+                                          data.trait_type.trim().toLowerCase()
+                                      )[0]
+                                      ?.rarityPercentage.toFixed(2) || 0}
+                                    %
+                                  </h4>
                                 </div>
                               </div>
                             );
                           })
-                          : <div className='col-md-12'>
-                            <h4 className='no_data_text text-muted'>
+                        ) : (
+                          <div className="col-md-12">
+                            <h4 className="no_data_text text-muted">
                               No Properties Added
                             </h4>
-                          </div>}
+                          </div>
+                        )}
                       </div>
-
-
                     </div>
-                  </div>}
+                  </div>
+                )}
 
-                {selectedMenu === 4 &&
+                {selectedMenu === 4 && (
                   <div className="tab-1 onStep fadeIn historyTab scrollable">
-                    {offerLength && offerLength >= 1 && nftDetails
-                      ? bids?.map((bid, key) => {
+                    {offerLength && offerLength >= 1 && nftDetails ? (
+                      bids?.map((bid, key) => {
                         return (
                           <div className="row" key={key}>
-                            {bid.isOffer === true && bid.bidStatus === "MakeOffer" ?
+                            {bid.isOffer === true &&
+                            bid.bidStatus === "MakeOffer" ? (
                               <>
                                 <div className="col item_author_ram ">
                                   <div className="item_list">
@@ -3084,15 +3341,17 @@ const ItemDetails = function (props) {
                                           <h6>
                                             {bid.bidder?.length > 20
                                               ? bid.bidder.slice(0, 6) +
-                                              "...." +
-                                              bid.bidder.slice(
-                                                bid.bidder?.length - 6,
-                                                bid.bidder?.length
-                                              )
+                                                "...." +
+                                                bid.bidder.slice(
+                                                  bid.bidder?.length - 6,
+                                                  bid.bidder?.length
+                                                )
                                               : bid.bidder}
                                             &nbsp; at
                                           </h6>
-                                          <p> Offer Price &nbsp;
+                                          <p>
+                                            {" "}
+                                            Offer Price &nbsp;
                                             {convertToEth(
                                               bid.bidPrice
                                                 ? +" " + bid.bidPrice + " "
@@ -3111,7 +3370,7 @@ const ItemDetails = function (props) {
                                             <div className="button_section">
                                               {currentUser?.toLowerCase() !==
                                                 bid?.bidder?.toLowerCase() &&
-                                                currentUser?.toLowerCase() ===
+                                              currentUser?.toLowerCase() ===
                                                 bid?.seller?.toLowerCase() ? (
                                                 <>
                                                   <button
@@ -3139,12 +3398,24 @@ const ItemDetails = function (props) {
                                                         return;
                                                       }
                                                       setLoading(true);
-                                                      let res2 = await checkBidOffer(bid.bidId)
-                                                      if (res2.message === "Data not found") {
-                                                        setReloadContent(!reloadContent)
-                                                        NotificationManager.error("There is no active Offer to accept", "", 1500);
+                                                      let res2 =
+                                                        await checkBidOffer(
+                                                          bid.bidId
+                                                        );
+                                                      if (
+                                                        res2.message ===
+                                                        "Data not found"
+                                                      ) {
+                                                        setReloadContent(
+                                                          !reloadContent
+                                                        );
+                                                        NotificationManager.error(
+                                                          "There is no active Offer to accept",
+                                                          "",
+                                                          1500
+                                                        );
                                                         setLoading(false);
-                                                        return
+                                                        return;
                                                       }
                                                       await handleAcceptOffers(
                                                         bid,
@@ -3153,18 +3424,19 @@ const ItemDetails = function (props) {
                                                           0,
                                                           3
                                                         ) +
-                                                        "..." +
-                                                        currentUser.slice(
-                                                          39,
-                                                          42
-                                                        ),
+                                                          "..." +
+                                                          currentUser.slice(
+                                                            39,
+                                                            42
+                                                          ),
                                                         currUserLazyMinted,
                                                         nftDetails,
                                                         currentUser
-
                                                       );
-                                                      resetStates()
-                                                      setReloadContent(!reloadContent)
+                                                      resetStates();
+                                                      setReloadContent(
+                                                        !reloadContent
+                                                      );
                                                       setLoading(false);
                                                     }}
                                                   >
@@ -3201,8 +3473,10 @@ const ItemDetails = function (props) {
                                                         "Offer",
                                                         currentUser
                                                       );
-                                                      resetStates()
-                                                      setReloadContent(!reloadContent)
+                                                      resetStates();
+                                                      setReloadContent(
+                                                        !reloadContent
+                                                      );
                                                       setLoading(false);
                                                     }}
                                                   >
@@ -3210,9 +3484,9 @@ const ItemDetails = function (props) {
                                                   </button>
                                                 </>
                                               ) : currentUser?.toLowerCase() ===
-                                                bid?.bidder?.toLowerCase() &&
+                                                  bid?.bidder?.toLowerCase() &&
                                                 currentUser?.toLowerCase() !==
-                                                bid?.seller?.toLowerCase() ? (
+                                                  bid?.seller?.toLowerCase() ? (
                                                 <>
                                                   <button
                                                     className="cancel_btn "
@@ -3245,8 +3519,10 @@ const ItemDetails = function (props) {
                                                         "Offer",
                                                         currentUser
                                                       );
-                                                      resetStates()
-                                                      setReloadContent(!reloadContent)
+                                                      resetStates();
+                                                      setReloadContent(
+                                                        !reloadContent
+                                                      );
                                                       setLoading(false);
                                                     }}
                                                   >
@@ -3265,40 +3541,48 @@ const ItemDetails = function (props) {
                                 </div>
                                 <div className="spacer-10"></div>
                               </>
-                              : ""}
+                            ) : (
+                              ""
+                            )}
                           </div>
                         );
                       })
-                      : <div className='col-md-12'>
-                        <h4 className='no_data_text text-muted'>
+                    ) : (
+                      <div className="col-md-12">
+                        <h4 className="no_data_text text-muted">
                           No Offers Available
                         </h4>
-                      </div>}
-                  </div>}
+                      </div>
+                    )}
+                  </div>
+                )}
 
-                {selectedMenu === 5 &&
+                {selectedMenu === 5 && (
                   <div className="tab-1 onStep fadeIn historyTab scrollable">
                     <div className="nft_attr_section">
                       <ul className="owners_list">
-                        {owners?.length > 0 ? owners?.map((o, i) => {
-                          return (<li key={i}>
-                            <b>{o.address}</b> owns <b>{o.quantity} Qty </b>
-                          </li>)
-                        }) : ""}
+                        {owners?.length > 0
+                          ? owners?.map((o, i) => {
+                              return (
+                                <li key={i}>
+                                  <b>{o.address}</b> owns{" "}
+                                  <b>{o.quantity} Qty </b>
+                                </li>
+                              );
+                            })
+                          : ""}
                       </ul>
-
-
                     </div>
-                  </div>}
-
-              </div >
-            </div >
-          </div >
-        </div >
-      </section >
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <Footer />
-    </div >
+    </div>
   );
 };
 

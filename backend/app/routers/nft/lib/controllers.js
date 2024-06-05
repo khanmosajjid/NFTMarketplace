@@ -3934,10 +3934,10 @@ const GetTraitsRarity = require("./helpers");
 
 controllers.importUserNfts = async (req, res) => {
   let walletAddress = req.body.walletAddress;
-  console.log("wallet address is",req.body)
+  console.log("wallet address is", req.body);
   try {
     const url = `https://testnets-api.opensea.io/api/v2/chain/amoy/account/${walletAddress}/nfts`;
-    
+
     const options = {
       method: "GET",
       headers: {
@@ -3949,87 +3949,94 @@ controllers.importUserNfts = async (req, res) => {
       .get(url, options, (response) => {
         let data = "";
 
-      response.on('data', (chunk) => {
-        data += chunk;
-      });
-      // console.log('data',data)
-      response.on('end', async () => {
-        if (response.statusCode === 200) {
-          const nfts = JSON.parse(data).nfts
-          const dbNfts = await NFT.find()
-          console.log(dbNfts)
-          const filteredOtherNfts = nfts.filter(otherNft => {
-            const isInDbNfts = dbNfts.some(dbNft => {
-              return (
-                dbNft.nCollection === otherNft.contract &&
-                dbNft.nTokenID === parseInt(otherNft.identifier)
+        response.on("data", (chunk) => {
+          data += chunk;
+        });
+        // console.log('data',data)
+        response.on("end", async () => {
+          if (response.statusCode === 200) {
+            const nfts = JSON.parse(data).nfts;
+            const dbNfts = await NFT.find();
+            console.log("response of imports is------>>>", nfts);
+            const filteredOtherNfts = nfts.filter((otherNft) => {
+              const isInDbNfts = dbNfts.some((dbNft) => {
+                return (
+                  dbNft.nCollection === otherNft.contract &&
+                  dbNft.nTokenID === parseInt(otherNft.identifier)
+                );
+              });
+              return !isInDbNfts;
+            });
+            console.log(filteredOtherNfts);
+            filteredOtherNfts.map(async (nft) => {
+              const newNft = new NFT({
+                nTitle: nft.name,
+                nCollection: nft.contract ? nft.contract : "",
+                nHash: nft?.image_url?.split("/").pop() || "",
+                nOwnedBy: [
+                  {
+                    address: walletAddress,
+                    quantity: 1,
+                    // name: user.sUserName,
+                    // lazyMinted: req.body.nLazyMintingStatus
+                  },
+                ], //setting ownedby for first time empty
+                nQuantity: 1,
+                nCollaborator: "",
+                nCollaboratorPercentage: 0,
+                nRoyaltyPercentage: null,
+                nDescription: nft.description,
+                // nCreater: req.userId,
+                nTokenID: nft.identifier,
+                nType: 1,
+                nLockedContent: "",
+                nNftImage: nft?.image_url,
+                nLazyMintingStatus: 0,
+                nNftImageType: "image",
+                isBlocked: false,
+                hash: null,
+                hashStatus: 1,
+              });
+              const nftData = await newNft.save();
+              console.log(nftData);
+              const order = new Order({
+                oNftId: null,
+                oSellerWalletAddress: nftData.nOwnedBy?.address,
+                oTokenId: nftData.nTokenId,
+                oTokenAddress: nftData.nCollection,
+                oQuantity: nftData.nQuantity,
+                oType: nftData.nType,
+                oPaymentToken: null,
+                oPrice: 0,
+                oSalt: null,
+                oSignature: null,
+                oValidUpto: null,
+                oBundleTokens: [],
+                oBundleTokensQuantities: [],
+                oSeller: req.userId,
+                auction_end_date: null,
+                hashStatus:1
+              });
+              const orderData = await order.save();
+              await NFT.updateOne(
+                { _id: nftData._id },
+                { $push: { nOrders: orderData._id } }
               );
             });
-            return !isInDbNfts;
-          });
-          console.log(filteredOtherNfts)
-          filteredOtherNfts.map(async(nft) => {
-            const newNft = new NFT({
-              nTitle: nft.name,
-              nCollection:
-                nft.contract ? nft.contract
-                  : "",
-              nHash: nft?.image_url?.split("/").pop() || null,
-              nOwnedBy: [{
-                address: "0x37E536e9a748262bd5912cc9D73B3fdf636BaDdf",
-                quantity: 1,
-                // name: user.sUserName,
-                // lazyMinted: req.body.nLazyMintingStatus
-              }], //setting ownedby for first time empty
-              nQuantity: 1,
-              nCollaborator: null,
-              nCollaboratorPercentage: null,
-              nRoyaltyPercentage: null,
-              nDescription: nft.description,
-              // nCreater: req.userId,
-              nTokenID: nft.identifier,
-              nType: 1,
-              nLockedContent: null,
-              nNftImage: nft?.image_url,
-              nLazyMintingStatus: null,
-              nNftImageType: "image",
-              isBlocked: false,
-              hash: null,
-              hashStatus: 1,
-            });
-            const nftData=await newNft.save()
-            console.log(nftData)
-            const order = new Order({
-              oNftId: nftData._id,
-              oSellerWalletAddress: nftData.nOwnedBy?.address,
-              oTokenId: nftData.nTokenId,
-              oTokenAddress: nftData.nCollection,
-              oQuantity: nftData.nQuantity,
-              oType: nftData.nType,
-              oPaymentToken:null,
-              oPrice: 0,
-              oSalt: null,
-              oSignature: null,
-              oValidUpto: null,
-              oBundleTokens: [],
-              oBundleTokensQuantities: [],
-              oSeller: req.userId,
-              auction_end_date: null,
-            });
-            const orderData=await order.save()
-            await NFT.updateOne({_id:nftData._id},{ $push: { nOrders: orderData._id } })
+            res.json(JSON.parse(data));
+          } else {
+            res
+              .status(response.statusCode)
+              .json({ error: "Failed to fetch NFTs" });
           }
-          )
-          res.json(JSON.parse(data));
-        } else {
-          res.status(response.statusCode).json({ error: 'Failed to fetch NFTs' });
-        }
+        });
+      })
+      .on("error", (error) => {
+        console.error("Error fetching NFTs:", error);
+        res
+          .status(500)
+          .json({ error: "An error occurred while fetching data" });
       });
-    }).on('error', (error) => {
-      console.error('Error fetching NFTs:', error);
-      res.status(500).json({ error: 'An error occurred while fetching data' });
-    });
-
   } catch (error) {
     console.log("error", error);
     return res.reply(messages.server_error());
