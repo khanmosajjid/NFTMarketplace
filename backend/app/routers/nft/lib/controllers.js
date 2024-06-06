@@ -3934,7 +3934,7 @@ const GetTraitsRarity = require("./helpers");
 
 controllers.importUserNfts = async (req, res) => {
   let walletAddress = req.body.walletAddress;
-  // console.log("wallet address is", req.body);
+  console.log("wallet address is", req.body);
   try {
     const url = `https://testnets-api.opensea.io/api/v2/chain/amoy/account/${walletAddress}/nfts`;
 
@@ -3971,109 +3971,132 @@ controllers.importUserNfts = async (req, res) => {
             });
             // console.log(filteredOtherNfts);
             filteredOtherNfts.map(async (nft) => {
-              let con =''
-              let quantity=''
+              let con = ''
+              let quantity = ''
+              let attributes=[];
+              console.log(nft)
+              if (nft.metadata_url) {
+               await  https.get(nft.metadata_url, (res) => {
+                  let data = '';
+
+                  // A chunk of data has been received.
+                  res.on('data', (chunk) => {
+                    data += chunk;
+                  });
+
+                  // The whole response has been received.
+                  res.on('end', async() => {
+                    console.log("ldki ka chkr maut se takkar", JSON.parse(data))
+                    JSON.parse(data).attributes?.map((item)=>attributes.push(item))
+
+                    
+                  });
+
+                }).on('error', (err) => {
+                  console.error('Error:', err.message);
+                });
+              }
               if (nft.token_standard === "erc721") {
                 con = new web3.eth.Contract(ERC721ABI.abi, nft.contract);
                 quantity = await con.methods
-                .balanceOf(walletAddress)
-                .call();
-              // console.log("qauntity", quantity);
+                  .balanceOf(walletAddress)
+                  .call();
+                // console.log("qauntity", quantity);
                 // console.log("collection name is------>", collectionName);
               } else {
-                 con = new web3.eth.Contract(ERC1155ABI.abi, nft.contract);
+                con = new web3.eth.Contract(ERC1155ABI.abi, nft.contract);
                 // console.log("connn", con)
                 quantity = await con.methods
-                .balanceOf(walletAddress, nft.identifier)
-                .call();
-              // console.log("qauntity", quantity);
+                  .balanceOf(walletAddress, nft.identifier)
+                  .call();
+                // console.log("qauntity", quantity);
                 // let creator = await con.methods.owner().call();
                 // console.log("creator of contract", creator);
 
               }
-             console.log("contract is------>",con)
-                let creator = await con.methods.owner().call();
-              console.log("creator of contract", creator);
-              // let collectionName = await con.methods.name().call();
+              let creator = await con.methods.owner().call();
+              
               let checkUser = await User.findOne({ sWalletAddress: creator })
-              console.log("nft-contract",nft.contract)
-              let checkCollection= await Collection.findOne({sContractAddress:nft.contract})
-              console.log("chk-cool",checkCollection)
-              try{
-              if(!checkCollection){
-                console.log('hi')
-                const collection= new Collection({
-                  erc721:nft.token_standard === "erc721",
-                  nextId:Number(nft.identifier)+1,
-                  hashStatus:0,
-                  sName:nft.collection,
-                  sDescription:'',
-                  sFloorPrice:0,
-                  sContractAddress:nft.contract,
-                  sRoyaltyPercentage:'',
-                  oCreatedBy:checkUser?checkUser._id:null,
-                  collectionImage:''
-                })
-                await collection.save();
+              let checkCollection = await Collection.findOne({ sContractAddress: nft.contract })
+              try {
+                if (!checkCollection) {
+                  console.log('hi')
+                  const collection = new Collection({
+                    erc721: nft.token_standard === "erc721",
+                    nextId: Number(nft.identifier) + 1,
+                    hashStatus: 0,
+                    sName: nft.collection,
+                    sDescription: '',
+                    sFloorPrice: 0,
+                    sContractAddress: nft.contract,
+                    sRoyaltyPercentage: '',
+                    oCreatedBy: checkUser ? checkUser._id : null,
+                    collectionImage: ''
+                  })
+                  await collection.save();
+                }
+                // console.log("jj",attributes)
+                const newNft = new NFT({
+                  nTitle: nft.name,
+                  nCollection: nft.contract ? nft.contract : "",
+                  nHash: nft?.image_url?.split("/").pop() || "",
+                  nOwnedBy: [
+                    {
+                      address: walletAddress,
+                      quantity: 1,
+                      name: checkUser ? checkUser.sUserName : '',
+                      // lazyMinted: req.body.nLazyMintingStatus
+                    },
+                  ], //setting ownedby for first time empty
+                  nQuantity: nft.token_standard === "erc721" ? 1 : quantity,
+                  nCollaborator: "",
+                  nCollaboratorPercentage: 0,
+                  nRoyaltyPercentage: null,
+                  nDescription: nft.description,
+                  nCreater: checkUser ? checkUser._id : null,
+                  nTokenID: nft.identifier,
+                  nType: nft.token_standard === "erc721" ? 1 : 2,
+                  nLockedContent: "",
+                  nNftImage: nft?.image_url,
+                  nLazyMintingStatus: 0,
+                  nNftImageType: "Image",
+                  isBlocked: false,
+                  // attributes:attributes,
+                  hash: "",
+                  hashStatus: 1,
+                });
+                const nftData = await newNft.save();
+                // console.log(nftData);
+                const order = new Order({
+                  oNftId: nftData._id,
+                  oSellerWalletAddress: nftData.nOwnedBy?.address,
+                  oTokenId: nftData.nTokenId,
+                  oTokenAddress: nftData.nCollection,
+                  oQuantity: nftData.nQuantity,
+                  oType: nftData.nType,
+                  oPaymentToken: null,
+                  oPrice: 0,
+                  oSalt: null,
+                  oSignature: null,
+                  oValidUpto: null,
+                  oBundleTokens: [],
+                  oBundleTokensQuantities: [],
+                  oSeller: req.userId,
+                  auction_end_date: null,
+                  hashStatus: 1,
+                });
+                const orderData = await order.save();
+                console.log("attr",attributes)
+                await NFT.updateOne(
+                  { _id: nftData._id },
+
+                  { $push: { nOrders: orderData._id },attributes:attributes}
+                );
+              } catch (err) {
+                console.log("error", err);
+                // return res.reply(messages.server_error());
               }
               
-              const newNft = new NFT({
-                nTitle: nft.name,
-                nCollection: nft.contract ? nft.contract : "",
-                nHash: nft?.image_url?.split("/").pop() || "",
-                nOwnedBy: [
-                  {
-                    address: walletAddress,
-                    quantity: 1,
-                    name: checkUser ? checkUser.sUserName : '',
-                    // lazyMinted: req.body.nLazyMintingStatus
-                  },
-                ], //setting ownedby for first time empty
-                nQuantity: nft.token_standard === "erc721" ? 1 : quantity,
-                nCollaborator: "",
-                nCollaboratorPercentage: 0,
-                nRoyaltyPercentage: null,
-                nDescription: nft.description,
-                nCreater: checkUser ? checkUser._id : null,
-                nTokenID: nft.identifier,
-                nType:nft.token_standard === "erc721"? 1:2,
-                nLockedContent: "",
-                nNftImage: nft?.image_url,
-                nLazyMintingStatus: 0,
-                nNftImageType: "Image",
-                isBlocked: false,
-                hash: "",
-                hashStatus: 1,
-              });
-              const nftData = await newNft.save();
-              // console.log(nftData);
-              const order = new Order({
-                oNftId: null,
-                oSellerWalletAddress: nftData.nOwnedBy?.address,
-                oTokenId: nftData.nTokenId,
-                oTokenAddress: nftData.nCollection,
-                oQuantity: nftData.nQuantity,
-                oType: nftData.nType,
-                oPaymentToken: null,
-                oPrice: 0,
-                oSalt: null,
-                oSignature: null,
-                oValidUpto: null,
-                oBundleTokens: [],
-                oBundleTokensQuantities: [],
-                oSeller: req.userId,
-                auction_end_date: null,
-                hashStatus: 1,
-              });
-              const orderData = await order.save();
-              await NFT.updateOne(
-                { _id: nftData._id },
-                { $push: { nOrders: orderData._id } }
-              );
-            }catch(err){
-              console.log("error", err);
-              return res.reply(messages.server_error());
-            }
             });
             res.json(JSON.parse(data));
           } else {
