@@ -4039,7 +4039,7 @@ controllers.importUserNfts = async (req, res) => {
                 const newNft = new NFT({
                   nTitle: nft.name,
                   nCollection: nft.contract ? nft.contract : "",
-                  nHash: nft?.image_url?.split("/").pop() || "",
+                  nHash: nft?.metadata_url?.split("/").pop() || "",
                   nOwnedBy: [
                     {
                       address: walletAddress,
