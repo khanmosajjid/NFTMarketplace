@@ -611,38 +611,39 @@ export const GetNftsByCollection = async (
 
   arr
     ? arr.map(async (data, key) => {
-        formattedData[key] = {
-          deadline:
-            data && data.nOrders.length > 0
-              ? data.nOrders[0].oValidUpto !== GENERAL_TIMESTAMP
-                ? data.nOrders[0].oValidUpto
-                : ""
-              : "",
-          auction_end_date:
-            data && data.nOrders.length > 0
-              ? data.nOrders[0].auction_end_date !== GENERAL_DATE
-                ? data.nOrders[0].auction_end_date
-                : ""
-              : "",
-          authorLink: `/author/${data.nCreater._id}`,
-          previewLink: "#",
-          nftLink: "#",
-          bidLink: "#",
-          authorImg: data.nCreater.sProfilePicUrl
-            ? data.nCreater.sProfilePicUrl
-            : Avatar,
-          previewImg: data.nNftImage ? data.nNftImage : Avatar,
-          title: data ? data.nTitle : "",
-          imageType: data ? data.nNftImageType : "",
-          price: "",
-          bid: "",
-          likes: data.nUser_likes?.length,
-          id: data ? data._id : "",
-          count: details.count,
-          isBlocked: data.isBlocked,
-          // creator: authorData.sProfilePicUrl?`https://decryptnft.mypinata.cloud/ipfs/${authorData.sProfilePicUrl}`:"",
-        };
-      })
+      formattedData[key] = {
+        deadline:
+          data && data.nOrders.length > 0
+            ? data.nOrders[0].oValidUpto !== GENERAL_TIMESTAMP
+              ? data.nOrders[0].oValidUpto
+              : ""
+            : "",
+        auction_end_date:
+          data && data.nOrders.length > 0
+            ? data.nOrders[0].auction_end_date !== GENERAL_DATE
+              ? data.nOrders[0].auction_end_date
+              : ""
+            : "",
+        authorLink: `/author/${data.nCreater._id}`,
+        previewLink: "#",
+        nftLink: "#",
+        bidLink: "#",
+        authorImg: data.nCreater.sProfilePicUrl
+          ? data.nCreater.sProfilePicUrl
+          : Avatar,
+        previewImg: data.nNftImage ? data.nNftImage : Avatar,
+        title: data ? data.nTitle : "",
+        imageType: data ? data.nNftImageType : "",
+        price: "",
+        bid: "",
+        likes: data.nUser_likes?.length,
+        id: data ? data._id : "",
+        count: details.count,
+        isBlocked: data.isBlocked,
+        attributes:data.attributes
+        // creator: authorData.sProfilePicUrl?`https://decryptnft.mypinata.cloud/ipfs/${authorData.sProfilePicUrl}`:"",
+      };
+    })
     : (formattedData[0] = {});
 
   return formattedData;

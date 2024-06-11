@@ -134,17 +134,19 @@ const Header = function () {
                     <span className="lines"></span>
                   </a>
                 </div>
-                <div className="navbar-item">
-                  <a
-                  style={{cursor:"pointer"}}
-                    onClick={async () => {
-                      await importNFT(currentAccount);
-                    }}
-                  >
-                    Import
-                    <span className="lines"></span>
-                  </a>
-                </div>
+                {currentAccount &&
+                  <div className="navbar-item">
+                    <a
+                      style={{ cursor: "pointer" }}
+                      onClick={async () => {
+                        await importNFT(currentAccount);
+                      }}
+                    >
+                      Import
+                      <span className="lines"></span>
+                    </a>
+                  </div>
+                }
                 {currentAccount ? (
                   <div className="navbar-item">
                     <a href="/createOption">

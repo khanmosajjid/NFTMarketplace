@@ -192,32 +192,32 @@ const Collection = function (props) {
                       alt=""
                     /> */}
 
-                    <div  style={styles.container}>
+                    <div style={styles.container}>
                       <img className="col-4" src={collectionDetails.collectionImage} alt="NFT" style={styles.collImg} />
 
                       <div className="col-8 container-items">
-                        
-                          <h2 className="title-h">{collectionDetails ? collectionDetails.sName : ""}</h2>
-                          <p style={{color:"#9b9b9b", marginTop:10}} className="title-p">
-                            {collectionDetails.sDescription}
-                          </p>
-                      
+
+                        <h2 className="title-h">{collectionDetails ? collectionDetails.sName : ""}</h2>
+                        <p style={{ color: "#9b9b9b", marginTop: 10 }} className="title-p">
+                          {collectionDetails.sDescription}
+                        </p>
+
                         <section className="collection-detail-card">
                           <div className="collection-card">
-                            <h5 style={{color:"#9b9b9b"}}>Floor Price</h5>
-                            <h5 style={{fontSize:"20px",color:"black",marginTop:8}}>{collectionDetails?.sFloorPrice}</h5>
+                            <h5 style={{ color: "#9b9b9b" }}>Floor Price</h5>
+                            <h5 style={{ fontSize: "20px", color: "black", marginTop: 8 }}>{collectionDetails?.sFloorPrice}</h5>
                           </div>
                           <div className="collection-card">
-                            <h5 style={{color:"#9b9b9b"}}>Trade Volume</h5>
-                            <h5 style={{fontSize:"20px",color:"black",marginTop:8}}>${metaData?.volume!=0?convertToEth(metaData?.volume):0}</h5>
+                            <h5 style={{ color: "#9b9b9b" }}>Trade Volume</h5>
+                            <h5 style={{ fontSize: "20px", color: "black", marginTop: 8 }}>${metaData?.volume != 0 ? convertToEth(metaData?.volume) : 0}</h5>
                           </div>
                           <div className="collection-card">
-                            <h5 style={{color:"#9b9b9b"}}>Latest Price</h5>
-                            <h5 style={{fontSize:"20px",color:"black",marginTop:8}}>${metaData?.latestPrice?convertToEth(metaData?.latestPrice):0}</h5>
+                            <h5 style={{ color: "#9b9b9b" }}>Latest Price</h5>
+                            <h5 style={{ fontSize: "20px", color: "black", marginTop: 8 }}>${metaData?.latestPrice ? convertToEth(metaData?.latestPrice) : 0}</h5>
                           </div>
                           <div className="collection-card">
-                            <h5 style={{color:"#9b9b9b"}}>Total Items</h5>
-                            <h5 style={{fontSize:"20px",color:"black",marginTop:8}}>{metaData.items}</h5>
+                            <h5 style={{ color: "#9b9b9b" }}>Total Items</h5>
+                            <h5 style={{ fontSize: "20px", color: "black", marginTop: 8 }}>{metaData.items}</h5>
                           </div>
                         </section>
                       </div>
@@ -228,6 +228,7 @@ const Collection = function (props) {
                   </a>
                   {/* <i className="fa fa-check"></i> */}
                 </div>
+                
 
                 {/* <div className="profile_name">
                   <h4 className="font_36 text-dark NunitoBold mb-0 mt-3">
@@ -284,7 +285,7 @@ const Collection = function (props) {
         </div>
       </section> */}
 
-      <section className="container no-top">
+      <section className="container no-top  ">
         {/* <div className="row mt-4 mb-5">
           <div className="col-lg-12">
             <div className="items_filter">
@@ -299,8 +300,9 @@ const Collection = function (props) {
             </div>
           </div>
         </div> */}
+       
         {openMenu && (
-          <div id="zero1" className="onStep fadeIn" >
+          <div id="zero1" className="onStep fadeIn " >
             <CollectionsNfts
               owned={false}
               collection={
@@ -339,16 +341,16 @@ const styles = {
     justifycontent: "justify",
     alignItems: "center",
     gap: "15px",
-    padding:"28px"
+    padding: "28px"
   },
   collImg: {
-  
-      width: "250px",
-      height: "250px",
-      marginLeft: "15px",
-      // marginTop: "32px",
-      borderRadius: "12px"
-  
+
+    width: "250px",
+    height: "250px",
+    marginLeft: "15px",
+    // marginTop: "32px",
+    borderRadius: "12px"
+
   }
 }
 
