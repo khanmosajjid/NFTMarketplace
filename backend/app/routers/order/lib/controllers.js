@@ -337,15 +337,12 @@ controllers.updateOrder = async (req, res) => {
           let ContractAddress = nftDataFound?.nCollection;
           let tokenID = nftDataFound?.nTokenID;
           let ERCType = nftDataFound?.nType;
+          console.log("erc")
           if (ContractAddress !== undefined) {
             let sellerAddress = req.body.oSeller.toLowerCase();
             let buyerAddress = req.body.oBuyer.toLowerCase();
             if (ERCType === 1) {
               console.log("abii",ERC721ABI);
-              // const contractJson = fs.readFileSync('./../../../../contract/ERC721ABI.json');
-
-              // // Parse the JSON interface file
-              // const abi = JSON.parse(contractJson);
               let con = new web3.eth.Contract(ERC721ABI, ContractAddress)
               let currentOwnerAddress = await con.methods.ownerOf(tokenID).call();
               let OwnedBy = [];
@@ -362,7 +359,7 @@ controllers.updateOrder = async (req, res) => {
                 });
             } else {
               let con = new web3.eth.Contract(ERC1155ABI, ContractAddress)
-              let sellerCurrentQty = await con.balanceOf(sellerAddress, tokenID).call();
+              let sellerCurrentQty = await con.balanceOf(sellerAddress,tokenID).call();
               let buyerCurrentQty = await con.balanceOf(buyerAddress, tokenID).call();
               console.log("seller qty", sellerCurrentQty, buyerCurrentQty)
               let isExist = await NFT.exists(
