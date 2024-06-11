@@ -316,8 +316,8 @@ controllers.create = async (req, res) => {
                       collection.nextId = nextId;
                       collection.save();
 
-                      return res.reply(messages.created("NFT"), result);
                       await GetTraitsRarity();
+                      return res.reply(messages.created("NFT"), result);
                     })
                     .catch((error) => {
                       console.log("Created NFT error", error);

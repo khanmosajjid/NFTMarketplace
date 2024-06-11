@@ -125,89 +125,59 @@ const CollectionsNfts = (props) => {
   }, [selectedTraits,nfts]);
   return (
     <div className="d-flex flex-row">
-     <div style={{marginRight: '20px'}}>
+     <div style={{marginRight: '20px',overflowY:'scroll', overflowX:'hidden',height:'200px'}}>
      <div style={{ fontWeight: 'bold', paddingInlineStart: '10px', fontSize: '15px', paddingTop:'10px', border:'1px solid rgb(203, 213, 225)', backgroundColor: 'white', paddingBottom:'10px', borderRadius: '8px'}}>
   Traits
 </div>
 
       <div className="accordion" id="accordionExample">
-        {[...traitValueMap].map(([traitType, values],i)=>
-        <div className="accordion-item">
-          <h2 className="accordion-header" id={i}>
-            <button
-              className="accordion-button custom-accordion-button"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseOne"
-              aria-expanded="true"
-              aria-controls="collapseOne"
-              style={{ width: '300px', color: 'black', textAlign: 'left', paddingLeft: '10px' }}
-            >
-              <span style={{paddingLeft : '150px'}}>{traitType}</span>
-            </button>
-          </h2>
-          <div
-            id="collapseOne"
-            className="accordion-collapse collapse show"
-            aria-labelledby="headingOne"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body ">
-            {[...values].map((value)=>
-              <div className="form-check px-2 d-flex">
-                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault1" onChange={() => handleCheckboxChange(traitType, value)}/>
-                <label className="form-check-label" htmlFor="flexCheckDefault1" style={{fontSize:'15px', paddingLeft:'10px'}}>
-                  {value}
-                </label>
-              </div>
-              )}
-              {/* <div className="form-check px-2 d-flex">
-                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault2" />
-                <label className="form-check-label" htmlFor="flexCheckDefault2" style={{fontSize:'15px', paddingLeft:'10px'}}>
-                  Default checkbox
-                </label>
-              </div> */}
+  {[...traitValueMap].map(([traitType, values], i) => (
+    <div className="accordion-item" key={i}>
+      <h2 className="accordion-header" id={i}>
+        <button
+          className="accordion-button custom-accordion-button position-relative"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target={`#collapse${i}`}
+          aria-expanded="true"
+          aria-controls={`collapse${i}`}
+          style={{ width: '300px', color: 'black',  paddingLeft: '10px' }}
+        >
+          <span style={{textAlign:"center"}}>{traitType}</span>
+          <span className="accordion-icon" />
+        </button>
+      </h2>
+      <div
+        id={`collapse${i}`}
+        className="accordion-collapse collapse show"
+        aria-labelledby={`heading${i}`}
+        data-bs-parent="#accordionExample"
+      >
+        <div className="accordion-body">
+          {[...values].map((value, index) => (
+            <div className="form-check px-2 d-flex" key={index}>
+              <input
+                className="form-check-input"
+                type="checkbox"
+                value=""
+                id={`flexCheckDefault${index}`}
+                onChange={() => handleCheckboxChange(traitType, value)}
+              />
+              <label
+                className="form-check-label"
+                htmlFor={`flexCheckDefault${index}`}
+                style={{ fontSize: '15px', paddingLeft: '10px' }}
+              >
+                {value}
+              </label>
             </div>
-          </div>
+          ))}
         </div>
-        )}
-        {/* <div className="accordion-item">
-          <h2 className="accordion-header" id="headingTwo">
-            <button
-              className="accordion-button custom-accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseTwo"
-              aria-expanded="false"
-              aria-controls="collapseTwo"
-              style={{ width: '300px', color: 'black', textAlign: 'left', paddingLeft: '10px' }}
-            >
-             <span style={{paddingLeft : '150px'}}>Background</span>
-            </button>
-          </h2>
-          <div
-            id="collapseTwo"
-            className="accordion-collapse collapse"
-            aria-labelledby="headingTwo"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body">
-              <div className="form-check px-2 d-flex">
-                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault3" style={{}}/>
-                <label className="form-check-label" htmlFor="flexCheckDefault3" style={{fontSize:'15px', paddingLeft:'10px'}}>
-                  Default checkbox
-                </label>
-              </div>
-              <div className="form-check px-2 d-flex">
-                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault4" />
-                <label className="form-check-label" htmlFor="flexCheckDefault4" style={{fontSize:'15px', paddingLeft:'10px'}}>
-                  Default checkbox
-                </label>
-              </div>
-            </div>
-          </div>
-        </div> */}
       </div>
+    </div>
+  ))}
+</div>
+
     </div>
 
       <div className="row ">
@@ -220,7 +190,7 @@ const CollectionsNfts = (props) => {
                 key={index}
                 className="d-item col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-4"
               >
-                <div className="nft__item " style={{ width: '250px', margin:'10px' }}>
+                <div className="nft__item " style={{ width: '240px' , height: '330px', marginBottom:'10px',padding:'15px'}}>
                   {nft.deadline && (
                     <div className="de_countdown">
                       <Clock deadline={nft.auction_end_date} />
@@ -241,6 +211,7 @@ const CollectionsNfts = (props) => {
                     </span>
                   </div>
 
+                   <div style={{display:'flex',flexDirection:'column'}}>
                   <div
                     className="nft__item_wrap_carausel"
                     style={{ height: `${height}px` }}
@@ -258,18 +229,19 @@ const CollectionsNfts = (props) => {
                           src={nft.previewImg}
                           className="lazy nft__item_preview  slider-img-preview"
                           alt=""
+                          style={{height:'200px'}}
                         />}
 
                       </span>
                     </Outer>
                   </div>
-                  <div className="nft__item_info">
+                  <div className="nft__item_info" style={{}}>
                     <span
                       onClick={() =>
                         navigate(`/itemDetail/${nft.id}`)
                       }
                     >
-                      <h4 className="nft_title_class">{nft.title}</h4>
+                      <h4 className="nft_title_class" style={{}}>{nft.title}</h4>
                     </span>
                     <div className="nft__item_price">
                       {nft.price ? nft.price : ""}
@@ -293,6 +265,7 @@ const CollectionsNfts = (props) => {
                     ></i>
                     <span>{nft.likes}</span>
                   </div> */}
+                  </div>
                   </div>
                 </div>
               </div>}

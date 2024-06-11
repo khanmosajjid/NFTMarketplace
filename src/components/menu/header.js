@@ -140,6 +140,7 @@ const Header = function () {
                       style={{ cursor: "pointer" }}
                       onClick={async () => {
                         await importNFT(currentAccount);
+                        navigate('/explore')
                       }}
                     >
                       Import
