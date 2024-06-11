@@ -646,7 +646,8 @@ export const GetNftsByCollection = async (
         likes: data.nUser_likes?.length,
         id: data ? data._id : "",
         count: details.count,
-        isBlocked: data.isBlocked
+        isBlocked: data.isBlocked,
+        attributes:data.attributes
         // creator: authorData.sProfilePicUrl?`https://decryptnft.mypinata.cloud/ipfs/${authorData.sProfilePicUrl}`:"",
       };
     })

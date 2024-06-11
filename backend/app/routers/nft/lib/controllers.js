@@ -3190,6 +3190,7 @@ controllers.getCollectionNFT = async (req, res) => {
         nLazyMintingStatus: 1,
         nNftImageType: 1,
         isBlocked: 1,
+        attributes:1
       })
       .populate({
         path: "nOrders",
@@ -4037,7 +4038,7 @@ controllers.importUserNfts = async (req, res) => {
                 }
                 // console.log("jj",attributes)
                 const newNft = new NFT({
-                  nTitle: nft.name,
+                  nTitle: nft?.name,
                   nCollection: nft.contract ? nft.contract : "",
                   nHash: nft?.metadata_url?.split("/").pop() || "",
                   nOwnedBy: [

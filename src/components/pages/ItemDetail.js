@@ -3291,7 +3291,7 @@ const ItemDetails = function (props) {
                                             .toLowerCase() ==
                                           data.trait_type.trim().toLowerCase()
                                       )[0]
-                                      ?.rarityPercentage.toFixed(2) || 0}
+                                      ?.rarityPercentage?.toFixed(2) || 0}
                                     %
                                   </h4>
                                 </div>

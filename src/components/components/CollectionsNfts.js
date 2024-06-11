@@ -8,6 +8,8 @@ import { Pagination } from "@material-ui/lab";
 import Placeholder from "./placeholder";
 import { perPageCount } from "./../../helpers/constants";
 import { useNavigate } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './accdrop1.css';
 
 const Outer = styled.div`
   display: flex;
@@ -24,6 +26,9 @@ const CollectionsNfts = (props) => {
   const [currPage, setCurrPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [selectedTraits, setSelectedTraits] = useState({});
+  const [filteredNFTs, setFilteredNFTs] = useState([]);
+  const [traitValueMap, setTraitValueMap] = useState(new Map());
   let navigate = useNavigate()
   const handleChange = (e, p) => {
     setCurrPage(p);
@@ -53,6 +58,22 @@ const CollectionsNfts = (props) => {
           setTotalPages(Math.ceil(details[0]?.count / perPageCount));
           setNfts(details);
           setLoading(false);
+          const newTraitValueMap = new Map();
+
+          details.forEach(nft => {
+            nft.attributes?.forEach(attribute => {
+              const { trait_type, value } = attribute;
+              let type = trait_type?.trim()
+              if (!newTraitValueMap.has(type)) {
+                newTraitValueMap.set(trait_type.trim(), new Set());
+              }
+              console.log('jjjjiooo',newTraitValueMap)
+              newTraitValueMap.get(trait_type.trim()).add(value);
+            });
+          });
+          console.log('trrrr0',newTraitValueMap)
+          setTraitValueMap(newTraitValueMap);
+          
         }
 
       } catch (e) {
@@ -71,73 +92,190 @@ const CollectionsNfts = (props) => {
     }
   };
 
-  return (
-    <div className="row">
-      {loading ? returnPlaceHolder() : ""}
-      {console.log("nfts are------------------>...>>>", nfts, nfts.length)}
-      {nfts && nfts.length >= 1
-        ? nfts.map((nft, index) => (
-          <>
-            {nft.isBlocked === true ? "" : <div
-              key={index}
-              className="d-item col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-4"
-            >
-              <div className="nft__item">
-                {nft.deadline && (
-                  <div className="de_countdown">
-                    <Clock deadline={nft.auction_end_date} />
-                  </div>
-                )}
-                <div className="author_list_pp">
-                  <span className="cursor-pointer" onClick={() => (window.location.href = nft.authorLink)}>
-                    <img
-                      className="lazy profile_img"
-                      src={
-                        nft.creater
-                          ? process.env.REACT_APP_IPFS_URL + nft.creater
-                          : nft.authorImg
-                      }
-                      alt=""
-                    />
-                    <i className="fa fa-check profile_img_check"></i>
-                  </span>
-                </div>
+  const handleCheckboxChange = (traitType, value) => {
+    setSelectedTraits(prev => ({
+      ...prev,
+      [traitType]: {
+        ...prev[traitType],
+        [value]: !prev[traitType]?.[value]
+      }
+    }));
+  };
 
-                <div
-                  className="nft__item_wrap_carausel"
-                  style={{ height: `${height}px` }}
-                >
-                  <Outer>
+  useEffect(() => {
+    const filterNFTs = () => {
+      const filtered = nfts.filter(nft => {
+        return Object.entries(selectedTraits).every(([traitType, values]) => {
+          const selectedValues = Object.entries(values)
+            .filter(([_, isSelected]) => isSelected)
+            .map(([value]) => value);
+
+          if (selectedValues.length === 0) return true; // No values selected for this trait
+
+          return nft.attributes.some(attr => 
+            attr.trait_type === traitType && selectedValues.includes(attr.value)
+          );
+        });
+      });
+      console.log("filllllll",filtered)
+      setFilteredNFTs(filtered);
+    };
+
+    filterNFTs();
+  }, [selectedTraits,nfts]);
+  return (
+    <div className="d-flex flex-row">
+     <div style={{marginRight: '20px'}}>
+     <div style={{ fontWeight: 'bold', paddingInlineStart: '10px', fontSize: '15px', paddingTop:'10px', border:'1px solid rgb(203, 213, 225)', backgroundColor: 'white', paddingBottom:'10px', borderRadius: '8px'}}>
+  Traits
+</div>
+
+      <div className="accordion" id="accordionExample">
+        {[...traitValueMap].map(([traitType, values],i)=>
+        <div className="accordion-item">
+          <h2 className="accordion-header" id={i}>
+            <button
+              className="accordion-button custom-accordion-button"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseOne"
+              aria-expanded="true"
+              aria-controls="collapseOne"
+              style={{ width: '300px', color: 'black', textAlign: 'left', paddingLeft: '10px' }}
+            >
+              <span style={{paddingLeft : '150px'}}>{traitType}</span>
+            </button>
+          </h2>
+          <div
+            id="collapseOne"
+            className="accordion-collapse collapse show"
+            aria-labelledby="headingOne"
+            data-bs-parent="#accordionExample"
+          >
+            <div className="accordion-body ">
+            {[...values].map((value)=>
+              <div className="form-check px-2 d-flex">
+                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault1" onChange={() => handleCheckboxChange(traitType, value)}/>
+                <label className="form-check-label" htmlFor="flexCheckDefault1" style={{fontSize:'15px', paddingLeft:'10px'}}>
+                  {value}
+                </label>
+              </div>
+              )}
+              {/* <div className="form-check px-2 d-flex">
+                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault2" />
+                <label className="form-check-label" htmlFor="flexCheckDefault2" style={{fontSize:'15px', paddingLeft:'10px'}}>
+                  Default checkbox
+                </label>
+              </div> */}
+            </div>
+          </div>
+        </div>
+        )}
+        {/* <div className="accordion-item">
+          <h2 className="accordion-header" id="headingTwo">
+            <button
+              className="accordion-button custom-accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseTwo"
+              aria-expanded="false"
+              aria-controls="collapseTwo"
+              style={{ width: '300px', color: 'black', textAlign: 'left', paddingLeft: '10px' }}
+            >
+             <span style={{paddingLeft : '150px'}}>Background</span>
+            </button>
+          </h2>
+          <div
+            id="collapseTwo"
+            className="accordion-collapse collapse"
+            aria-labelledby="headingTwo"
+            data-bs-parent="#accordionExample"
+          >
+            <div className="accordion-body">
+              <div className="form-check px-2 d-flex">
+                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault3" style={{}}/>
+                <label className="form-check-label" htmlFor="flexCheckDefault3" style={{fontSize:'15px', paddingLeft:'10px'}}>
+                  Default checkbox
+                </label>
+              </div>
+              <div className="form-check px-2 d-flex">
+                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault4" />
+                <label className="form-check-label" htmlFor="flexCheckDefault4" style={{fontSize:'15px', paddingLeft:'10px'}}>
+                  Default checkbox
+                </label>
+              </div>
+            </div>
+          </div>
+        </div> */}
+      </div>
+    </div>
+
+      <div className="row ">
+        {loading ? returnPlaceHolder() : ""}
+        {console.log("nfts are------------------>...>>>", nfts, nfts.length)}
+        {filteredNFTs && filteredNFTs.length >= 1
+          ? filteredNFTs.map((nft, index) => (
+            <>
+              {nft.isBlocked === true ? "" : <div
+                key={index}
+                className="d-item col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-4"
+              >
+                <div className="nft__item " style={{ width: '250px', margin:'10px' }}>
+                  {nft.deadline && (
+                    <div className="de_countdown">
+                      <Clock deadline={nft.auction_end_date} />
+                    </div>
+                  )}
+                  <div className="author_list_pp">
+                    <span className="cursor-pointer" onClick={() => (window.location.href = nft.authorLink)}>
+                      <img
+                        className="lazy profile_img"
+                        src={
+                          nft.creater
+                            ? process.env.REACT_APP_IPFS_URL + nft.creater
+                            : nft.authorImg
+                        }
+                        alt=""
+                      />
+                      <i className="fa fa-check profile_img_check"></i>
+                    </span>
+                  </div>
+
+                  <div
+                    className="nft__item_wrap_carausel"
+                    style={{ height: `${height}px` }}
+                  >
+                    <Outer>
+                      <span
+                        onClick={() =>
+                          navigate(`/itemDetail/${nft.id}`)
+                        }
+                      >
+                        {nft.imageType === "mp4" ? <video className="lazy nft__item_preview  slider-img-preview " controls>
+                          <source src={nft.previewImg} type="video/mp4" />
+                        </video> : <img
+                          onLoad={onImgLoad}
+                          src={nft.previewImg}
+                          className="lazy nft__item_preview  slider-img-preview"
+                          alt=""
+                        />}
+
+                      </span>
+                    </Outer>
+                  </div>
+                  <div className="nft__item_info">
                     <span
                       onClick={() =>
                         navigate(`/itemDetail/${nft.id}`)
                       }
                     >
-                      {nft.imageType === "mp4" ? <video className="lazy nft__item_preview  slider-img-preview " controls>
-                        <source src={nft.previewImg} type="video/mp4" />
-                      </video> : <img
-                        onLoad={onImgLoad}
-                        src={nft.previewImg}
-                        className="lazy nft__item_preview  slider-img-preview"
-                        alt=""
-                      />}
-
+                      <h4 className="nft_title_class">{nft.title}</h4>
                     </span>
-                  </Outer>
-                </div>
-                <div className="nft__item_info">
-                  <span
-                    onClick={() =>
-                      navigate(`/itemDetail/${nft.id}`)
-                    }
-                  >
-                    <h4 className="nft_title_class">{nft.title}</h4>
-                  </span>
-                  <div className="nft__item_price">
-                    {nft.price ? nft.price : ""}
-                    <span>{nft.bid ? nft.bid : ""}</span>
-                  </div>
-                  {/* <div className="nft__item_action">
+                    <div className="nft__item_price">
+                      {nft.price ? nft.price : ""}
+                      <span>{nft.bid ? nft.bid : ""}</span>
+                    </div>
+                    {/* <div className="nft__item_action">
                     <span
                       onClick={() =>
                         (window.location.href = "/itemDetail/" + nft.id)
@@ -146,7 +284,7 @@ const CollectionsNfts = (props) => {
                       Buy Now
                     </span>
                   </div> */}
-                  {/* <div className="nft__item_like">
+                    {/* <div className="nft__item_like">
                     <i
                       className="fa fa-heart"
                       onClick={() => {
@@ -155,30 +293,32 @@ const CollectionsNfts = (props) => {
                     ></i>
                     <span>{nft.likes}</span>
                   </div> */}
+                  </div>
                 </div>
-              </div>
-            </div>}
+              </div>}
 
-          </>
+            </>
 
-        ))
-        : <div className='col-md-12'>
-          <h4 className='no_data_text text-muted'>
-            No NFTs Available
-          </h4>
-        </div>}
-      {totalPages > 1 ? (
-        <Pagination
-          count={totalPages}
-          size="large"
-          page={currPage}
-          variant="outlined"
-          shape="rounded"
-          onChange={handleChange}
-        />
-      ) : (
-        ""
-      )}
+          ))
+          : <div className='col-md-12'>
+            <h4 className='no_data_text text-muted'>
+              No NFTs Available
+            </h4>
+
+          </div>}
+        {totalPages > 1 ? (
+          <Pagination
+            count={totalPages}
+            size="large"
+            page={currPage}
+            variant="outlined"
+            shape="rounded"
+            onChange={handleChange}
+          />
+        ) : (
+          ""
+        )}
+      </div>
     </div>
   );
 };
@@ -188,5 +328,18 @@ const mapStateToProps = (state) => {
     profileData: state.profileData,
   };
 };
+<style>
+{`
+  .custom-accordion-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
+  .custom-accordion-button::after {
+    margin-left: auto;
+    margin-right: 10px;
+  }
+`}
+</style>
 export default connect(mapStateToProps)(CollectionsNfts);
