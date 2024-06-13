@@ -4038,7 +4038,7 @@ controllers.importUserNfts = async (req, res) => {
                 }
                 // console.log("jj",attributes)
                 const newNft = new NFT({
-                  nTitle: nft?.name,
+                  nTitle: nft?.name || nft?.identifier,
                   nCollection: nft.contract ? nft.contract : "",
                   nHash: nft?.metadata_url?.split("/").pop() || "",
                   nOwnedBy: [
