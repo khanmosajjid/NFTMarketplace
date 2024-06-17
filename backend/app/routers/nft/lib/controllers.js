@@ -311,8 +311,8 @@ controllers.create = async (req, res) => {
                       collection.nextId = nextId;
                       collection.save();
 
-                      return res.reply(messages.created("NFT"), result);
                       await GetTraitsRarity();
+                      return res.reply(messages.created("NFT"), result);
                     })
                     .catch((error) => {
                       console.log("Created NFT error", error);
@@ -4035,7 +4035,7 @@ controllers.importUserNfts = async (req, res) => {
                 }
                 // console.log("jj",attributes)
                 const newNft = new NFT({
-                  nTitle: nft?.name,
+                  nTitle: nft?.name || nft?.identifier,
                   nCollection: nft.contract ? nft.contract : "",
                   nHash: nft?.metadata_url?.split("/").pop() || "",
                   nOwnedBy: [

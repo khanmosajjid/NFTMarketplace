@@ -1273,7 +1273,7 @@ const ItemDetails = function (props) {
         process.env.REACT_APP_IPFS_URL
       );
       let resp = await fetch(
-        process.env.REACT_APP_IPFS_URL + "/" + nftDetails?.nHash
+        process.env.REACT_APP_IPFS_URL + "/" + nftDetails?.nHash,
         // {
         //   headers:{
         //     "x-pinata-gateway-token":"o0xOnJayjR_RDU5YYS52WSR3Zh1qJpjAxhiS9JwoniBAhzQuvTm3RoS1Mfhi4m67"
