@@ -180,7 +180,7 @@ const CollectionsNfts = (props) => {
 
     </div>
 
-      <div className="row ">
+      <div className="row  collection_row">
         {loading ? returnPlaceHolder() : ""}
         {console.log("nfts are------------------>...>>>", nfts, nfts.length)}
         {filteredNFTs && filteredNFTs.length >= 1
@@ -188,7 +188,7 @@ const CollectionsNfts = (props) => {
             <>
               {nft.isBlocked === true ? "" : <div
                 key={index}
-                className="d-item col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-4"
+                className="d-item col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 mb-4 collection_item"
               >
                 <div className="nft__item " style={{ width: '240px' , height: '330px', marginBottom:'10px',padding:'15px'}}>
                   {nft.deadline && (

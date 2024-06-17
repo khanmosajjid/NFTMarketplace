@@ -92,7 +92,7 @@ const CollectionsList = (props) => {
   return loading ? (
     returnPlaceHolder()
   ) : (
-    <div className="row">
+    <div className="row test">
       {console.log("collections are --------->",collections)}
       {collections?.length >= 1
         ? collections.map((collection, index) => (

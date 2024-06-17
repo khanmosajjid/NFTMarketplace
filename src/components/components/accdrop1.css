@@ -17,3 +17,11 @@
 .custom-accordion-button::after {
   margin-left: auto;
 }
+.collection_row{
+ display: flex;
+            flex-wrap: wrap;
+}
+.collection_item{
+ flex: 1 1 calc(33.33% - 20px); 
+            margin: 10px; 
+}
