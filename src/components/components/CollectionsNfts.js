@@ -63,12 +63,15 @@ const CollectionsNfts = (props) => {
           details.forEach(nft => {
             nft.attributes?.forEach(attribute => {
               const { trait_type, value } = attribute;
-              let type = trait_type?.trim()
+              let type = trait_type?.toLowerCase().trim()
               if (!newTraitValueMap.has(type)) {
-                newTraitValueMap.set(trait_type.trim(), new Set());
+                newTraitValueMap.set(trait_type.toLowerCase().trim(), { values: new Set(), count: 0 });
               }
               console.log('jjjjiooo',newTraitValueMap)
-              newTraitValueMap.get(trait_type.trim()).add(value);
+              const traitData = newTraitValueMap.get(type);
+              traitData.values.add(value);
+              traitData.count += 1;
+              newTraitValueMap.set(type, { ...traitData, count: traitData.values.size });
             });
           });
           console.log('trrrr0',newTraitValueMap)
@@ -113,7 +116,7 @@ const CollectionsNfts = (props) => {
           if (selectedValues.length === 0) return true; // No values selected for this trait
 
           return nft.attributes.some(attr => 
-            attr.trait_type === traitType && selectedValues.includes(attr.value)
+            attr.trait_type.toLowerCase().trim() === traitType.toLowerCase().trim() && selectedValues.includes(attr.value)
           );
         });
       });
@@ -125,13 +128,13 @@ const CollectionsNfts = (props) => {
   }, [selectedTraits,nfts]);
   return (
     <div className="d-flex flex-row">
-     <div style={{marginRight: '20px',overflowY:'scroll', overflowX:'hidden',height:'200px'}}>
+     <div style={{marginRight: '20px',height:'200px'}}>
      <div style={{ fontWeight: 'bold', paddingInlineStart: '10px', fontSize: '15px', paddingTop:'10px', border:'1px solid rgb(203, 213, 225)', backgroundColor: 'white', paddingBottom:'10px', borderRadius: '8px'}}>
   Traits
 </div>
 
-      <div className="accordion" id="accordionExample">
-  {[...traitValueMap].map(([traitType, values], i) => (
+      <div className="accordion" id="accordionExample" style={{overflowY:'scroll', overflowX:'hidden'}}>
+  {[...traitValueMap].map(([traitType, traitData], i) => (
     <div className="accordion-item" key={i}>
       <h2 className="accordion-header" id={i}>
         <button
@@ -144,6 +147,7 @@ const CollectionsNfts = (props) => {
           style={{ width: '300px', color: 'black',  paddingLeft: '10px' }}
         >
           <span style={{textAlign:"center"}}>{traitType}</span>
+          <span style={{textAlign:"end"}}>{traitData?.count}</span>
           <span className="accordion-icon" />
         </button>
       </h2>
@@ -154,7 +158,7 @@ const CollectionsNfts = (props) => {
         data-bs-parent="#accordionExample"
       >
         <div className="accordion-body">
-          {[...values].map((value, index) => (
+          {[...traitData?.values].map((value, index) => (
             <div className="form-check px-2 d-flex" key={index}>
               <input
                 className="form-check-input"
