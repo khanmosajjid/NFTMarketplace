@@ -219,8 +219,8 @@ controllers.create = async (req, res) => {
               pinata
                 .pinFileToIPFS(readableStreamForFile, iOptions)
                 .then((res) => {
-                  console.log("metaa", metaData, JSON.parse(req.body.metaData));
                   metaData = JSON.parse(req.body.metaData);
+                  console.log("metaa", metaData, JSON.parse(req.body.metaData));
                   console.log(
                     "req.body.nDescription is----->",
                     req.body.nDescription
