@@ -841,7 +841,7 @@ input:checked + .slider:before {
 }
 .clockloader::before,
 ::after {
-  position: absolute;
+  position: static;
   content: "";
   top: calc(var(--clock-radius) * 0.25);
   width: var(--clock-thickness);

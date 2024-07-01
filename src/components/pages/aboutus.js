@@ -55,15 +55,18 @@ const AboutUs = () => {
         </div>
       </section>
 
-      <section className="container">
-        <p className="about-us-text">
+      <section
+        className="container"
+        style={{ fontWeight: "bold", display: "flex", flexDirection: "column" }}
+      >
+        <p className="about-us-text" style={{ textAlign: "left" }}>
           Kunstify is an online marketplace platform for non-fungible token
           (NFT).
         </p>
-        <p className="about-us-text">
+        <p className="about-us-text" style={{ textAlign: "left" }}>
           Kunstify is operated by Paiblock A/S based in Denmark.
         </p>
-        <p className="about-us-text">
+        <p className="about-us-text" style={{ textAlign: "left" }}>
           The company aims to provide customers with more secure NFT trading
           solutions among other things.
         </p>
