@@ -11,12 +11,17 @@ import DecryptNFTLogo2 from "./../../assets/images/DecryptNFT-Logo2.png";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { importNFT } from "../../apiServices";
+import { Modal } from "react-bootstrap";
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const Header = function () {
   const [showmenu, btn_icon] = useState(false);
+  const [showMd, setShowMd] = useState(false);
+  const [floorPrice, setFloorPrice] = useState('');
+  const [collectionAddress, setCollectionAddress] = useState('');
   const [cookies] = useCookies(["selected_account"]);
   const [currentAccount, setCurrentAccount] = useState("");
+  const onClose = () => setShowMd(false);
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +34,13 @@ const Header = function () {
     }
   }, [cookies.selected_account]);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setFloorPrice('');
+    setCollectionAddress('');
+    onClose();
+  };
   useEffect(() => {
     const header = document.getElementById("myHeader");
     const totop = document.getElementById("scroll-to-top");
@@ -138,6 +150,19 @@ const Header = function () {
                   <div className="navbar-item">
                     <a
                       style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setShowMd(true)
+                      }}
+                    >
+                      Import collection
+                      <span className="lines"></span>
+                    </a>
+                  </div>
+                }
+                {currentAccount &&
+                  <div className="navbar-item">
+                    <a
+                      style={{ cursor: "pointer" }}
                       onClick={async () => {
                         await importNFT(currentAccount);
                         navigate('/explore')
@@ -183,6 +208,43 @@ const Header = function () {
           <div className="menu-line2 white"></div>
         </button>
       </div>
+      <Modal
+  show={showMd}
+  onHide={() => setShowMd(false)}
+  centered
+  className="custom-modal"
+>
+  <Modal.Header >
+    <Modal.Title>Enter Collection Details</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <form onSubmit={handleSubmit} className="collection-form">
+      <div className="form-group">
+        <label htmlFor="floorPrice">Floor Price</label>
+        <input
+          type="text"
+          className="form-control"
+          id="floorPrice"
+          placeholder="Enter floor price"
+          onChange={(e) => setFloorPrice(e.target.value)}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="collectionAddress">Collection Address</label>
+        <input
+          type="text"
+          className="form-control"
+          id="collectionAddress"
+          placeholder="Enter collection address"
+          onChange={(e) => setCollectionAddress(e.target.value)}
+        />
+      </div>
+      <button type="submit" className="btn-sub btn-primary btn-block">
+        Submit
+      </button>
+    </form>
+  </Modal.Body>
+</Modal>
     </header>
   );
 };
